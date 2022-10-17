@@ -11,7 +11,7 @@
 
 	<groupId>org.kkukie</groupId>
 	<artifactId>jrtsp_gw</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>jrtsp_gw</name>
 	<description>RTSP Gateway</description>
 	<properties>
