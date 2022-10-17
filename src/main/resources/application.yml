@@ -1,0 +1,231 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  #datasource:
+  #  url: jdbc:h2:tcp://localhost/~/jrtsp_gw
+  #  username: sa
+  #  password:
+  #  driver-class-name: org.h2.Driver
+
+  #jpa:
+  #  hibernate:
+  #    ddl-auto: create
+  #  properties:
+  #    hibernate:
+  #      format_sql: false
+  #      show_sql: false
+  #      use_sql_comments: false # Print jpql
+        #dialect: org.hibernate.dialect.Oracle10gDialect
+
+  servlet:
+    multipart:
+      location: /Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/templates/images
+      maxFileSize: 200MB
+      maxRequestSize: 100MB
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+        #one-indexed-parameters: true
+
+logging:
+  config: classpath:logback-${spring.config.activate.on-profile}.xml
+
+server:
+  servlet:
+    session:
+      timeout: 10m
+      tracking-modes: cookie
+  port: 8080
+
+default:
+  id: 0
+  serverUri: "ws://192.168.5.222:9101"
+  applicationName: "app"
+  sendBufSize: 33554432
+  recvBufSize: 16777216
+  streamThreadPoolSize: 10
+  localListenIp: "127.0.0.1"
+  localRtspListenPort: 8554
+  localPortMin: 50000
+  localPortMax: 60000
+
+sdp:
+  version: "0"
+  origin: "JRTSP_GW_0 %s 0 IN IP4 %s"
+  session: "streaming"
+  connection: "IN IP4 %s"
+  time: "0 0"
+  audio: "audio %d RTP/AVP %d"
+  audioRtpMap: "rtpmap:%d %s"
+  video: "video %d RTP/AVP %d"
+  videoRtpMap: "rtpmap:%d %s"
+  sdpLocalIp: "192.168.2.159"
+  audioAttributeList: control:trackID=1, ptime:20, sendonly
+  videoAttributeList: control:trackID=2, sendonly
+
+dtls:
+  keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
+  certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  #jpa:
+  #  hibernate:
+  #    ddl-auto: update
+  #  properties:
+  #    hibernate:
+  #      format_sql: false
+  #      show_sql: false
+  #      use_sql_comments: false # Print jpql
+        #dialect: org.hibernate.dialect.Oracle10gDialect
+  #      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  servlet:
+    multipart:
+      location: /var/kkukie_bookstore/resources/images
+      maxFileSize: 200MB
+      maxRequestSize: 100MB
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+        #one-indexed-parameters: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+logging:
+  config: classpath:logback-${spring.config.activate.on-profile}.xml
+
+server:
+  servlet:
+    session:
+      timeout: 10m
+      tracking-modes: cookie
+  port: 8080
+
+default:
+  id: 0
+  serverUri: "ws://192.168.5.222:9101"
+  applicationName: "app"
+  sendBufSize: 33554432
+  recvBufSize: 16777216
+  streamThreadPoolSize: 10
+  localListenIp: "127.0.0.1"
+  localRtspListenPort: 8554
+  localPortMin: 50000
+  localPortMax: 60000
+
+sdp:
+  version: "0"
+  origin: "JRTSP_GW_0 %s 0 IN IP4 %s"
+  session: "streaming"
+  connection: "IN IP4 %s"
+  time: "0 0"
+  audio: "audio %d RTP/AVP %d"
+  audioRtpMap: "rtpmap:%d %s"
+  video: "video %d RTP/AVP %d"
+  videoRtpMap: "rtpmap:%d %s"
+  sdpLocalIp: "192.168.2.159"
+  audioAttributeList: control:trackID=1, ptime:20, sendonly
+  videoAttributeList: control:trackID=2, sendonly
+
+dtls:
+  keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
+  certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
+
+---
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: server
+
+  #jpa:
+  #  hibernate:
+  #    ddl-auto: update
+  #  properties:
+  #    hibernate:
+  #      format_sql: false
+  #      show_sql: false
+  #      use_sql_comments: false # Print jpql
+        #dialect: org.hibernate.dialect.Oracle10gDialect
+  #      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  servlet:
+    multipart:
+      location: /var/kkukie_bookstore/resources/images
+      maxFileSize: 200MB
+      maxRequestSize: 100MB
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+        #one-indexed-parameters: true
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+logging:
+  config: classpath:logback-${spring.config.activate.on-profile}.xml
+
+server:
+  servlet:
+    session:
+      timeout: 10m
+      tracking-modes: cookie
+  port: 80
+
+default:
+  id: 0
+  serverUri: "ws://192.168.5.222:9101"
+  applicationName: "app"
+  sendBufSize: 33554432
+  recvBufSize: 16777216
+  streamThreadPoolSize: 10
+  localListenIp: "127.0.0.1"
+  localRtspListenPort: 8554
+  localPortMin: 50000
+  localPortMax: 60000
+
+sdp:
+  version: "0"
+  origin: "JRTSP_GW_0 %s 0 IN IP4 %s"
+  session: "streaming"
+  connection: "IN IP4 %s"
+  time: "0 0"
+  audio: "audio %d RTP/AVP %d"
+  audioRtpMap: "rtpmap:%d %s"
+  video: "video %d RTP/AVP %d"
+  videoRtpMap: "rtpmap:%d %s"
+  sdpLocalIp: "192.168.2.159"
+  audioAttributeList: control:trackID=1, ptime:20, sendonly
+  videoAttributeList: control:trackID=2, sendonly
+
+dtls:
+  keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
+  certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
+
+---
