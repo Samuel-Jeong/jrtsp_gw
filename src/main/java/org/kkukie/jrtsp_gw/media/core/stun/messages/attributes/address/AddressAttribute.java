@@ -8,11 +8,9 @@
 
 package org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.address;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress.TransportProtocol;
-
 import org.kkukie.jrtsp_gw.media.core.stun.StunException;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.StunAttribute;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 
 /**
  * This class is used to represent Stun attributes that contain an address. Such
@@ -175,7 +173,7 @@ public abstract class AddressAttribute extends StunAttribute {
 
 		System.arraycopy(attributeValue, offset, addressData, 0, addressLength);
 		TransportAddress address = new TransportAddress(
-				new String(addressData), port, TransportProtocol.UDP);
+				new String(addressData), port, TransportAddress.TransportProtocol.UDP);
 		setAddress(address);
 	}
 

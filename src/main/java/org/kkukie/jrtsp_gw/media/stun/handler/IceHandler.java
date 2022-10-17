@@ -2,7 +2,6 @@ package org.kkukie.jrtsp_gw.media.stun.handler;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
 import org.kkukie.jrtsp_gw.media.core.stun.StunException;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.StunMessage;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.StunRequest;
@@ -14,6 +13,7 @@ import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.MessageIn
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.UsernameAttribute;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandler;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandlerException;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;

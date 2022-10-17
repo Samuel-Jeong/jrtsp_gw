@@ -8,9 +8,9 @@
 
 package org.kkukie.jrtsp_gw.media.core.stun.messages;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.StunAttributeFactory;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.address.XorMappedAddressAttribute;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 
 /**
  * Factory that provides STUN Messages.

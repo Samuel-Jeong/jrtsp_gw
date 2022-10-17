@@ -1,6 +1,5 @@
 package org.kkukie.jrtsp_gw.media.stun.model;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
 import org.kkukie.jrtsp_gw.media.core.stun.StunException;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.StunMessage;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.StunRequest;
@@ -10,6 +9,7 @@ import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.address.XorMapped
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.FingerprintAttribute;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.MessageIntegrityAttribute;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.UsernameAttribute;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 
 import java.nio.charset.StandardCharsets;
 

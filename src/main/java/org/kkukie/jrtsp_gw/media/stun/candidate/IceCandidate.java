@@ -20,7 +20,7 @@
 
 package org.kkukie.jrtsp_gw.media.stun.candidate;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 
 import java.net.InetAddress;
 

@@ -8,9 +8,8 @@
 
 package org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.address;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress.TransportProtocol;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.StunMessage;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -73,7 +72,7 @@ public class XorMappedAddressAttribute extends AddressAttribute {
 	 * @return the XOR-ed address.
 	 */
 	public static TransportAddress applyXor(TransportAddress address,
-			byte[] transactionID) {
+											byte[] transactionID) {
 		byte[] addressBytes = address.getAddressBytes();
 		char port = (char) address.getPort();
 		char portModifier = (char) ((transactionID[0] << 8 & 0x0000FF00) | (transactionID[1] & 0x000000FF));
@@ -85,10 +84,9 @@ public class XorMappedAddressAttribute extends AddressAttribute {
 		}
 
 		try {
-			TransportAddress xoredAdd = new TransportAddress(
+			return new TransportAddress(
 					InetAddress.getByAddress(addressBytes), port,
-					TransportProtocol.UDP);
-			return xoredAdd;
+					TransportAddress.TransportProtocol.UDP);
 		} catch (UnknownHostException e) {
 			// shouldn't happen so just throw an illegal arg
 			throw new IllegalArgumentException(e);

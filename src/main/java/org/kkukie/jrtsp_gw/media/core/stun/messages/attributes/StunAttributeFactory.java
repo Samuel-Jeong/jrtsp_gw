@@ -8,13 +8,13 @@
 
 package org.kkukie.jrtsp_gw.media.core.stun.messages.attributes;
 
-import org.kkukie.jrtsp_gw.media.core.network.api.TransportAddress;
 import org.kkukie.jrtsp_gw.media.core.stun.StunException;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.address.*;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.control.ControlledAttribute;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.control.ControllingAttribute;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.data.DataAttribute;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.*;
+import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.UndeclaredThrowableException;
