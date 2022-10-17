@@ -14,8 +14,8 @@ import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.*;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.CreateDescObserver;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.SetDescObserver;
-import org.kkukie.jrtsp_gw.session.CallInfo;
-import org.kkukie.jrtsp_gw.session.MediaInfo;
+import org.kkukie.jrtsp_gw.session.call.CallInfo;
+import org.kkukie.jrtsp_gw.session.media.MediaInfo;
 import org.kkukie.jrtsp_gw.session.SessionManager;
 
 import java.io.IOException;

@@ -23,7 +23,7 @@ package org.kkukie.jrtsp_gw.media.rtp.statistics;
 import org.kkukie.jrtsp_gw.media.core.rtcp.*;
 import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
 import org.kkukie.jrtsp_gw.media.rtp.RtpPacket;
-import org.kkukie.jrtsp_gw.media.rtp.SsrcGenerator;
+import org.kkukie.jrtsp_gw.media.rtp.util.SsrcGenerator;
 import org.kkukie.jrtsp_gw.media.rtsp.rtcp.module.CnameGenerator;
 import org.kkukie.jrtsp_gw.media.rtsp.rtcp.module.RtpClock;
 import org.slf4j.Logger;

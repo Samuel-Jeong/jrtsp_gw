@@ -20,7 +20,9 @@
 
 package org.kkukie.jrtsp_gw.media.dtls;
 
+import lombok.NoArgsConstructor;
 import org.kkukie.jrtsp_gw.media.bouncycastle.asn1.pkcs.RSAPrivateKey;
+import org.kkukie.jrtsp_gw.media.bouncycastle.asn1.x509.Certificate;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.Digest;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.digests.SHA1Digest;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.digests.SHA256Digest;
@@ -29,44 +31,24 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.AsymmetricKeyParamet
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.*;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.util.PrivateKeyFactory;
-import org.kkukie.jrtsp_gw.media.bouncycastle.util.encoders.Base64;
 import org.kkukie.jrtsp_gw.media.bouncycastle.util.encoders.Hex;
 import org.kkukie.jrtsp_gw.media.bouncycastle.util.io.pem.PemObject;
 import org.kkukie.jrtsp_gw.media.bouncycastle.util.io.pem.PemReader;
-import org.kkukie.jrtsp_gw.media.bouncycastle.asn1.x509.Certificate;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Collection of utility functions for DTLS operations.
  *
  * @author Henrique Rosa (henrique.rosa@telestax.com)
  */
-public class TlsUtils {
 
-    static final byte[] rsaCertData = Base64
-            .decode("MIICUzCCAf2gAwIBAgIBATANBgkqhkiG9w0BAQQFADCBjzELMAkGA1UEBhMCQVUxKDAmBgNVBAoMH1RoZSBMZWdpb2"
-                    + "4gb2YgdGhlIEJvdW5jeSBDYXN0bGUxEjAQBgNVBAcMCU1lbGJvdXJuZTERMA8GA1UECAwIVmljdG9yaWExLzAtBgkq"
-                    + "hkiG9w0BCQEWIGZlZWRiYWNrLWNyeXB0b0Bib3VuY3ljYXN0bGUub3JnMB4XDTEzMDIyNTA2MDIwNVoXDTEzMDIyNT"
-                    + "A2MDM0NVowgY8xCzAJBgNVBAYTAkFVMSgwJgYDVQQKDB9UaGUgTGVnaW9uIG9mIHRoZSBCb3VuY3kgQ2FzdGxlMRIw"
-                    + "EAYDVQQHDAlNZWxib3VybmUxETAPBgNVBAgMCFZpY3RvcmlhMS8wLQYJKoZIhvcNAQkBFiBmZWVkYmFjay1jcnlwdG"
-                    + "9AYm91bmN5Y2FzdGxlLm9yZzBaMA0GCSqGSIb3DQEBAQUAA0kAMEYCQQC0p+RhcFdPFqlwgrIr5YtqKmKXmEGb4Shy"
-                    + "pL26Ymz66ZAPdqv7EhOdzl3lZWT6srZUMWWgQMYGiHQg4z2R7X7XAgERo0QwQjAOBgNVHQ8BAf8EBAMCBSAwEgYDVR"
-                    + "0lAQH/BAgwBgYEVR0lADAcBgNVHREBAf8EEjAQgQ50ZXN0QHRlc3QudGVzdDANBgkqhkiG9w0BAQQFAANBAHU55Ncz"
-                    + "eglREcTg54YLUlGWu2WOYWhit/iM1eeq8Kivro7q98eW52jTuMI3CI5ulqd0hYzshQKQaZ5GDzErMyM=");
-    static final byte[] dudRsaCertData = Base64
-            .decode("MIICUzCCAf2gAwIBAgIBATANBgkqhkiG9w0BAQQFADCBjzELMAkGA1UEBhMCQVUxKDAmBgNVBAoMH1RoZSBMZWdpb2"
-                    + "4gb2YgdGhlIEJvdW5jeSBDYXN0bGUxEjAQBgNVBAcMCU1lbGJvdXJuZTERMA8GA1UECAwIVmljdG9yaWExLzAtBgkq"
-                    + "hkiG9w0BCQEWIGZlZWRiYWNrLWNyeXB0b0Bib3VuY3ljYXN0bGUub3JnMB4XDTEzMDIyNTA1NDcyOFoXDTEzMDIyNT"
-                    + "A1NDkwOFowgY8xCzAJBgNVBAYTAkFVMSgwJgYDVQQKDB9UaGUgTGVnaW9uIG9mIHRoZSBCb3VuY3kgQ2FzdGxlMRIw"
-                    + "EAYDVQQHDAlNZWxib3VybmUxETAPBgNVBAgMCFZpY3RvcmlhMS8wLQYJKoZIhvcNAQkBFiBmZWVkYmFjay1jcnlwdG"
-                    + "9AYm91bmN5Y2FzdGxlLm9yZzBaMA0GCSqGSIb3DQEBAQUAA0kAMEYCQQC0p+RhcFdPFqlwgrIr5YtqKmKXmEGb4Shy"
-                    + "pL26Ymz66ZAPdqv7EhOdzl3lZWT6srZUMWWgQMYGiHQg4z2R7X7XAgERo0QwQjAOBgNVHQ8BAf8EBAMCAAEwEgYDVR"
-                    + "0lAQH/BAgwBgYEVR0lADAcBgNVHREBAf8EEjAQgQ50ZXN0QHRlc3QudGVzdDANBgkqhkiG9w0BAQQFAANBAJg55PBS"
-                    + "weg6obRUKF4FF6fCrWFi6oCYSQ99LWcAeupc5BofW5MstFMhCOaEucuGVqunwT5G7/DweazzCIrSzB0=");
+@NoArgsConstructor
+public class TlsUtils {
 
     private static final String SHA_1 = "sha-1";
     private static final String SHA_256 = "sha-256";
@@ -76,14 +58,14 @@ public class TlsUtils {
         byte[] der = tlsCertificate.getEncoded();
         byte[] sha1 = digestOf(hashFunction, der);
         byte[] hexBytes = Hex.encode(sha1);
-        String hex = new String(hexBytes, "ASCII").toUpperCase();
+        String hex = new String(hexBytes, StandardCharsets.US_ASCII).toUpperCase();
 
-        StringBuffer fp = new StringBuffer();
+        StringBuilder fp = new StringBuilder();
         int i = 0;
-        fp.append(hex.substring(i, i + 2));
+        fp.append(hex, i, i + 2);
         while ((i += 2) < hex.length()) {
             fp.append(':');
-            fp.append(hex.substring(i, i + 2));
+            fp.append(hex, i, i + 2);
         }
 
         switch (hashFunction) {
@@ -119,37 +101,28 @@ public class TlsUtils {
         return result;
     }
 
-    static TlsAgreementCredentials loadAgreementCredentials (TlsContext context,
-                                                             String[] certResources, String keyResource) throws IOException {
+    static TlsAgreementCredentials loadAgreementCredentials (TlsContext context, String[] certResources, String keyResource) throws IOException {
         TlsCertificate tlsCertificate = loadCertificateChain(certResources);
         AsymmetricKeyParameter privateKey = loadPrivateKeyResource(keyResource);
         return new DefaultTlsAgreementCredentials(tlsCertificate, privateKey);
     }
 
-    static TlsEncryptionCredentials loadEncryptionCredentials (
-            TlsContext context, String[] certResources, String keyResource)
-            throws IOException {
+    static TlsEncryptionCredentials loadEncryptionCredentials (TlsContext context, String[] certResources, String keyResource) throws IOException {
         TlsCertificate tlsCertificate = loadCertificateChain(certResources);
         AsymmetricKeyParameter privateKey = loadPrivateKeyResource(keyResource);
-        return new DefaultTlsEncryptionCredentials(context, tlsCertificate,
-                privateKey);
+        return new DefaultTlsEncryptionCredentials(context, tlsCertificate, privateKey);
     }
 
-    static TlsSignerCredentials loadSignerCredentials (TlsContext context,
-                                                       String[] certResources, String keyResource) throws IOException {
+    static TlsSignerCredentials loadSignerCredentials (TlsContext context, String[] certResources, String keyResource) throws IOException {
         TlsCertificate tlsCertificate = loadCertificateChain(certResources);
         AsymmetricKeyParameter privateKey = loadPrivateKeyResource(keyResource);
         return new DefaultTlsSignerCredentials(context, tlsCertificate, privateKey);
     }
 
-    static TlsSignerCredentials loadSignerCredentials (TlsServerContext context,
-                                                       String[] certResources, String keyResource,
-                                                       SignatureAndHashAlgorithm signatureAndHashAlgorithm)
-            throws IOException {
+    static TlsSignerCredentials loadSignerCredentials (TlsServerContext context, String[] certResources, String keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm) throws IOException {
         TlsCertificate tlsCertificate = loadCertificateChain(certResources);
         AsymmetricKeyParameter privateKey = loadPrivateKeyResource(keyResource);
-        return new DefaultTlsSignerCredentials(context, tlsCertificate,
-                privateKey, signatureAndHashAlgorithm);
+        return new DefaultTlsSignerCredentials(context, tlsCertificate, privateKey, signatureAndHashAlgorithm);
     }
 
     static TlsCertificate loadCertificateChain (String[] resources) throws IOException {
@@ -165,8 +138,7 @@ public class TlsUtils {
         if (pem.getType().endsWith("CERTIFICATE")) {
             return Certificate.getInstance(pem.getContent());
         }
-        throw new IllegalArgumentException(
-                "'resource' doesn't specify a valid tlsCertificate");
+        throw new IllegalArgumentException("'resource' doesn't specify a valid tlsCertificate");
     }
 
     static AsymmetricKeyParameter loadPrivateKeyResource (String resource) throws IOException {
@@ -181,8 +153,8 @@ public class TlsUtils {
         if (pem.getType().endsWith("PRIVATE KEY")) {
             return PrivateKeyFactory.createKey(pem.getContent());
         }
-        throw new IllegalArgumentException(
-                "'resource' doesn't specify a valid private key");
+
+        throw new IllegalArgumentException("'resource' doesn't specify a valid private key");
     }
 
     static PemObject loadPemResource (String resource) throws IOException {

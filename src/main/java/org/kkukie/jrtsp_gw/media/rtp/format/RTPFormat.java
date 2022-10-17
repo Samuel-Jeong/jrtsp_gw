@@ -22,7 +22,7 @@
 
 package org.kkukie.jrtsp_gw.media.rtp.format;
 
-import org.kkukie.jrtsp_gw.media.core.spi.format.Format;
+import org.kkukie.jrtsp_gw.session.format.Format;
 
 /**
  * RTP Format descriptor.
