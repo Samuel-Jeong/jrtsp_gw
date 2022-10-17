@@ -22,6 +22,21 @@ Thanks to [ RestComm/media-core ]
   
 ## REST-API
 ~~~
-~ TODO ~
+1. 세션(호) 개수 조회
+  - Method : GET
+  - URI : http://[IP]:[PORT]/s/v1/call_count
+
+2. CPU 사용량 조회
+  - Method : GET
+  - URI : http://[IP]:[PORT]/s/v1/cpu_usage
+
+3. 힙 메모리 사용량 조회
+  - Method : GET
+  - URI : http://[IP]:[PORT]/s/v1/heap_memory_usage
+
+4. 프로세스 내 구동 중인 전체 쓰레드 개수 조회
+  - Method : GET
+  - URI : http://[IP]:[PORT]/s/v1/total_thread_count
+
 ~~~
   
