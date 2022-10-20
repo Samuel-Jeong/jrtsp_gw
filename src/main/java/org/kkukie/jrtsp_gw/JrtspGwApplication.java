@@ -1,6 +1,5 @@
 package org.kkukie.jrtsp_gw;
 
-import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.config.DefaultConfig;
 import org.kkukie.jrtsp_gw.config.DtlsConfig;
 import org.kkukie.jrtsp_gw.config.SdpConfig;

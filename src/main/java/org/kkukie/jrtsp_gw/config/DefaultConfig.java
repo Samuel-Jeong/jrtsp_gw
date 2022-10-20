@@ -1,7 +1,5 @@
 package org.kkukie.jrtsp_gw.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

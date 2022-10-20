@@ -1,7 +1,5 @@
 package org.kkukie.jrtsp_gw.media.rtp;
 
-import org.kkukie.jrtsp_gw.media.rtp.RtpPacket;
-
 import java.net.InetSocketAddress;
 
 public class RtpInfo {

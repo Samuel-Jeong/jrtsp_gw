@@ -6,6 +6,7 @@ import dev.onvoid.webrtc.*;
 import kotlin.random.Random;
 import lombok.extern.slf4j.Slf4j;
 import media.core.rtsp.sdp.*;
+import org.jetbrains.annotations.NotNull;
 import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.config.DefaultConfig;
 import org.kkukie.jrtsp_gw.media.stream.manager.ChannelMaster;
@@ -14,9 +15,9 @@ import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.*;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.CreateDescObserver;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.SetDescObserver;
+import org.kkukie.jrtsp_gw.session.SessionManager;
 import org.kkukie.jrtsp_gw.session.call.CallInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
-import org.kkukie.jrtsp_gw.session.SessionManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 public class WebSocketService implements PeerConnectionObserver {
@@ -254,116 +256,116 @@ public class WebSocketService implements PeerConnectionObserver {
 
             SdpParser sdpParser = SdpParser.INSTANCE;
             try {
-                ///////////////////////////////////////////////////////////////////////////
                 // REMOTE SDP
-                SdpSession remoteSdpSession = sdpParser.parse(this.remoteSdp);
-                log.info("|WebSocketService({})| Parsed Remote Sdp: \n{}", callId, remoteSdpSession.write());
-
-                if (remoteSdpSession.getOrigin().getUsername() != null) {
-                    remoteRealm = remoteSdpSession.getOrigin().getUsername();
-                }
-
-                // a=ice-options:trickle
-                if (remoteSdpSession.getIceOptions() != null && remoteSdpSession.getIceOptions().getValue().equals("trickle")) {
-                    isRemoteIceTrickle = true;
-                }
-
                 SetDescObserver setDescObserver = new SetDescObserver();
-                localPeerConnection.setRemoteDescription(
-                        new RTCSessionDescription(RTCSdpType.OFFER, this.remoteSdp),
-                        setDescObserver
-                );
-                setDescObserver.get();
-                ///////////////////////////////////////////////////////////////////////////
+                SdpSession remoteSdpSession = createRemoteSdpSession(sdpParser, setDescObserver);
 
-                ///////////////////////////////////////////////////////////////////////////
                 // LOCAL SDP
-                CreateDescObserver createDescObserver = new CreateDescObserver();
-                localPeerConnection.createAnswer(new RTCAnswerOptions(), createDescObserver);
-                RTCSessionDescription answerDesc = createDescObserver.get();
-                localPeerConnection.setLocalDescription(answerDesc, setDescObserver);
-                setDescObserver.get();
-
-                this.localSdp = answerDesc.sdp;
+                RTCSessionDescription localAnswerDesc = createLocalRtcSessionDescription(setDescObserver);
+                this.localSdp = localAnswerDesc.sdp;
                 SdpSession localSdpSession = sdpParser.parse(this.localSdp);
-                ///////////////////////////////////////////////////////////////////////////
 
-                ///////////////////////////////////////////////////////////////////////////
                 // NEW SESSION
-                //CallInfo callInfo = SessionManager.getInstance().createCall(UUID.randomUUID().toString(), callId, true);
-                CallInfo callInfo = SessionManager.getInstance().findCall(callId);
-                if (callInfo == null) {
-                    log.warn("|WebSocketService({})| Fail to get the call info. Fail to process the sdp.", callInfo);
-                    stop();
-                    return;
-                }
+                if (createNewSession(remoteSdpSession)) { return; }
 
-                mediaInfo = new MediaInfo(channelMaster, callId, remoteSdpSession);
-                callInfo.setMediaInfo(mediaInfo);
-                ///////////////////////////////////////////////////////////////////////////
-
-                ///////////////////////////////////////////////////////////////////////////
-                // MEDIA
-                stunServerPort = WebSocketPortManager.getInstance().takePort();
-                mediaInfo.setLocalMediaAddress(new InetSocketAddress(localIp, stunServerPort));
-                ///////////////////////////////////////////////////////////////////////////
-
-                ///////////////////////////////////////////////////////////////////////////
                 // ICE
                 setupIceInfo(localSdpSession, remoteSdpSession);
-                log.debug("|WebSocketService({})| Stun server port : {}", callId, stunServerPort);
-                RTCIceCandidate rtcIceCandidate = mediaInfo.getRemoteAudioDesc().getMid() != null ?
-                        /**
-                         * {"id":336200207,"peer_id":0,"command":"candidate","candidates":[
-                         * {"candidate":"candidate:1666098506 1 udp 2113937151 601f67ac-e8d3-4862-8352-0b1aa55f2d23.local 62860 typ host generation 0 ufrag LScd network-cost 999","sdpMid":"F3nmxZ","sdpMLineIndex":0}
-                         * ]}
-                         *
-                         * {"id":336200207,"peer_id":0,"command":"candidate","candidates":[
-                         * {"candidate":"candidate:3348106977 1 udp 2113942271 7489ed6b-21be-4406-904c-aa67ae15893c.local 62039 typ host generation 0 ufrag LScd network-cost 999","sdpMid":"F3nmxZ","sdpMLineIndex":0}
-                         * ]}
-                         */
-                        new RTCIceCandidate(
-                                localSdpSession.getMedia().get(0).getMid().getValue(),
-                                0,
-                                "candidate:" + Random.Default.nextLong(10000, 99999) + "" + Random.Default.nextLong(10000, 99999) + " 1 udp"
-                                        + " " + Random.Default.nextLong(10000, 99999) + "" + Random.Default.nextLong(10000, 99999)
-                                        + " " + UUID.randomUUID() + ".local"
-                                        + " " + stunServerPort
-                                        + " typ host generation 0"
-                                        + " ufrag " + iceInfo.getLocalIceUfrag()
-                        ) : null;
-                localCandidates.add(rtcIceCandidate);
-
-                this.localSdp = localSdpSession.write();
-                log.info("|WebSocketService({})| Parsed Local Sdp: \n{}", callId, this.localSdp);
 
                 // STUN
-                List<InetSocketAddress> serverAddressList = new ArrayList<>();
-
-                for (RTCIceCandidate remoteCandidate : remoteCandidates) {
-                    String candidate = remoteCandidate.sdp;
-                    if (candidate == null || candidate.isEmpty()) {
-                        continue;
-                    }
-
-                    String[] splitedCandidate = candidate.split(" ");
-                    if (splitedCandidate.length > 0) {
-                        String ip = splitedCandidate[4];
-                        int port = Integer.parseInt(splitedCandidate[5]);
-
-                        if ((ip != null && !ip.isEmpty()) && port > 0) {
-                            serverAddressList.add(new InetSocketAddress(ip, port));
-                        }
-                    }
-                }
-                targetAddressQueue.clear();
-                targetAddressQueue = new ConcurrentLinkedQueue<>(serverAddressList);
+                List<InetSocketAddress> serverAddressList = createTargetAddressQueue();
                 log.debug("|WebSocketService({})| serverAddressList: {} ({})", callId, serverAddressList.toArray(), serverAddressList.size());
-                ///////////////////////////////////////////////////////////////////////////
             } catch (Exception e) {
                 log.warn("|WebSocketService({})| WebSocketService.handleSdp.Exception", callId, e);
             }
         }
+    }
+
+    @NotNull
+    private SdpSession createRemoteSdpSession(SdpParser sdpParser, SetDescObserver setDescObserver) throws InterruptedException, ExecutionException {
+        SdpSession remoteSdpSession = sdpParser.parse(this.remoteSdp);
+        log.info("|WebSocketService({})| Parsed Remote Sdp: \n{}", callId, remoteSdpSession.write());
+
+        if (remoteSdpSession.getOrigin().getUsername() != null) {
+            remoteRealm = remoteSdpSession.getOrigin().getUsername();
+        }
+
+        // a=ice-options:trickle
+        if (remoteSdpSession.getIceOptions() != null && remoteSdpSession.getIceOptions().getValue().equals("trickle")) {
+            isRemoteIceTrickle = true;
+        }
+
+        localPeerConnection.setRemoteDescription(new RTCSessionDescription(RTCSdpType.OFFER, this.remoteSdp), setDescObserver);
+        setDescObserver.get();
+        return remoteSdpSession;
+    }
+
+    private RTCSessionDescription createLocalRtcSessionDescription(SetDescObserver setDescObserver) throws InterruptedException, ExecutionException {
+        CreateDescObserver createDescObserver = new CreateDescObserver();
+        localPeerConnection.createAnswer(new RTCAnswerOptions(), createDescObserver);
+        RTCSessionDescription answerDesc = createDescObserver.get();
+        localPeerConnection.setLocalDescription(answerDesc, setDescObserver);
+        setDescObserver.get();
+        return answerDesc;
+    }
+
+    private boolean createNewSession(SdpSession remoteSdpSession) {
+        CallInfo callInfo = SessionManager.getInstance().findCall(callId);
+        if (callInfo == null) {
+            log.warn("|WebSocketService({})| Fail to get the call info. Fail to process the sdp.", callInfo);
+            stop();
+            return true;
+        }
+
+        mediaInfo = new MediaInfo(channelMaster, callId, remoteSdpSession);
+        callInfo.setMediaInfo(mediaInfo);
+        return false;
+    }
+
+    private List<InetSocketAddress> createTargetAddressQueue() {
+        List<InetSocketAddress> serverAddressList = new ArrayList<>();
+
+        for (RTCIceCandidate remoteCandidate : remoteCandidates) {
+            String candidate = remoteCandidate.sdp;
+            if (candidate == null || candidate.isEmpty()) {
+                continue;
+            }
+
+            String[] splitedCandidate = candidate.split(" ");
+            if (splitedCandidate.length > 0) {
+                String ip = splitedCandidate[4];
+                int port = Integer.parseInt(splitedCandidate[5]);
+
+                if ((ip != null && !ip.isEmpty()) && port > 0) {
+                    serverAddressList.add(new InetSocketAddress(ip, port));
+                }
+            }
+        }
+        targetAddressQueue.clear();
+        targetAddressQueue = new ConcurrentLinkedQueue<>(serverAddressList);
+        return serverAddressList;
+    }
+
+    private RTCIceCandidate createRtcIceCandidate(SdpSession localSdpSession) {
+        return mediaInfo.getRemoteAudioDesc().getMid() != null ?
+                /**
+                 * {"id":336200207,"peer_id":0,"command":"candidate","candidates":[
+                 * {"candidate":"candidate:1666098506 1 udp 2113937151 601f67ac-e8d3-4862-8352-0b1aa55f2d23.local 62860 typ host generation 0 ufrag LScd network-cost 999","sdpMid":"F3nmxZ","sdpMLineIndex":0}
+                 * ]}
+                 *
+                 * {"id":336200207,"peer_id":0,"command":"candidate","candidates":[
+                 * {"candidate":"candidate:3348106977 1 udp 2113942271 7489ed6b-21be-4406-904c-aa67ae15893c.local 62039 typ host generation 0 ufrag LScd network-cost 999","sdpMid":"F3nmxZ","sdpMLineIndex":0}
+                 * ]}
+                 */
+                new RTCIceCandidate(
+                        localSdpSession.getMedia().get(0).getMid().getValue(),
+                        0,
+                        "candidate:" + Random.Default.nextLong(10000, 99999) + "" + Random.Default.nextLong(10000, 99999) + " 1 udp"
+                                + " " + Random.Default.nextLong(10000, 99999) + "" + Random.Default.nextLong(10000, 99999)
+                                + " " + UUID.randomUUID() + ".local"
+                                + " " + stunServerPort
+                                + " typ host generation 0"
+                                + " ufrag " + iceInfo.getLocalIceUfrag()
+                ) : null;
     }
 
     private void setupMediaPorts(SdpSession localSdpSession, long audioPort, long videoPort) {
@@ -403,6 +405,10 @@ public class WebSocketService implements PeerConnectionObserver {
     }
 
     private void setupIceInfo(SdpSession localSdpSession, SdpSession remoteSdpSession) {
+        // MEDIA
+        stunServerPort = WebSocketPortManager.getInstance().takePort();
+        mediaInfo.setLocalMediaAddress(new InetSocketAddress(localIp, stunServerPort));
+
         if (localSdpSession.getMedia().get(0).getIceUfrag() != null) {
             iceInfo.setLocalIceUfrag(localSdpSession.getMedia().get(0).getIceUfrag().getValue());
         } else if (localSdpSession.getIceUfrag() != null) {
@@ -430,6 +436,13 @@ public class WebSocketService implements PeerConnectionObserver {
         if (iceInfo.getLocalIceUfrag() != null && iceInfo.getRemoteIceUfrag() != null) {
             iceInfo.setRemoteUsername(iceInfo.getRemoteIceUfrag() + ":" + iceInfo.getLocalIceUfrag());
         }
+
+        log.debug("|WebSocketService({})| Stun server port : {}", callId, stunServerPort);
+        RTCIceCandidate rtcIceCandidate = createRtcIceCandidate(localSdpSession);
+        localCandidates.add(rtcIceCandidate);
+
+        this.localSdp = localSdpSession.write();
+        log.info("|WebSocketService({})| Parsed Local Sdp: \n{}", callId, this.localSdp);
     }
 
     private void handlePeerId(JsonObject jsonObject) {
