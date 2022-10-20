@@ -26,7 +26,7 @@ Example) Publish stream with OBS
 - Resolution : 720p (1280x720)
 ~~~
   
-<img width="854" alt="스크린샷 2022-10-21 오전 8 00 56" src="https://user-images.githubusercontent.com/37236920/197074922-73c90310-386b-41a6-8616-3f34718a89f8.png">
+<img width="850" alt="스크린샷 2022-10-21 오전 8 28 46" src="https://user-images.githubusercontent.com/37236920/197077896-c64de780-7923-4d29-812c-169fe665d229.png">
   
 ~~~
 [OME Log]
@@ -53,7 +53,7 @@ Example) Provided stream with VLC
 - Stream URI : rtsp://127.0.0.1:8554/abcd1234
 ~~~
   
-<img width="735" alt="스크린샷 2022-10-21 오전 8 01 40" src="https://user-images.githubusercontent.com/37236920/197075000-78768d40-fc8f-42fb-acc1-d3c9ee16bc85.png">
+<img width="797" alt="스크린샷 2022-10-21 오전 8 42 25" src="https://user-images.githubusercontent.com/37236920/197079397-80974f17-a82f-418e-9352-aee115e972d8.png">
   
 ~~~
 [JRTSP_GW Log]
@@ -436,7 +436,6 @@ Range: npt=0.000-
   "rtpDestPort": 59782,
   "rtcpDestPort": 59783
 })
-08:12:18.779 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - Play response is saved in [abcd1234:2:438758]
 08:12:18.856 [service-scheduler-2] DEBUG media.core.rtsp.Streamer - |Streamer(abcd1234:2:438758)| [PLAY] > Success to send the response: DefaultFullHttpResponse(decodeResult: success, version: RTSP/1.0, content: UnpooledByteBufAllocator$InstrumentedUnpooledUnsafeHeapByteBuf(ridx: 0, widx: 0, cap: 0))
 RTSP/1.0 200 OK
 server: 0
@@ -447,6 +446,13 @@ rtp-info: url=rtsp://127.0.0.1:8554/abcd1234/trackID=1;seq=32;rtptime=2631240,ur
 10) Set ICE Candidate
 
 08:19:28.379 [service-scheduler-1] DEBUG media.core.stun.handler.IceHandler - |IceHandler(abcd1234)| Selected candidate=/192.168.5.224:30002 (local=/10.254.110.220:50006)
+
+
+~~~
+  
+<img width="1562" alt="스크린샷 2022-10-21 오전 8 43 19" src="https://user-images.githubusercontent.com/37236920/197079474-24748bbf-aee9-436c-a686-2eb138652193.png">
+  
+~~~
 
 
 11) Recv TEARDOWN from VCL & Send Response to VLC
