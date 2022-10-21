@@ -2,8 +2,8 @@ package org.kkukie.jrtsp_gw.media.webrtc.websocket.command;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import dev.onvoid.webrtc.RTCIceCandidate;
 import lombok.extern.slf4j.Slf4j;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCIceCandidate;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.WebSocketService;
 
 import java.util.List;

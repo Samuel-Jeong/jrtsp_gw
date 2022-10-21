@@ -2,19 +2,18 @@ package org.kkukie.jrtsp_gw.media.webrtc.websocket.service;
 
 import com.google.gson.*;
 import com.neovisionaries.ws.client.*;
-import dev.onvoid.webrtc.*;
 import kotlin.random.Random;
 import lombok.extern.slf4j.Slf4j;
 import media.core.rtsp.sdp.*;
-import org.jetbrains.annotations.NotNull;
 import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.config.DefaultConfig;
+import org.kkukie.jrtsp_gw.config.DtlsConfig;
 import org.kkukie.jrtsp_gw.media.stream.manager.ChannelMaster;
 import org.kkukie.jrtsp_gw.media.stream.util.WebSocketPortManager;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.*;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.CreateDescObserver;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.SetDescObserver;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCIceCandidate;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCPeerConnection;
 import org.kkukie.jrtsp_gw.session.SessionManager;
 import org.kkukie.jrtsp_gw.session.call.CallInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
@@ -26,10 +25,9 @@ import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
-public class WebSocketService implements PeerConnectionObserver {
+public class WebSocketService {
 
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -37,8 +35,6 @@ public class WebSocketService implements PeerConnectionObserver {
     private final String APPLICATION_NAME;
 
     private String callId = null;
-
-    private final PeerConnectionFactory factory;
 
     private final RTCPeerConnection localPeerConnection;
 
@@ -73,14 +69,10 @@ public class WebSocketService implements PeerConnectionObserver {
         APPLICATION_NAME = defaultConfig.getApplicationName();
 
         iceInfo = new IceInfo();
-        factory = new PeerConnectionFactory();
-        RTCConfiguration config = new RTCConfiguration();
-        localPeerConnection = factory.createPeerConnection(config, this);
-    }
+        localPeerConnection = new RTCPeerConnection();
 
-    @Override
-    public void onIceCandidate(RTCIceCandidate candidate) {
-        localPeerConnection.addIceCandidate(candidate);
+        DtlsConfig dtlsConfig = ConfigManager.getDtlsConfig();
+        localPeerConnection.setCertPath(dtlsConfig.getCertPath());
     }
 
     public void start(String callId) throws WebSocketException, IOException {
@@ -261,13 +253,10 @@ public class WebSocketService implements PeerConnectionObserver {
             SdpParser sdpParser = SdpParser.INSTANCE;
             try {
                 // REMOTE SDP
-                SetDescObserver setDescObserver = new SetDescObserver();
-                SdpSession remoteSdpSession = createRemoteSdpSession(sdpParser, setDescObserver);
+                SdpSession remoteSdpSession = createRemoteSdpSession(sdpParser);
 
                 // LOCAL SDP
-                RTCSessionDescription localAnswerDesc = createLocalRtcSessionDescription(setDescObserver);
-                this.localSdp = localAnswerDesc.sdp;
-                SdpSession localSdpSession = sdpParser.parse(this.localSdp);
+                SdpSession localSdpSession = createLocalRtcSessionDescription();
 
                 // NEW SESSION
                 if (createNewSession(remoteSdpSession)) { return; }
@@ -284,8 +273,7 @@ public class WebSocketService implements PeerConnectionObserver {
         }
     }
 
-    @NotNull
-    private SdpSession createRemoteSdpSession(SdpParser sdpParser, SetDescObserver setDescObserver) throws InterruptedException, ExecutionException {
+    private SdpSession createRemoteSdpSession(SdpParser sdpParser) {
         SdpSession remoteSdpSession = sdpParser.parse(this.remoteSdp);
         log.info("|WebSocketService({})| Parsed Remote Sdp: \n{}", callId, remoteSdpSession.write());
 
@@ -298,18 +286,12 @@ public class WebSocketService implements PeerConnectionObserver {
             isRemoteIceTrickle = true;
         }
 
-        localPeerConnection.setRemoteDescription(new RTCSessionDescription(RTCSdpType.OFFER, this.remoteSdp), setDescObserver);
-        setDescObserver.get();
+        localPeerConnection.setRemoteDesc(remoteSdpSession);
         return remoteSdpSession;
     }
 
-    private RTCSessionDescription createLocalRtcSessionDescription(SetDescObserver setDescObserver) throws InterruptedException, ExecutionException {
-        CreateDescObserver createDescObserver = new CreateDescObserver();
-        localPeerConnection.createAnswer(new RTCAnswerOptions(), createDescObserver);
-        RTCSessionDescription answerDesc = createDescObserver.get();
-        localPeerConnection.setLocalDescription(answerDesc, setDescObserver);
-        setDescObserver.get();
-        return answerDesc;
+    private SdpSession createLocalRtcSessionDescription() {
+        return localPeerConnection.createAnswerSdpSession();
     }
 
     private boolean createNewSession(SdpSession remoteSdpSession) {
@@ -462,5 +444,6 @@ public class WebSocketService implements PeerConnectionObserver {
             this.id = rootId.getAsLong();
         }
     }
+
 
 }

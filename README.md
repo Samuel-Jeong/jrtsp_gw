@@ -10,6 +10,13 @@
 - Thanks to [ bouncycastle.org ]
   # https://www.bouncycastle.org/java.html
 ~~~
+
+## CAUTION
+~~~
+- 설치 OS
+  - Ubuntu 20.04 LTS
+  - 아래 사용한 WebRTC 라이브러리인 [dev.onvoid.webrtc] 에서 사용하는 JNI 라이브러리가 Centos7 이하의 리눅스에서는 동작하지 않음
+~~~
   
 ## FLOW
 - WebRTC to RTSP
