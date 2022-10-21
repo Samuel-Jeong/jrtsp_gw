@@ -274,9 +274,8 @@ public class Streamer {
         return localNetworkInfo.isTcp();
     }
 
-    public void sendPlayResponse() {
+    public void sendPlayResponse(DefaultFullHttpResponse playResponse) {
         ChannelHandlerContext rtspChannelContext = streamInfo.getRtspChannelContext();
-        DefaultFullHttpResponse playResponse = streamInfo.getPlayResponse();
         ReentrantLock playResponseLock = streamInfo.getPlayResponseLock();
 
         if (rtspChannelContext == null) {
@@ -295,7 +294,6 @@ public class Streamer {
             );
             rtspChannelContext.writeAndFlush(playResponse);
             log.debug("|Streamer({})| [PLAY] > Success to send the response: {}\n", getKey(), playResponse);
-            streamInfo.setPlayResponse(null);
         } catch (Exception e) {
             // ignore
         } finally {
@@ -474,22 +472,6 @@ public class Streamer {
 
     public void setCongestionLevel(int congestionLevel) {
         rtcpInfo.setCongestionLevel(congestionLevel);
-    }
-
-    public DefaultFullHttpResponse getPlayResponse() {
-        return streamInfo.getPlayResponse();
-    }
-
-    public void setPlayResponse(DefaultFullHttpResponse playResponse) {
-        ReentrantLock playResponseLock = streamInfo.getPlayResponseLock();
-        playResponseLock.lock();
-        try {
-            streamInfo.setPlayResponse(playResponse);
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            playResponseLock.unlock();
-        }
     }
 
     public String getTrackId() {

@@ -190,12 +190,6 @@ public class MediaInfo {
 
         for (Streamer streamer : streamerList) {
             applyRtpMetaToStreamer(rtpInfo, streamer);
-
-            // CALLBACK
-            if (streamer.getPlayResponse() != null) {
-                streamer.sendPlayResponse();
-            }
-
             if (streamer.isStarted()) {
                 streamer.sendRtpPacket(rtpInfo.getRtpPacket(), rtpInfo.getMediaType());
             }

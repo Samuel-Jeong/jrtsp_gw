@@ -65,14 +65,13 @@ public class WebSocketService implements PeerConnectionObserver {
 
     private String remoteRealm = null;
 
-    private final ChannelMaster channelMaster;
+    private ChannelMaster channelMaster = null;
 
     public WebSocketService() {
         DefaultConfig defaultConfig = ConfigManager.getDefaultConfig();
         URI = defaultConfig.getServerUri();
         APPLICATION_NAME = defaultConfig.getApplicationName();
 
-        channelMaster = new ChannelMaster(callId);
         iceInfo = new IceInfo();
         factory = new PeerConnectionFactory();
         RTCConfiguration config = new RTCConfiguration();
@@ -93,6 +92,11 @@ public class WebSocketService implements PeerConnectionObserver {
         localIp = webSocket.getSocket().getLocalAddress().getHostAddress();
         localPort = webSocket.getSocket().getLocalPort();
 
+        if (channelMaster != null) {
+            channelMaster.stop();
+            channelMaster = null;
+        }
+        channelMaster = new ChannelMaster(callId);
         channelMaster.start();
 
         log.debug("|WebSocketService({})| LOCAL NETWORK = {}:{}", callId, localIp, localPort);

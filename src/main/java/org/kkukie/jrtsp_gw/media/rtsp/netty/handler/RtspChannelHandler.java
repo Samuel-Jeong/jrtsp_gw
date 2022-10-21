@@ -613,9 +613,9 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
                 Streamer streamer = NettyChannelManager.getInstance().getStreamerBySessionId(curSessionId);
                 if (streamer != null) {
                     logger.debug("Play response is saved in [{}]", streamer.getKey());
-                    streamer.setPlayResponse(res);
+                    streamer.sendPlayResponse(res);
                 } else {
-                    audioContextStreamer.setPlayResponse(res);
+                    audioContextStreamer.sendPlayResponse(res);
                 }
             } else {
                 String callId = getCallId(req);
@@ -675,9 +675,9 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
                 Streamer streamer = NettyChannelManager.getInstance().getStreamerBySessionId(curSessionId);
                 if (streamer != null) {
                     logger.debug("Play response is saved in [{}]", streamer.getKey());
-                    streamer.setPlayResponse(res);
+                    streamer.sendPlayResponse(res);
                 } else {
-                    audioContextStreamer.setPlayResponse(res);
+                    audioContextStreamer.sendPlayResponse(res);
                 }
             }
         }

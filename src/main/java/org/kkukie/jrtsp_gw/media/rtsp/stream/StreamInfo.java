@@ -22,6 +22,5 @@ public class StreamInfo {
     private String clientUserAgent = null;
     private UdpStream udpStream = null;
     private ChannelHandlerContext rtspChannelContext = null;
-    private DefaultFullHttpResponse playResponse = null;
 
 }
