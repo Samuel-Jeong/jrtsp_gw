@@ -31,7 +31,7 @@ public class ServiceManager {
     private static final ServiceManager serviceManager = new ServiceManager(); // lazy initialization
     private final ScheduleManager scheduleManager = new ScheduleManager();
     private final String tmpdir = System.getProperty("java.io.tmpdir");
-    private final File lockFile = new File(tmpdir, System.getProperty("lock_file", "urtsp_gw.lock"));
+    private final File lockFile = new File(tmpdir, System.getProperty("lock_file", "jrtsp_gw.lock"));
     private FileChannel fileChannel;
     private FileLock lock;
     private boolean isQuit = false;
