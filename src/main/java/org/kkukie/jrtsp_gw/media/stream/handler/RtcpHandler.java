@@ -29,7 +29,7 @@ public class RtcpHandler implements PacketHandler {
     private static final long SSRC_TASK_DELAY = 7000;
 
     /* Core elements */
-    private DatagramSocket datagramSocket;
+    private final DatagramSocket datagramSocket;
     private final ByteBuffer byteBuffer;
     private int pipelinePriority;
 
@@ -69,9 +69,10 @@ public class RtcpHandler implements PacketHandler {
 
     private final SocketAddress remoteAddress;
 
-    public RtcpHandler(String callId, final Scheduler scheduler, final RtpStatistics statistics, String mediaType, SocketAddress remoteAddress) {
+    public RtcpHandler(String callId, DatagramSocket datagramSocket, final Scheduler scheduler, final RtpStatistics statistics, String mediaType, SocketAddress remoteAddress) {
         this.callId = callId;
-        
+        this.datagramSocket = datagramSocket;
+
         this.mediaType = mediaType.equals(AUDIO_TYPE);
         this.remoteAddress = remoteAddress;
 
@@ -114,14 +115,6 @@ public class RtcpHandler implements PacketHandler {
     private long resolveInterval(long timestamp) {
         long interval = timestamp - this.statistics.getCurrentTime();
         return (interval < 0) ? 0 : interval;
-    }
-
-    public void setDatagramSocket(DatagramSocket datagramSocket) {
-        this.datagramSocket = datagramSocket;
-    }
-
-    public DatagramSocket getDatagramSocket() {
-        return datagramSocket;
     }
 
     /**

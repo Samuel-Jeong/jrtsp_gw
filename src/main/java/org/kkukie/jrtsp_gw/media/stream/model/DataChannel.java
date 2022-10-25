@@ -71,7 +71,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
     private final Map<String, RTPFormats> mediaFormatMap;
 
     private final Queue<byte[]> packetQueue = new ConcurrentLinkedQueue<>();
-    private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();;
+    private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
 
     private final ServiceScheduler scheduler = new ServiceScheduler();
 
@@ -169,7 +169,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
         if (isRtcpMux) {
             scheduler.start();
             rtcpHandler = new RtcpHandler(
-                    callId,
+                    callId, mediaChannel.socket(),
                     scheduler, rtpStatistics, MediaType.AUDIO.getName(), realRemoteAddress
             );
             rtcpHandler.setPipelinePriority(RTCP_PRIORITY);

@@ -1,7 +1,6 @@
 package org.kkukie.jrtsp_gw.media.rtsp.stream;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.kkukie.jrtsp_gw.media.rtsp.base.MediaType;

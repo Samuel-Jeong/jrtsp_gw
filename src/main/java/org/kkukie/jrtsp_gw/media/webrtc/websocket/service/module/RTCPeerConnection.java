@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import media.core.rtsp.sdp.*;
-
 import org.kkukie.jrtsp_gw.util.StringManager;
 
 import java.util.ArrayList;
