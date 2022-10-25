@@ -167,7 +167,7 @@ public class PublicKeyFactory
                 byte[] seed = dhValidationParms.getSeed();
                 BigInteger pgenCounter = dhValidationParms.getPgenCounter();
 
-                // TODO Check pgenCounter size?
+                // Check pgenCounter size?
 
                 validation = new DHValidationParameters(seed, pgenCounter.intValue());
             }

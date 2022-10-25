@@ -50,22 +50,22 @@ public enum SRTPParameters {
         }
     }
 
-    public int getProfile ( ) {
+    public int getProfile () {
         return profile;
     }
 
-    public int getCipherKeyLength ( ) {
+    public int getCipherKeyLength () {
         return encKeyLength;
     }
 
-    public int getCipherSaltLength ( ) {
+    public int getCipherSaltLength () {
         return saltLength;
     }
 
     /**
      * @return an initialized SRTPPolicy instance that matches the current SRTPParameter values for the SRTP stream
      */
-    public SRTPPolicy getSrtpPolicy ( ) {
+    public SRTPPolicy getSrtpPolicy () {
         SRTPPolicy sp = new SRTPPolicy(encType, encKeyLength, authType, authKeyLength, authTagLength, saltLength);
         return sp;
     }
@@ -73,7 +73,7 @@ public enum SRTPParameters {
     /**
      * @return an initialized SRTPPolicy instance that matches the current SRTPParameter values for the SRTCP stream
      */
-    public SRTPPolicy getSrtcpPolicy ( ) {
+    public SRTPPolicy getSrtcpPolicy () {
         SRTPPolicy sp = new SRTPPolicy(encType, encKeyLength, authType, authKeyLength, rtcpAuthTagLength, saltLength);
         return sp;
     }

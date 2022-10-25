@@ -96,7 +96,7 @@ public class DERGeneralizedTime
         }
         else
         {
-            return time; // TODO: is there a better way?
+            return time; // is there a better way?
         }
     }
 

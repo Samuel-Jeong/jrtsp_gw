@@ -157,7 +157,7 @@ public class RtpStatistics {
      *
      * @return The last heartbeat timestamp, in nanoseconds
      */
-    public long getLastHeartbeat ( ) {
+    public long getLastHeartbeat () {
         return rtpLastHeartbeat;
     }
 
@@ -176,7 +176,7 @@ public class RtpStatistics {
      *
      * @return The current time stamp in RTP format.
      */
-    public long getTime ( ) {
+    public long getTime () {
         return this.wallClock.getTime();
     }
 
@@ -185,7 +185,7 @@ public class RtpStatistics {
      *
      * @return The current time of the wall clock, in milliseconds.
      */
-    public long getCurrentTime ( ) {
+    public long getCurrentTime () {
         return this.wallClock.getCurrentTime();
     }
 
@@ -198,7 +198,7 @@ public class RtpStatistics {
      *
      * @return The SSRC identifier of the channel
      */
-    public long getSsrc ( ) {
+    public long getSsrc () {
         return ssrc;
     }
 
@@ -211,7 +211,7 @@ public class RtpStatistics {
      *
      * @return The CNAME of the source
      */
-    public String getCname ( ) {
+    public String getCname () {
         return cname;
     }
 
@@ -229,22 +229,22 @@ public class RtpStatistics {
      *
      * @return The number of RTP packets
      */
-    public long getRtpPacketsReceived ( ) {
+    public long getRtpPacketsReceived () {
         return rtpRxPackets;
     }
 
     /**
      * @return
      */
-    public long getRtpOctetsReceived ( ) {
+    public long getRtpOctetsReceived () {
         return rtpRxOctets;
     }
 
-    public long getRtpPacketsSent ( ) {
+    public long getRtpPacketsSent () {
         return rtpTxPackets;
     }
 
-    public long getRtpOctetsSent ( ) {
+    public long getRtpOctetsSent () {
         return rtpTxOctets;
     }
 
@@ -253,7 +253,7 @@ public class RtpStatistics {
      *
      * @return The elapsed time, in nanoseconds.
      */
-    public long getRtpReceivedOn ( ) {
+    public long getRtpReceivedOn () {
         return rtpReceivedOn;
     }
 
@@ -262,7 +262,7 @@ public class RtpStatistics {
      *
      * @return The elapsed time, in nanoseconds.
      */
-    public long getRtpSentOn ( ) {
+    public long getRtpSentOn () {
         return rtpSentOn;
     }
 
@@ -271,7 +271,7 @@ public class RtpStatistics {
      *
      * @return The time stamp of the packet.
      */
-    public long getRtpTimestamp ( ) {
+    public long getRtpTimestamp () {
         return rtpTimestamp;
     }
 
@@ -285,7 +285,7 @@ public class RtpStatistics {
      *
      * @return Whether data has been sent recently
      */
-    public boolean hasSent ( ) {
+    public boolean hasSent () {
         return this.weSent;
     }
 
@@ -294,7 +294,7 @@ public class RtpStatistics {
      *
      * @return The bandwidth, in octets per second
      */
-    public double getRtcpBw ( ) {
+    public double getRtcpBw () {
         return rtcpBw;
     }
 
@@ -303,7 +303,7 @@ public class RtpStatistics {
      *
      * @return The type of the packet
      */
-    public RtcpPacketType getRtcpPacketType ( ) {
+    public RtcpPacketType getRtcpPacketType () {
         return rtcpNextPacketType;
     }
 
@@ -321,7 +321,7 @@ public class RtpStatistics {
      *
      * @return The estimate number of senders
      */
-    public int getSenders ( ) {
+    public int getSenders () {
         return this.senders;
     }
 
@@ -354,7 +354,7 @@ public class RtpStatistics {
         }
     }
 
-    public void clearSenders ( ) {
+    public void clearSenders () {
         synchronized (this.sendersList) {
             this.sendersList.clear();
             this.senders = 0;
@@ -368,7 +368,7 @@ public class RtpStatistics {
      *
      * @return The number of members
      */
-    public int getPmembers ( ) {
+    public int getPmembers () {
         return pmembers;
     }
 
@@ -377,7 +377,7 @@ public class RtpStatistics {
      *
      * @return The number of members
      */
-    public int getMembers ( ) {
+    public int getMembers () {
         return members;
     }
 
@@ -387,7 +387,7 @@ public class RtpStatistics {
         }
     }
 
-    public List<Long> getMembersList ( ) {
+    public List<Long> getMembersList () {
         List<Long> copy;
         synchronized (this.membersMap) {
             copy = new ArrayList<Long>(this.membersMap.keySet());
@@ -429,11 +429,11 @@ public class RtpStatistics {
      * Sets the estimate number of members (pmembers) equal to the number of
      * currently registered members.
      */
-    public void confirmMembers ( ) {
+    public void confirmMembers () {
         this.pmembers = this.members;
     }
 
-    public void resetMembers ( ) {
+    public void resetMembers () {
         synchronized (this.membersMap) {
             this.membersMap.clear();
             this.membersMap.put(Long.valueOf(this.ssrc), new RtpMember(this.rtpClock, this.ssrc));
@@ -447,7 +447,7 @@ public class RtpStatistics {
      *
      * @return The average packet size, in octets
      */
-    public double getRtcpAvgSize ( ) {
+    public double getRtcpAvgSize () {
         return rtcpAvgSize;
     }
 
@@ -460,11 +460,11 @@ public class RtpStatistics {
         return this.rtcpAvgSize;
     }
 
-    public long getRtcpPacketsSent ( ) {
+    public long getRtcpPacketsSent () {
         return rtcpTxPackets;
     }
 
-    public long getRtcpOctetsSent ( ) {
+    public long getRtcpOctetsSent () {
         return rtcpTxOctets;
     }
 
@@ -507,7 +507,7 @@ public class RtpStatistics {
      *
      * @return whether this SSRC is still considered a sender
      */
-    public boolean isSenderTimeout ( ) {
+    public boolean isSenderTimeout () {
         long t = rtcpReceiverInterval(false);
         long minTime = getCurrentTime() - (2 * t);
 
@@ -517,7 +517,7 @@ public class RtpStatistics {
         return this.weSent;
     }
 
-    public void reset ( ) {
+    public void reset () {
         // Common
         this.ssrc = SsrcGenerator.generateSsrc();
         this.cname = CnameGenerator.generateCname();

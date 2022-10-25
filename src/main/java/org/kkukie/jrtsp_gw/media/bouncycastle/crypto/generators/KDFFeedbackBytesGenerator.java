@@ -134,7 +134,7 @@ public class KDFFeedbackBytesGenerator
     private void generateNext()
     {
 
-        // TODO enable IV
+        // enable IV
         if (generatedBytes == 0)
         {
             prf.update(iv, 0, iv.length);

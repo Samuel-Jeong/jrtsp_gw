@@ -24,10 +24,20 @@ public class RTCPeerConnection {
     public SdpSession createAnswerSdpSession() {
         if (certPath == null || remoteDesc == null) { return null; }
 
-        localDesc = null;
+        createLocalDesc();
+        disableUnusedFields();
+        if (enableRequisiteFields()) { return null; }
+
+        return localDesc;
+    }
+
+    private void createLocalDesc() {
+        localDesc = null; // 명시적 메모리 할당 해제
         localDesc = new SdpSession();
         localDesc.parse(remoteDesc.write());
+    }
 
+    private void disableUnusedFields() {
         localDesc.setIcePwd(null);
         localDesc.setIceUfrag(null);
         localDesc.setFingerprint(null);
@@ -36,7 +46,9 @@ public class RTCPeerConnection {
         localDesc.setSsrcGroups(new ArrayList<>());
         localDesc.setSsrcs(new ArrayList<>());
         localDesc.setMsidSemantic(null);
+    }
 
+    private boolean enableRequisiteFields() {
         // VERSION
         localDesc.setVersion(remoteDesc.getVersion());
 
@@ -76,7 +88,7 @@ public class RTCPeerConnection {
             newFingerPrint = FingerPrintGen.getFingerPrint(certPath);
         } catch (Exception e) {
             log.warn("RTCPeerConnection.getFingerPrint.Exception", e);
-            return null;
+            return true;
         }
 
         for (SdpMedia localMedia : localDesc.getMedia()) {
@@ -96,8 +108,7 @@ public class RTCPeerConnection {
             localMedia.setSsrcs(new ArrayList<>());
             localMedia.setMsid(null);
         }
-
-        return localDesc;
+        return false;
     }
 
 }

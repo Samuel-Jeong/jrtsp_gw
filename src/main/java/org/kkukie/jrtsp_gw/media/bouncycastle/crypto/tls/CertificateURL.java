@@ -107,7 +107,7 @@ public class CertificateURL
         return new CertificateURL(type, url_and_hash_list);
     }
 
-    // TODO Could be more generally useful
+    // Could be more generally useful
     class ListBuffer16 extends ByteArrayOutputStream
     {
         ListBuffer16() throws IOException

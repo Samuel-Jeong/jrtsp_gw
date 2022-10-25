@@ -31,7 +31,7 @@ public class SsrcGenerator {
 
     public static final int MAX_SIZE = 32;
 
-    public static long generateSsrc ( ) {
+    public static long generateSsrc () {
         UUID uuid = UUID.randomUUID();
         long leastSignificantBits = uuid.getLeastSignificantBits();
         byte[] data = uIntLongToByteWord(leastSignificantBits);

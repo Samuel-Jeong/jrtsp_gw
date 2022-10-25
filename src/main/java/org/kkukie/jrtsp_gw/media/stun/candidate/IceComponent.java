@@ -64,7 +64,7 @@ public class IceComponent {
         return true;
     }
 
-    public short getComponentId ( ) {
+    public short getComponentId () {
         return componentId;
     }
 
@@ -118,7 +118,7 @@ public class IceComponent {
         }
     }
 
-    private void sortCandidates ( ) {
+    private void sortCandidates () {
         synchronized (localCandidates) {
             Collections.sort(this.localCandidates);
         }
@@ -139,7 +139,7 @@ public class IceComponent {
                 + (long) (256 - this.getComponentId());
     }
 
-    public LocalCandidateWrapper selectDefaultLocalCandidate ( ) {
+    public LocalCandidateWrapper selectDefaultLocalCandidate () {
         // Choose the candidate with greatest priority
         // This is fine because this implementation only supports IPv4 addresses
         // That being said, it should only be one address. If there are more,
@@ -148,7 +148,7 @@ public class IceComponent {
         return this.defaultLocalCandidate;
     }
 
-    public List<LocalCandidateWrapper> getLocalCandidates ( ) {
+    public List<LocalCandidateWrapper> getLocalCandidates () {
         List<LocalCandidateWrapper> copy;
         synchronized (this.localCandidates) {
             copy = new ArrayList<LocalCandidateWrapper>(this.localCandidates);
@@ -156,15 +156,15 @@ public class IceComponent {
         return copy;
     }
 
-    public LocalCandidateWrapper getDefaultLocalCandidate ( ) {
+    public LocalCandidateWrapper getDefaultLocalCandidate () {
         return defaultLocalCandidate;
     }
 
-    public boolean isDefaultLocalCandidateSelected ( ) {
+    public boolean isDefaultLocalCandidateSelected () {
         return this.defaultLocalCandidate != null;
     }
 
-    public CandidatePair getSelectedCandidates ( ) {
+    public CandidatePair getSelectedCandidates () {
         return candidatePair;
     }
 

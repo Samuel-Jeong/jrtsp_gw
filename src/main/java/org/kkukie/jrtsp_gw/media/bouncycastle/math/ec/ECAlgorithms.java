@@ -244,7 +244,7 @@ public class ECAlgorithms
         ECCurve curve = P.getCurve();
         ECPoint infinity = curve.getInfinity();
 
-        // TODO conjugate co-Z addition (ZADDC) can return both of these
+        // conjugate co-Z addition (ZADDC) can return both of these
         ECPoint PaddQ = P.add(Q);
         ECPoint PsubQ = P.subtract(Q);
 

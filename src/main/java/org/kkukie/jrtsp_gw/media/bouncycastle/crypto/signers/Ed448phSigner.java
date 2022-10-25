@@ -29,7 +29,7 @@ public class Ed448phSigner
 
         if (forSigning)
         {
-            // TODO Allow AsymmetricCipherKeyPair to be a CipherParameters?
+            // Allow AsymmetricCipherKeyPair to be a CipherParameters?
 
             this.privateKey = (Ed448PrivateKeyParameters)parameters;
             this.publicKey = privateKey.generatePublicKey();

@@ -119,7 +119,7 @@ public class RtpMember {
      *
      * @return The SSRC identifier
      */
-    public long getSsrc ( ) {
+    public long getSsrc () {
         return ssrc;
     }
 
@@ -128,7 +128,7 @@ public class RtpMember {
      *
      * @return The CNAME of the member
      */
-    public String getCname ( ) {
+    public String getCname () {
         return cname;
     }
 
@@ -146,11 +146,11 @@ public class RtpMember {
      *
      * @return The number of packets received
      */
-    public long getPacketsReceived ( ) {
+    public long getPacketsReceived () {
         return receivedPackets;
     }
 
-    public long getPacketsExpected ( ) {
+    public long getPacketsExpected () {
         return getExtHighSequence() - this.firstSequenceNumber + 1;
     }
 
@@ -159,7 +159,7 @@ public class RtpMember {
      *
      * @return The total of received octets
      */
-    public long getOctetsReceived ( ) {
+    public long getOctetsReceived () {
         return receivedOctets;
     }
 
@@ -169,7 +169,7 @@ public class RtpMember {
      *
      * @return The number of incoming RTP packets
      */
-    public long getReceivedSinceSR ( ) {
+    public long getReceivedSinceSR () {
         return receivedSinceSR;
     }
 
@@ -182,7 +182,7 @@ public class RtpMember {
      *
      * @return The fraction of lost packets
      */
-    public long getFractionLost ( ) {
+    public long getFractionLost () {
 //		long expected = this.lastSequenceNumber - this.lastSrSequenceNumber;
 //		if (expected < 0) {
 //			expected = RTP_SEQ_MOD + expected;
@@ -231,7 +231,7 @@ public class RtpMember {
      * @return The number of lost packets.<br>
      * Loss can be negative, i.e. duplicates have been received.
      */
-    public long getPacketsLost ( ) {
+    public long getPacketsLost () {
         long lost = getPacketsExpected() - this.receivedPackets;
 
         if (lost > 0x7fffff) {
@@ -250,7 +250,7 @@ public class RtpMember {
      *
      * @return The number of cycles
      */
-    public int getSequenceCycle ( ) {
+    public int getSequenceCycle () {
         return (sequenceCycle >> 16);
     }
 
@@ -261,7 +261,7 @@ public class RtpMember {
      *
      * @return the estimated jitter for this source
      */
-    public long getJitter ( ) {
+    public long getJitter () {
         return this.jitter >> 4;
     }
 
@@ -272,7 +272,7 @@ public class RtpMember {
      * part of the most recent RTCP sender report (SR) packet.<br>
      * If no SR has been received yet, returns zero.
      */
-    public long getLastSR ( ) {
+    public long getLastSR () {
         return lastSrTimestamp;
     }
 
@@ -285,7 +285,7 @@ public class RtpMember {
      * If no SR packet has been received yet, the DLSR field is set to
      * zero. seconds
      */
-    public long getLastSRdelay ( ) {
+    public long getLastSRdelay () {
         return getLastSRdelay(this.wallClock.getCurrentTime(), this.lastSrReceivedOn);
     }
 
@@ -306,11 +306,11 @@ public class RtpMember {
      *
      * @return extended highest sequence
      */
-    public int getExtHighSequence ( ) {
+    public int getExtHighSequence () {
         return this.highestSequence + this.sequenceCycle;
     }
 
-    public int getRTT ( ) {
+    public int getRTT () {
         if (this.roundTripDelay > 0) {
             return this.roundTripDelay;
         }

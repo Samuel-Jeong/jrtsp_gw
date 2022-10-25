@@ -13,25 +13,20 @@ import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.UsernameA
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandler;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandlerException;
 import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
-import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;
 import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.kkukie.jrtsp_gw.media.core.stun.messages.StunMessage.MAGIC_COOKIE;
 
 @Slf4j
 public class IceHandler implements PacketHandler {
-
-    private static final int STUN_DELAY = 3000; // milliseconds
 
     private final String callId;
     private final short componentId;
@@ -40,7 +35,7 @@ public class IceHandler implements PacketHandler {
     private IceAuthenticator authenticator;
     private int pipelinePriority = 1;
 
-    private Thread harvester = null;
+    private HarvestHandler harvestHandler = null;
 
     public IceHandler(String callId, short componentId, IceEventListener iceListener) {
         this.callId = callId;
@@ -55,11 +50,6 @@ public class IceHandler implements PacketHandler {
             default:
                 throw new IllegalArgumentException("|IceHandler(" + callId + ")| Invalid component ID: " + componentId);
         }
-    }
-
-    public void reset() {
-        this.authenticator = null;
-        this.candidateSelected.set(false);
     }
 
     public short getComponentId() {
@@ -196,58 +186,16 @@ public class IceHandler implements PacketHandler {
         this.pipelinePriority = pipelinePriority;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////
-
     public void startHarvester(MediaInfo mediaInfo) {
-        if (mediaInfo == null) {
-            log.warn("|IceHandler({})| Fail to start harvesting. MediaInfo is null.", callId);
-            return;
-        }
-
         stopHarvester();
-        harvester = new Thread(
-                () -> {
-                    try {
-                        while (!Thread.currentThread().isInterrupted()) {
-                            harvest(mediaInfo);
-                            Thread.sleep(STUN_DELAY);
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
-        );
-        harvester.start();
+        harvestHandler = new HarvestHandler(callId);
+        harvestHandler.start(mediaInfo);
     }
 
     public void stopHarvester() {
-        if (harvester != null) {
-            harvester.interrupt();
-            harvester = null;
-        }
-    }
-
-    private void harvest(MediaInfo mediaInfo) {
-        DataChannel dataChannel = mediaInfo.getDataChannel();
-        if (dataChannel != null) {
-            Queue<InetSocketAddress> targetAddressQueue = mediaInfo.getTargetAddressQueue();
-            if (targetAddressQueue == null) { return; }
-
-            IceInfo iceInfo = mediaInfo.getIceInfo();
-            if (iceInfo == null) { return; }
-
-            for (InetSocketAddress targetAddress : targetAddressQueue) {
-                try {
-                    StunRequest bindingRequest = StunMessageFactory.createBindingRequest(
-                            iceInfo.getRemoteUsername(),
-                            iceInfo.getRemoteIcePasswd()
-                    );
-                    dataChannel.send(bindingRequest.encode(), targetAddress);
-                    //log.debug("|IceHandler({})| Send StunRequest to [{}]", callId, targetAddress);
-                } catch (Exception e) {
-                    //log.warn("|IceHandler({})| Fail to stun binding.", callId, e);
-                }
-            }
+        if (harvestHandler != null) {
+            harvestHandler.stop();
+            harvestHandler = null;
         }
     }
 

@@ -32,11 +32,11 @@ public class LocalCandidateWrapper implements CandidateWrapper, Comparable<Local
         this.udpChannel = udpChannel;
     }
 
-    public IceCandidate getCandidate ( ) {
+    public IceCandidate getCandidate () {
         return this.candidate;
     }
 
-    public DatagramChannel getChannel ( ) {
+    public DatagramChannel getChannel () {
         return udpChannel;
     }
 

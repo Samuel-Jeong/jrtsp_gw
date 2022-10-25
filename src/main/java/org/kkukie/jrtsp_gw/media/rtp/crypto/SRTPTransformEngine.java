@@ -53,7 +53,7 @@ public class SRTPTransformEngine implements TransformEngine {
      * The close functions closes all stored default crypto contexts. This
      * deletes key data and forces a cleanup of the crypto contexts.
      */
-    public void close ( ) {
+    public void close () {
         if (defaultContext != null) {
             defaultContext.close();
             defaultContext = null;
@@ -69,7 +69,7 @@ public class SRTPTransformEngine implements TransformEngine {
      *
      * @return the <tt>PacketTransformer</tt> for RTCP packets
      */
-    public PacketTransformer getRTCPTransformer ( ) {
+    public PacketTransformer getRTCPTransformer () {
         return new SRTCPTransformer(this);
     }
 
@@ -79,7 +79,7 @@ public class SRTPTransformEngine implements TransformEngine {
      * @see net.java.sip.communicator.impl.media.transform.
      * TransformEngine#getRTPTransformer()
      */
-    public PacketTransformer getRTPTransformer ( ) {
+    public PacketTransformer getRTPTransformer () {
         return new SRTPTransformer(this);
     }
 
@@ -88,7 +88,7 @@ public class SRTPTransformEngine implements TransformEngine {
      *
      * @return the default SRTPCryptoContext
      */
-    public SRTPCryptoContext getDefaultContext ( ) {
+    public SRTPCryptoContext getDefaultContext () {
         return this.defaultContext;
     }
 
@@ -97,7 +97,7 @@ public class SRTPTransformEngine implements TransformEngine {
      *
      * @return the default SRTPCryptoContext
      */
-    public SRTCPCryptoContext getDefaultContextControl ( ) {
+    public SRTCPCryptoContext getDefaultContextControl () {
         return this.defaultContextControl;
     }
 }

@@ -39,7 +39,7 @@ public class ASN1StreamParser
     {
         // Note: INDEF => CONSTRUCTED
 
-        // TODO There are other tags that may be constructed (e.g. BIT_STRING)
+        // There are other tags that may be constructed (e.g. BIT_STRING)
         switch (tagValue)
         {
             case BERTags.EXTERNAL:
@@ -182,7 +182,7 @@ public class ASN1StreamParser
 
             if (isConstructed)
             {
-                // TODO There are other tags that may be constructed (e.g. BIT_STRING)
+                // There are other tags that may be constructed (e.g. BIT_STRING)
                 switch (tagNo)
                 {
                     case BERTags.OCTET_STRING:

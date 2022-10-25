@@ -70,7 +70,7 @@ public class SHAKEDigest
     }
 
     /*
-     * TODO Possible API change to support partial-byte suffixes.
+     * Possible API change to support partial-byte suffixes.
      */
     protected int doFinal(byte[] out, int outOff, byte partialByte, int partialBits)
     {
@@ -78,7 +78,7 @@ public class SHAKEDigest
     }
 
     /*
-     * TODO Possible API change to support partial-byte suffixes.
+     * Possible API change to support partial-byte suffixes.
      */
     protected int doFinal(byte[] out, int outOff, int outLen, byte partialByte, int partialBits)
     {

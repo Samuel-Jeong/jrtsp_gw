@@ -192,7 +192,7 @@ public abstract class TlsProtocol
          * RFC 2246 7.2.1. The session becomes unresumable if any connection is terminated
          * without proper close_notify messages with level equal to warning.
          */
-        // TODO This isn't quite in the right place. Also, as of TLS 1.1 the above is obsolete.
+        // This isn't quite in the right place. Also, as of TLS 1.1 the above is obsolete.
         invalidateSession();
 
         recordStream.safeClose();
@@ -310,7 +310,7 @@ public abstract class TlsProtocol
                         .setPeerCertificate(this.peerTlsCertificate)
                         .setPSKIdentity(this.securityParameters.getPSKIdentity())
                         .setSRPIdentity(this.securityParameters.getSRPIdentity())
-                        // TODO Consider filtering extensions that aren't relevant to resumed sessions
+                        // Consider filtering extensions that aren't relevant to resumed sessions
                         .setServerExtensions(this.serverExtensions)
                         .build();
 
@@ -1205,7 +1205,7 @@ public abstract class TlsProtocol
         }
         finally
         {
-            // TODO Is there a way to ensure the data is really overwritten?
+            // Is there a way to ensure the data is really overwritten?
             /*
              * RFC 2246 8.1. The pre_master_secret should be deleted from memory once the
              * master_secret has been computed.

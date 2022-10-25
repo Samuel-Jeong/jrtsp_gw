@@ -15,11 +15,13 @@ public class ConfigManager {
         setDefaultConfig();
         setSdpConfig();
         setDtlsConfig();
+        setStunConfig();
     }
 
     private static DefaultConfig defaultConfig = null;
     private static SdpConfig sdpConfig = null;
     private static DtlsConfig dtlsConfig = null;
+    private static StunConfig stunConfig = null;
 
     public void setDefaultConfig() {
         if (defaultConfig == null) {
@@ -76,6 +78,18 @@ public class ConfigManager {
 
     public static DtlsConfig getDtlsConfig() {
         return dtlsConfig;
+    }
+
+    public void setStunConfig() {
+        if (stunConfig == null) {
+            stunConfig = new StunConfig();
+            stunConfig.setHarvestIntervalMs(configEnv.getIntProperty("stun.harvestIntervalMs"));
+            log.debug("StunConfig: {}", stunConfig.toString());
+        }
+    }
+
+    public static StunConfig getStunConfig() {
+        return stunConfig;
     }
 
 }

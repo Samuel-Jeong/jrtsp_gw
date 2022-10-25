@@ -98,15 +98,15 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         }
     }
 
-    public boolean isHandshakeComplete ( ) {
+    public boolean isHandshakeComplete () {
         return handshakeComplete;
     }
 
-    public boolean isHandshakeFailed ( ) {
+    public boolean isHandshakeFailed () {
         return handshakeFailed;
     }
 
-    public boolean isHandshaking ( ) {
+    public boolean isHandshaking () {
         return handshaking;
     }
 
@@ -274,7 +274,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         }
     }
 
-    public void reset ( ) {
+    public void reset () {
         this.server = this.tlsServerProvider.provide();
         this.datagramChannel = null;
         this.srtcpDecoder = null;
@@ -320,7 +320,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
     }
 
     @Override
-    public int getPipelinePriority ( ) {
+    public int getPipelinePriority () {
         return this.pipelinePriority;
     }
 
@@ -329,12 +329,12 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
     }
 
     @Override
-    public int getReceiveLimit ( ) throws IOException {
+    public int getReceiveLimit () throws IOException {
         return this.receiveLimit;
     }
 
     @Override
-    public int getSendLimit ( ) throws IOException {
+    public int getSendLimit () throws IOException {
         return this.sendLimit;
     }
 
@@ -388,19 +388,19 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
     }
 
     @Override
-    public void close ( ) throws IOException {
+    public void close () throws IOException {
         this.rxQueue.clear();
         this.startTime = 0L;
         this.datagramChannel = null;
     }
 
-    private boolean hasTimeout ( ) {
+    private boolean hasTimeout () {
         return (System.currentTimeMillis() - this.startTime) > MAX_DELAY;
     }
 
     private class HandshakeServer implements Runnable {
 
-        public void run ( ) {
+        public void run () {
             DtlsHandler.this.rxQueue.clear();
             SecureRandom secureRandom = new SecureRandom();
             DTLSServerProtocol serverProtocol = new DTLSServerProtocol(secureRandom);
@@ -456,7 +456,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
 
     private class HandshakeClient implements Runnable {
 
-        public void run ( ) {
+        public void run () {
             DtlsHandler.this.rxQueue.clear();
             SecureRandom secureRandom = new SecureRandom();
             DTLSClientProtocol clientProtocol = new DTLSClientProtocol(secureRandom);

@@ -326,7 +326,7 @@ public class DiscoverEndomorphisms
     {
         BigInteger u1 = u[0].abs(), u2 = u[1].abs(), v1 = v[0].abs(), v2 = v[1].abs();
 
-        // TODO Check whether "shorter" just means by rectangle norm:
+        // Check whether "shorter" just means by rectangle norm:
         // return u1.max(u2).compareTo(v1.max(v2)) < 0;
 
         boolean c1 = u1.compareTo(v1) < 0, c2 = u2.compareTo(v2) < 0;

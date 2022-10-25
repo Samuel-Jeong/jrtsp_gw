@@ -267,7 +267,7 @@ public class SRTPCryptoContext {
      * cannot know if the CryptoCOntext was used and the application called
      * deriveSrtpKeys(...) .
      */
-    public void close ( ) {
+    public void close () {
         Arrays.fill(masterKey, (byte) 0);
         Arrays.fill(masterSalt, (byte) 0);
     }
@@ -277,7 +277,7 @@ public class SRTPCryptoContext {
      *
      * @return the authentication tag length of this SRTP cryptographic context
      */
-    public int getAuthTagLength ( ) {
+    public int getAuthTagLength () {
         return policy.getAuthTagLength();
     }
 
@@ -286,7 +286,7 @@ public class SRTPCryptoContext {
      *
      * @return the MKI length of this SRTP cryptographic context
      */
-    public int getMKILength ( ) {
+    public int getMKILength () {
         return this.mki == null ? 0 : this.mki.length;
     }
 
@@ -295,7 +295,7 @@ public class SRTPCryptoContext {
      *
      * @return the SSRC of this SRTP cryptographic context
      */
-    public long getSSRC ( ) {
+    public long getSSRC () {
         return ssrcCtx;
     }
 
@@ -304,7 +304,7 @@ public class SRTPCryptoContext {
      *
      * @return the Roll-Over-Counter of this SRTP cryptographic context
      */
-    public int getROC ( ) {
+    public int getROC () {
         return roc;
     }
 

@@ -75,21 +75,21 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         this.context = context;
     }
 
-    public TlsSession getSessionToResume ( ) {
+    public TlsSession getSessionToResume () {
         return this.session;
     }
 
-    public ProtocolVersion getMinimumVersion ( ) {
+    public ProtocolVersion getMinimumVersion () {
         return minVersion;
     }
 
-    public ProtocolVersion getClientVersion ( ) {
+    public ProtocolVersion getClientVersion () {
         return maxVersion;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public Hashtable<Integer, byte[]> getClientExtensions ( ) throws IOException {
+    public Hashtable<Integer, byte[]> getClientExtensions () throws IOException {
         //see : http://bouncy-castle.1462172.n4.nabble.com/DTLS-SRTP-with-bouncycastle-1-49-td4656286.html
         Hashtable<Integer, byte[]> clientExtensions = super.getClientExtensions();
         if (clientExtensions == null) {
@@ -146,7 +146,7 @@ public class DtlsSrtpClient extends DefaultTlsClient {
     /**
      * @return the shared secret key that will be used for the SRTP session
      */
-    public void prepareSrtpSharedSecret ( ) {
+    public void prepareSrtpSharedSecret () {
         logger.debug("DtlsSrtpClient: Preparing SRTP Shared Secret...");
         SRTPParameters srtpParams = SRTPParameters.getSrtpParametersForProfile(clientSrtpData.getProtectionProfiles()[0]);
         final int keyLen = srtpParams.getCipherKeyLength();
@@ -206,27 +206,27 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         logger.debug("DtlsSrtpClient: Done.");
     }
 
-    public SRTPPolicy getSrtpPolicy ( ) {
+    public SRTPPolicy getSrtpPolicy () {
         return srtpPolicy;
     }
 
-    public SRTPPolicy getSrtcpPolicy ( ) {
+    public SRTPPolicy getSrtcpPolicy () {
         return srtcpPolicy;
     }
 
-    public byte[] getSrtpMasterServerKey ( ) {
+    public byte[] getSrtpMasterServerKey () {
         return srtpMasterServerKey;
     }
 
-    public byte[] getSrtpMasterServerSalt ( ) {
+    public byte[] getSrtpMasterServerSalt () {
         return srtpMasterServerSalt;
     }
 
-    public byte[] getSrtpMasterClientKey ( ) {
+    public byte[] getSrtpMasterClientKey () {
         return srtpMasterClientKey;
     }
 
-    public byte[] getSrtpMasterClientSalt ( ) {
+    public byte[] getSrtpMasterClientSalt () {
         return srtpMasterClientSalt;
     }
 
@@ -242,20 +242,19 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         System.arraycopy(masterSecret, 0, this.masterSecret, 0, masterSecret.length);
     }
 
-    public TlsKeyExchange getKeyExchange ( ) throws IOException {
+    public TlsKeyExchange getKeyExchange () throws IOException {
         TlsKeyExchange keyExchange = super.getKeyExchange();
         return keyExchange;
     }
 
     @Override
-    public TlsAuthentication getAuthentication ( ) throws IOException {
+    public TlsAuthentication getAuthentication () throws IOException {
         return new TlsAuthentication() {
             @Override
             public void notifyServerCertificate (TlsCertificate tlsCertificate) throws IOException {
                 logger.debug("client notifyServerCertificate");
             }
 
-            // TODO
             @Override
             public TlsCredentials getClientCredentials (CertificateRequest certificateRequest) throws IOException {
                 boolean ok = false;
@@ -292,7 +291,7 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         };
     }
 
-    public void notifyHandshakeComplete ( ) throws IOException {
+    public void notifyHandshakeComplete () throws IOException {
         super.notifyHandshakeComplete();
 
         TlsSession newSession = context.getResumableSession();

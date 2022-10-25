@@ -100,7 +100,6 @@ public class FormatFactory {
      * @param  frameRate the number of frames per second.
      */
     public static VideoFormat createVideoFormat(EncodingName name, int frameRate) {
-        //TODO : implement specific format here
         return new VideoFormat(name, frameRate);
     }
 

@@ -318,7 +318,7 @@ public enum CipherSuite {
         return null;
     }
 
-    public int getValue ( ) {
+    public int getValue () {
         return value;
     }
 

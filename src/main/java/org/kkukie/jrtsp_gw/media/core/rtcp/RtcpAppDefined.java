@@ -33,9 +33,7 @@ public class RtcpAppDefined extends RtcpHeader {
 	private String name;
 	private long ssrc;
 
-	public RtcpAppDefined() {
-		// TODO Auto-generated constructor stub
-	}
+	public RtcpAppDefined() {}
 
 	protected RtcpAppDefined(boolean padding, int subType, long ssrc, String name, byte[] data) {
 		super(padding, RtcpHeader.RTCP_APP);

@@ -256,7 +256,7 @@ public class StunAttributeFactory {
 			TransportAddress address, byte[] tranID) {
 		XorRelayedAddressAttribute attribute = new XorRelayedAddressAttribute();
 
-		// TODO shouldn't we be XORing the address before setting it?
+		// Shouldn't we be XORing the address before setting it?
 		attribute.setAddress(address, tranID);
 		return attribute;
 	}
@@ -276,7 +276,7 @@ public class StunAttributeFactory {
 			TransportAddress address, byte[] tranID) {
 		XorPeerAddressAttribute attribute = new XorPeerAddressAttribute();
 
-		// TODO shouldn't we be XORing the address before setting it?
+		// Shouldn't we be XORing the address before setting it?
 		attribute.setAddress(address, tranID);
 		return attribute;
 	}

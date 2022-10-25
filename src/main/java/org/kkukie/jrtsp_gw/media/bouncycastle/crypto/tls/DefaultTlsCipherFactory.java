@@ -168,7 +168,7 @@ public class DefaultTlsCipherFactory
 
     protected AEADBlockCipher createAEADBlockCipher_AES_GCM()
     {
-        // TODO Consider allowing custom configuration of multiplier
+        // Consider allowing custom configuration of multiplier
         return new GCMBlockCipher(createAESEngine());
     }
 
@@ -179,7 +179,7 @@ public class DefaultTlsCipherFactory
 
     protected AEADBlockCipher createAEADBlockCipher_Camellia_GCM()
     {
-        // TODO Consider allowing custom configuration of multiplier
+        // Consider allowing custom configuration of multiplier
         return new GCMBlockCipher(createCamelliaEngine());
     }
 

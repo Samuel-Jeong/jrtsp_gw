@@ -76,7 +76,7 @@ public class KXTSBlockCipher
         byte[] iv = ivParam.getIV();
 
         /*
-         * TODO We need to check what the rule is supposed to be for IVs that aren't exactly one block.
+         * We need to check what the rule is supposed to be for IVs that aren't exactly one block.
          * 
          * Given general little-endianness, presumably a short IV should be right-padded with zeroes.
          */
@@ -100,7 +100,7 @@ public class KXTSBlockCipher
     public int processByte(byte in, byte[] out, int outOff)
     {
         /*
-         * TODO This class isn't really behaving like a BufferedBlockCipher yet
+         * This class isn't really behaving like a BufferedBlockCipher yet
          */
         throw new IllegalStateException("unsupported operation");
     }

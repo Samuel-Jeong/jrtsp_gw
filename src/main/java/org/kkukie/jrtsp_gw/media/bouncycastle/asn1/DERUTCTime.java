@@ -1,5 +1,7 @@
 package org.kkukie.jrtsp_gw.media.bouncycastle.asn1;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -23,5 +25,11 @@ public class DERUTCTime
         super(time);
     }
 
-    // TODO: create proper DER encoding.
+    private ASN1Primitive toDERObject(byte[] data) throws IOException
+    {
+        ByteArrayInputStream inStream = new ByteArrayInputStream(data);
+        ASN1InputStream asnInputStream = new ASN1InputStream(inStream);
+        return asnInputStream.readObject().toDERObject();
+    }
+
 }

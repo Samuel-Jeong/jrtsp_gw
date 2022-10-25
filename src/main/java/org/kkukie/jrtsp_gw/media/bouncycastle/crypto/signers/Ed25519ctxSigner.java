@@ -30,7 +30,7 @@ public class Ed25519ctxSigner
 
         if (forSigning)
         {
-            // TODO Allow AsymmetricCipherKeyPair to be a CipherParameters?
+            // Allow AsymmetricCipherKeyPair to be a CipherParameters?
 
             this.privateKey = (Ed25519PrivateKeyParameters)parameters;
             this.publicKey = privateKey.generatePublicKey();

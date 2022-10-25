@@ -130,7 +130,7 @@ public abstract class ASN1TaggedObject
     {
         int code = tagNo;
 
-        // TODO: actually this is wrong - the problem is that a re-encoded
+        // actually this is wrong - the problem is that a re-encoded
         // object may end up with a different hashCode due to implicit
         // tagging. As implicit tagging is ambiguous if a sequence is involved
         // it seems the only correct method for both equals and hashCode is to

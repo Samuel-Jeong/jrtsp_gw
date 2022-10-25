@@ -77,12 +77,12 @@ class DTLSRecordLayer
         }
 
         /*
-         * TODO "In order to ensure that any given sequence/epoch pair is unique, implementations
+         * "In order to ensure that any given sequence/epoch pair is unique, implementations
          * MUST NOT allow the same epoch value to be reused within two times the TCP maximum segment
          * lifetime."
          */
 
-        // TODO Check for overflow
+        // Check for overflow
         this.pendingEpoch = new DTLSEpoch(writeEpoch.getEpoch() + 1, pendingCipher);
     }
 
@@ -170,7 +170,7 @@ class DTLSRecordLayer
 
                 short type = TlsUtils.readUint8(record, 0);
 
-                // TODO Support user-specified custom protocols?
+                // Support user-specified custom protocols?
                 switch (type)
                 {
                 case ContentType.alert:
@@ -180,7 +180,7 @@ class DTLSRecordLayer
                 case ContentType.heartbeat:
                     break;
                 default:
-                    // TODO Exception?
+                    // Exception?
                     continue;
                 }
 
@@ -252,7 +252,7 @@ class DTLSRecordLayer
                             throw new TlsFatalAlert(alertDescription);
                         }
 
-                        // TODO Can close_notify be a fatal alert?
+                        // Can close_notify be a fatal alert?
                         if (alertDescription == AlertDescription.close_notify)
                         {
                             closeTransport();
@@ -265,7 +265,7 @@ class DTLSRecordLayer
                 {
                     if (inHandshake)
                     {
-                        // TODO Consider buffering application data for new epoch that arrives
+                        // Consider buffering application data for new epoch that arrives
                         // out-of-order with the Finished message
                         continue;
                     }
@@ -300,7 +300,7 @@ class DTLSRecordLayer
                             retransmit.receivedHandshakeRecord(epoch, plaintext, 0, plaintext.length);
                         }
 
-                        // TODO Consider support for HelloRequest
+                        // Consider support for HelloRequest
                         continue;
                     }
                     break;
@@ -363,7 +363,7 @@ class DTLSRecordLayer
 
                 // Implicitly send change_cipher_spec and change to pending cipher state
 
-                // TODO Send change_cipher_spec and finished records in single datagram?
+                // Send change_cipher_spec and finished records in single datagram?
                 byte[] data = new byte[]{ 1 };
                 sendRecord(ContentType.change_cipher_spec, data, 0, data.length);
 
@@ -524,7 +524,7 @@ class DTLSRecordLayer
         byte[] ciphertext = writeEpoch.getCipher().encodePlaintext(
             getMacSequenceNumber(recordEpoch, recordSequenceNumber), contentType, buf, off, len);
 
-        // TODO Check the ciphertext length?
+        // Check the ciphertext length?
 
         byte[] record = new byte[ciphertext.length + RECORD_HEADER_LENGTH];
         TlsUtils.writeUint8(contentType, record, 0);

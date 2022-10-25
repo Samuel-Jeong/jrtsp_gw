@@ -104,14 +104,14 @@ public abstract class AbstractTlsKeyExchange
         if (supportedSignatureAlgorithms == null)
         {
             /*
-             * TODO RFC 2246 7.4.2. Unless otherwise specified, the signing algorithm for the
+             * RFC 2246 7.4.2. Unless otherwise specified, the signing algorithm for the
              * tlsCertificate must be the same as the algorithm for the tlsCertificate key.
              */
         }
         else
         {
             /*
-             * TODO RFC 5246 7.4.2. If the client provided a "signature_algorithms" extension, then
+             * RFC 5246 7.4.2. If the client provided a "signature_algorithms" extension, then
              * all certificates provided by the server MUST be signed by a hash/signature algorithm
              * pair that appears in that extension.
              */

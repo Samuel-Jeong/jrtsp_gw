@@ -36,7 +36,7 @@ public class TlsMac
 
         this.secret = Arrays.clone(keyParameter.getKey());
 
-        // TODO This should check the actual algorithm, not rely on the engine type
+        // This should check the actual algorithm, not rely on the engine type
         if (digest instanceof LongDigest)
         {
             this.digestBlockSize = 128;
@@ -52,7 +52,7 @@ public class TlsMac
         {
             this.mac = new SSL3Mac(digest);
 
-            // TODO This should check the actual algorithm, not assume based on the digest size
+            // This should check the actual algorithm, not assume based on the digest size
             if (digest.getDigestSize() == 20)
             {
                 /*

@@ -50,7 +50,7 @@ public class DSAKeyPairGenerator
         int minWeight = q.bitLength() >>> 2;
         for (;;)
         {
-            // TODO Prefer this method? (change test cases that used fixed random)
+            // Prefer this method? (change test cases that used fixed random)
             // B.1.1 Key Pair Generation Using Extra Random Bits
 //            BigInteger x = new BigInteger(q.bitLength() + 64, random).mod(q.subtract(ONE)).add(ONE);
 

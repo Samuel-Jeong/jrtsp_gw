@@ -33,9 +33,9 @@ public class Chacha20Poly1305 implements TlsCipher
         this.context = context;
 
         int cipherKeySize = 32;
-        // TODO SecurityParameters.fixed_iv_length
+        // SecurityParameters.fixed_iv_length
         int fixed_iv_length = 12;
-        // TODO SecurityParameters.record_iv_length = 0
+        // SecurityParameters.record_iv_length = 0
 
         int key_block_size = (2 * cipherKeySize) + (2 * fixed_iv_length);
 

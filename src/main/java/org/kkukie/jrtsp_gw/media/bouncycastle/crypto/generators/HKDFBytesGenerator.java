@@ -74,7 +74,7 @@ public class HKDFBytesGenerator
     {
         if (salt == null)
         {
-            // TODO check if hashLen is indeed same as HMAC size
+            // check if hashLen is indeed same as HMAC size
             hMacHash.init(new KeyParameter(new byte[hashLen]));
         }
         else

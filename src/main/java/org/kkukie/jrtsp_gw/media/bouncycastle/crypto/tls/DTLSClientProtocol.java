@@ -239,7 +239,7 @@ public class DTLSClientProtocol
             processCertificateRequest(state, serverMessage.getBody());
 
             /*
-             * TODO Give the client a chance to immediately select the CertificateVerify hash
+             * Give the client a chance to immediately select the CertificateVerify hash
              * algorithm here to avoid tracking the other hash algorithms unnecessarily?
              */
             TlsUtils.trackHashAlgorithms(handshake.getHandshakeHash(),
@@ -377,7 +377,7 @@ public class DTLSClientProtocol
                 .setPeerCertificate(serverTlsCertificate)
                 .setPSKIdentity(securityParameters.getPSKIdentity())
                 .setSRPIdentity(securityParameters.getSRPIdentity())
-                // TODO Consider filtering extensions that aren't relevant to resumed sessions
+                // Consider filtering extensions that aren't relevant to resumed sessions
                 .setServerExtensions(state.serverExtensions)
                 .build();
 
@@ -468,7 +468,7 @@ public class DTLSClientProtocol
 
             if (noRenegExt && noRenegSCSV)
             {
-                // TODO Consider whether to default to a client extension instead
+                // Consider whether to default to a client extension instead
                 state.offeredCipherSuites = Arrays.append(state.offeredCipherSuites, CipherSuite.TLS_EMPTY_RENEGOTIATION_INFO_SCSV);
             }
 
@@ -571,7 +571,7 @@ public class DTLSClientProtocol
 
         TlsProtocol.assertEmpty(buf);
 
-        // TODO Seems this behaviour is not yet in line with OpenSSL for DTLS 1.2
+        // Seems this behaviour is not yet in line with OpenSSL for DTLS 1.2
 //        reportServerVersion(state, server_version);
         if (!server_version.isEqualOrEarlierVersionOf(state.clientContext.getClientVersion()))
         {
@@ -669,7 +669,7 @@ public class DTLSClientProtocol
          */
 
         /*
-         * TODO RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
+         * RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
          * extensions appearing in the client hello, and send a server hello containing no
          * extensions.
          */
@@ -809,7 +809,7 @@ public class DTLSClientProtocol
             securityParameters.truncatedHMac = TlsExtensionsUtils.hasTruncatedHMacExtension(sessionServerExtensions);
 
             /*
-             * TODO It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be
+             * It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be
              * sent in a session resumption handshake.
              */
             state.allowCertificateStatus = !state.resumedSession

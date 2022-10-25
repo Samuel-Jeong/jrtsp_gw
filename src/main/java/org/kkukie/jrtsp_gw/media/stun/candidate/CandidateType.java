@@ -47,15 +47,15 @@ public enum CandidateType {
         return null;
     }
 
-    public static int count ( ) {
+    public static int count () {
         return values().length;
     }
 
-    public String getDescription ( ) {
+    public String getDescription () {
         return description;
     }
 
-    public int getPreference ( ) {
+    public int getPreference () {
         return preference;
     }
 

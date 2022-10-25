@@ -293,7 +293,7 @@ public class TlsSRPKeyExchange extends AbstractTlsKeyExchange
                 ?   srpServer.calculateSecret(srpPeerCredentials)
                 :   srpClient.calculateSecret(srpPeerCredentials);
 
-            // TODO Check if this needs to be a fixed size
+            // Check if this needs to be a fixed size
             return BigIntegers.asUnsignedByteArray(S);
         }
         catch (CryptoException e)

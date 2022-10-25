@@ -20,7 +20,7 @@ public class KeyParameter
         System.arraycopy(key, keyOff, this.key, 0, keyLen);
     }
 
-    public byte[] getKey ( ) {
+    public byte[] getKey () {
         return key;
     }
 }

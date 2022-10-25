@@ -67,7 +67,7 @@ public class RTPFormat implements Cloneable {
      *
      * @return payload number
      */
-    public int getID ( ) {
+    public int getID () {
         return id;
     }
 
@@ -85,7 +85,7 @@ public class RTPFormat implements Cloneable {
      *
      * @return the rtp clock rate in Hertz
      */
-    public int getClockRate ( ) {
+    public int getClockRate () {
         return clockRate;
     }
 
@@ -103,7 +103,7 @@ public class RTPFormat implements Cloneable {
      *
      * @return format descriptor.
      */
-    public Format getFormat ( ) {
+    public Format getFormat () {
         return format;
     }
 
@@ -117,13 +117,13 @@ public class RTPFormat implements Cloneable {
     }
 
     @Override
-    public RTPFormat clone ( ) {
+    public RTPFormat clone () {
         Format f = format.clone();
         return new RTPFormat(id, f, clockRate);
     }
 
     @Override
-    public String toString ( ) {
+    public String toString () {
         return id + " " + format;
     }
 }

@@ -159,7 +159,7 @@ public class SecT571R1Point extends AbstractF2m
         SecT571FieldElement X3, L3, Z3;
         if (X2.isZero())
         {
-            // TODO This can probably be optimized quite a bit
+            // This can probably be optimized quite a bit
             ECPoint p = this.normalize();
             X1 = (SecT571FieldElement)p.getXCoord();
             ECFieldElement Y1 = p.getYCoord();

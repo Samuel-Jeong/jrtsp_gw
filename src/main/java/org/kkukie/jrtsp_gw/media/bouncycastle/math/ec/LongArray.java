@@ -292,7 +292,7 @@ class LongArray implements Cloneable
         8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8
     };
 
-    // TODO make m fixed for the LongArray, and hence compute T once and for all
+    // make m fixed for the LongArray, and hence compute T once and for all
 
     private long[] m_ints;
 
@@ -1534,7 +1534,7 @@ class LongArray implements Cloneable
             return len;
         }
 
-        int numBits = Math.min(len << 6, (m << 1) - 1); // TODO use actual degree?
+        int numBits = Math.min(len << 6, (m << 1) - 1); // use actual degree?
         int excessBits = (len << 6) - numBits;
         while (excessBits >= 64)
         {

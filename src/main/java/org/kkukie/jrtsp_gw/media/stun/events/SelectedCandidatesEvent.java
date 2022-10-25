@@ -35,7 +35,7 @@ public class SelectedCandidatesEvent {
         this.remotePeer = remotePeer;
     }
 
-    public SocketAddress getRemotePeer ( ) {
+    public SocketAddress getRemotePeer () {
         return remotePeer;
     }
 

@@ -30,7 +30,7 @@ public class AsymmetricSRTPTransformer
      * The close functions closes all stored default crypto contexts. This
      * deletes key data and forces a cleanup of the crypto contexts.
      */
-    public void close ( ) {
+    public void close () {
         if (forwardEngine != null)
             forwardEngine.close();
         if (reverseEngine != null)
@@ -47,7 +47,7 @@ public class AsymmetricSRTPTransformer
      * net.java.sip.communicator.impl.neomedia.transform.srtp.SRTPTransformEngine
      * #getRTCPTransformer()
      */
-    public PacketTransformer getRTCPTransformer ( ) {
+    public PacketTransformer getRTCPTransformer () {
         return new SRTCPTransformer(forwardEngine, reverseEngine);
     }
 
@@ -58,7 +58,7 @@ public class AsymmetricSRTPTransformer
      * net.java.sip.communicator.impl.neomedia.transform.srtp.SRTPTransformEngine
      * #getRTPTransformer()
      */
-    public PacketTransformer getRTPTransformer ( ) {
+    public PacketTransformer getRTPTransformer () {
         return new SRTPTransformer(forwardEngine, reverseEngine);
     }
 }

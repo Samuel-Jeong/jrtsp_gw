@@ -190,7 +190,6 @@ public class RtcpPacketFactory {
 	 * @return The RTCP packet containing the RTCP Report (SS or RR).
 	 */
 	public static RtcpPacket buildReport(RtpStatistics statistics) {
-		// TODO Validate padding
 		boolean padding = false;
 		
 		// Build the initial report packet
@@ -216,7 +215,6 @@ public class RtcpPacketFactory {
 	 * @return The RTCP packet
 	 */
 	public static RtcpPacket buildBye(RtpStatistics statistics) {
-		// TODO Validate padding
 		boolean padding = false;
 		
 		// Build the initial report packet

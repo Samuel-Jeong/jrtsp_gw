@@ -87,11 +87,11 @@ public class IceCandidate extends TransportAddress implements Comparable<IceCand
         this.priority = 0;
     }
 
-    public CandidateType getType ( ) {
+    public CandidateType getType () {
         return type;
     }
 
-    public String getFoundation ( ) {
+    public String getFoundation () {
         return foundation;
     }
 
@@ -99,11 +99,11 @@ public class IceCandidate extends TransportAddress implements Comparable<IceCand
         this.foundation = foundation;
     }
 
-    public int getAddressPrecedence ( ) {
+    public int getAddressPrecedence () {
         return addressPrecedence;
     }
 
-    public long getPriority ( ) {
+    public long getPriority () {
         return priority;
     }
 
@@ -111,7 +111,7 @@ public class IceCandidate extends TransportAddress implements Comparable<IceCand
         this.priority = priority;
     }
 
-    public IceCandidate getBase ( ) {
+    public IceCandidate getBase () {
         return base;
     }
 
@@ -126,7 +126,7 @@ public class IceCandidate extends TransportAddress implements Comparable<IceCand
      *
      * @return The precedence value of the transport address
      */
-    private int calculateAddressPrecedence ( ) {
+    private int calculateAddressPrecedence () {
         if (this.isIPv6()) {
             throw new UnsupportedOperationException("IPv6 addresses are not supported.");
         }
@@ -141,11 +141,11 @@ public class IceCandidate extends TransportAddress implements Comparable<IceCand
     }
 
     @Override
-    public IceCandidate clone ( ) throws CloneNotSupportedException {
+    public IceCandidate clone () throws CloneNotSupportedException {
         return (IceCandidate) super.clone();
     }
 
-    public short getComponentId ( ) {
+    public short getComponentId () {
         return this.component.getComponentId();
     }
 }

@@ -87,11 +87,11 @@ public class RtpPacket implements Serializable {
      *
      * @return the underlying buffer instance.
      */
-    public ByteBuffer getBuffer ( ) {
+    public ByteBuffer getBuffer () {
         return buffer;
     }
 
-    public byte[] getRawData ( ) {
+    public byte[] getRawData () {
         byte[] data = new byte[getLength()];
         this.buffer.rewind();
         this.buffer.get(data);
@@ -108,7 +108,7 @@ public class RtpPacket implements Serializable {
      *
      * @return the version value.
      */
-    public int getVersion ( ) {
+    public int getVersion () {
         return (buffer.get(0) & 0xC0) >> 6;
     }
 
@@ -126,7 +126,7 @@ public class RtpPacket implements Serializable {
      *
      * @return synchronization source.
      */
-    public int getContributingSource ( ) {
+    public int getContributingSource () {
         return buffer.get(0) & 0x0F;
     }
 
@@ -143,7 +143,7 @@ public class RtpPacket implements Serializable {
      *
      * @return true if padding bit set.
      */
-    public boolean hasPadding ( ) {
+    public boolean hasPadding () {
         return (buffer.get(0) & 0x20) == 0x020;
     }
 
@@ -155,7 +155,7 @@ public class RtpPacket implements Serializable {
      *
      * @return true if extension bit set.
      */
-    public boolean hasExtensions ( ) {
+    public boolean hasExtensions () {
         return (buffer.get(0) & 0x10) == 0x010;
     }
 
@@ -170,7 +170,7 @@ public class RtpPacket implements Serializable {
      *
      * @return true if marker set.
      */
-    public boolean getMarker ( ) {
+    public boolean getMarker () {
         return (buffer.get(1) & 0xff & 0x80) == 0x80;
     }
 
@@ -185,7 +185,7 @@ public class RtpPacket implements Serializable {
      *
      * @return integer value of payload type.
      */
-    public int getPayloadType ( ) {
+    public int getPayloadType () {
         return (buffer.get(1) & 0xff & 0x7f);
     }
 
@@ -202,7 +202,7 @@ public class RtpPacket implements Serializable {
      *
      * @return the sequence number value.
      */
-    public int getSeqNumber ( ) {
+    public int getSeqNumber () {
         return buffer.getShort(2) & 0xFFFF;
     }
 
@@ -241,7 +241,7 @@ public class RtpPacket implements Serializable {
      *
      * @return timestamp value
      */
-    public long getTimestamp ( ) {
+    public long getTimestamp () {
         return ((long) (buffer.get(4) & 0xff) << 24) |
                 ((long) (buffer.get(5) & 0xff) << 16) |
                 ((long) (buffer.get(6) & 0xff) << 8) |
@@ -266,7 +266,7 @@ public class RtpPacket implements Serializable {
      *
      * @return the sysncronization source
      */
-    public long getSyncSource ( ) {
+    public long getSyncSource () {
         return readUnsignedIntAsLong(8);
     }
 
@@ -290,7 +290,7 @@ public class RtpPacket implements Serializable {
      *
      * @return RTP SSRC from source RTP packet
      */
-    public long GetRTCPSyncSource ( ) {
+    public long GetRTCPSyncSource () {
         return (readUnsignedIntAsLong(4));
     }
 
@@ -378,7 +378,7 @@ public class RtpPacket implements Serializable {
     }
 
     @Override
-    public String toString ( ) {
+    public String toString () {
         return "RTP Packet[marker=" + getMarker() + ", seq=" + getSeqNumber() +
                 ", timestamp=" + getTimestamp() + ", payload_size=" + getPayloadLength() +
                 ", payload=" + getPayloadType() + "]";
@@ -406,7 +406,7 @@ public class RtpPacket implements Serializable {
      *
      * @return RTP header length from source RTP packet
      */
-    public int getHeaderLength ( ) {
+    public int getHeaderLength () {
         if (getExtensionBit())
             return FIXED_HEADER_SIZE + 4 * getCsrcCount()
                     + EXT_HEADER_SIZE
@@ -420,7 +420,7 @@ public class RtpPacket implements Serializable {
      *
      * @return RTP payload length from source RTP packet
      */
-    public int getPayloadLength ( ) {
+    public int getPayloadLength () {
         buffer.rewind();
         return buffer.limit() - getHeaderLength();
     }
@@ -431,7 +431,7 @@ public class RtpPacket implements Serializable {
      *
      * @return the length of the extensions currently added to this packet.
      */
-    public int getExtensionLength ( ) {
+    public int getExtensionLength () {
         if (!getExtensionBit())
             return 0;
 
@@ -450,7 +450,7 @@ public class RtpPacket implements Serializable {
      * @return <tt>true</tt> if the extension bit of this packet has been set
      * and false otherwise.
      */
-    public boolean getExtensionBit ( ) {
+    public boolean getExtensionBit () {
         buffer.rewind();
         return (buffer.get() & 0x10) == 0x10;
     }
@@ -460,7 +460,7 @@ public class RtpPacket implements Serializable {
      *
      * @return the CSRC count for this <tt>RawPacket</tt>.
      */
-    public int getCsrcCount ( ) {
+    public int getCsrcCount () {
         buffer.rewind();
         return (buffer.get() & 0x0f);
     }
@@ -470,7 +470,7 @@ public class RtpPacket implements Serializable {
      *
      * @return RTP padding size from source RTP packet
      */
-    public int getPaddingSize ( ) {
+    public int getPaddingSize () {
         buffer.rewind();
         if ((buffer.get() & 0x4) == 0) {
             return 0;
@@ -485,11 +485,11 @@ public class RtpPacket implements Serializable {
      *
      * @return length of this packet's raw data
      */
-    public int getLength ( ) {
+    public int getLength () {
         return buffer.limit();
     }
 
-    public int getOffset ( ) {
+    public int getOffset () {
         return this.buffer.position();
     }
 

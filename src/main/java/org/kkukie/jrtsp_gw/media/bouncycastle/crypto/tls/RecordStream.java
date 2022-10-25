@@ -234,7 +234,7 @@ class RecordStream
         checkLength(decoded.length, compressedLimit, AlertDescription.record_overflow);
 
         /*
-         * TODO RFC 5246 6.2.2. Implementation note: Decompression functions are responsible for
+         * RFC 5246 6.2.2. Implementation note: Decompression functions are responsible for
          * ensuring that messages cannot cause internal buffer overflows.
          */
         OutputStream cOut = readCompression.decompress(buffer);

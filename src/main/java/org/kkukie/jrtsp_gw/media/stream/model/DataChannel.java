@@ -389,7 +389,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
     /////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void onDtlsHandshakeComplete ( ) {
+    public void onDtlsHandshakeComplete () {
         log.debug("|DataChannel({})| DTLS handshake completed for RTP candidate.", callId);
         if (this.isRtcpMux) {
             this.rtcpHandler.joinRtpSession();

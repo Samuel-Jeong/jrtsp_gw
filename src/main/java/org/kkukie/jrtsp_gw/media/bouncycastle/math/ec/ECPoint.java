@@ -75,7 +75,7 @@ public abstract class ECPoint
 
         BigInteger n = curve.getOrder();
 
-        // TODO Require order to be available for all curves
+        // Require order to be available for all curves
 
         return n == null || ECAlgorithms.referenceMultiply(this, n).isInfinity();
     }
@@ -381,11 +381,11 @@ public abstract class ECPoint
         }
         else
         {
-            // TODO Consider just requiring already normalized, to avoid silent performance degradation
+            // Consider just requiring already normalized, to avoid silent performance degradation
 
             ECPoint[] points = new ECPoint[]{ this, c1.importPoint(p2) };
 
-            // TODO This is a little strong, really only requires coZNormalizeAll to get Zs equal
+            // This is a little strong, really only requires coZNormalizeAll to get Zs equal
             c1.normalizeAll(points);
 
             p1 = points[0];
@@ -417,7 +417,7 @@ public abstract class ECPoint
 
         if (!this.isInfinity())
         {
-            // TODO Consider just requiring already normalized, to avoid silent performance degradation
+            // Consider just requiring already normalized, to avoid silent performance degradation
 
             ECPoint p = normalize();
 
@@ -732,7 +732,7 @@ public abstract class ECPoint
                     return curve.getInfinity();
                 }
 
-                // TODO Optimize for when w == 1
+                // Optimize for when w == 1
                 ECFieldElement w = Z1IsOne ? Z2 : Z2IsOne ? Z1 : Z1.multiply(Z2);
                 ECFieldElement vSquared = v.square();
                 ECFieldElement vCubed = vSquared.multiply(v);
@@ -758,7 +758,7 @@ public abstract class ECPoint
 
                 if (!Z1IsOne && Z1.equals(Z2))
                 {
-                    // TODO Make this available as public method coZAdd?
+                    // Make this available as public method coZAdd?
 
                     ECFieldElement dx = X1.subtract(X2), dy = Y1.subtract(Y2);
                     if (dx.isZero())
@@ -856,7 +856,7 @@ public abstract class ECPoint
                 ECFieldElement[] zs;
                 if (coord == ECCurve.COORD_JACOBIAN_MODIFIED)
                 {
-                    // TODO If the result will only be used in a subsequent addition, we don't need W3
+                    // If the result will only be used in a subsequent addition, we don't need W3
                     ECFieldElement W3 = calculateJacobianModifiedW(Z3, Z3Squared);
 
                     zs = new ECFieldElement[]{ Z3, W3 };
@@ -914,7 +914,7 @@ public abstract class ECPoint
 
                 boolean Z1IsOne = Z1.isOne();
 
-                // TODO Optimize for small negative a4 and -3
+                // Optimize for small negative a4 and -3
                 ECFieldElement w = curve.getA();
                 if (!w.isZero() && !Z1IsOne)
                 {
@@ -1387,7 +1387,7 @@ public abstract class ECPoint
                 {
                     ECFieldElement Z2 = Z.square(), Z4 = Z2.square();
                     lhs = L.add(Z).multiplyPlusProduct(L, A, Z2);
-                    // TODO If sqrt(b) is precomputed this can be simplified to a single square
+                    // If sqrt(b) is precomputed this can be simplified to a single square
                     rhs = X2.squarePlusProduct(B, Z4);
                 }
                 lhs = lhs.multiply(X2);
@@ -1848,7 +1848,7 @@ public abstract class ECPoint
                 ECFieldElement X3, L3, Z3;
                 if (X2.isZero())
                 {
-                    // TODO This can probably be optimized quite a bit
+                    // This can probably be optimized quite a bit
                     ECPoint p = this.normalize();
                     X1 = p.getXCoord();
                     ECFieldElement Y1 = p.getYCoord();
@@ -1985,7 +1985,7 @@ public abstract class ECPoint
                     }
                     else
                     {
-                        // TODO Can be calculated with one square if we pre-compute sqrt(b)
+                        // Can be calculated with one square if we pre-compute sqrt(b)
                         t2 = aZ1Sq.squarePlusProduct(b, Z1Sq.square());
                     }
                     L3 = t1.add(T).add(Z1Sq).multiply(t1).add(t2).add(X3);

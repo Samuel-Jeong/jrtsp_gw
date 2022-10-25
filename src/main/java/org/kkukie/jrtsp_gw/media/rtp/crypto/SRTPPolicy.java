@@ -113,7 +113,7 @@ public class SRTPPolicy {
      *
      * @return the authentication key length
      */
-    public int getAuthKeyLength ( ) {
+    public int getAuthKeyLength () {
         return this.authKeyLength;
     }
 
@@ -131,7 +131,7 @@ public class SRTPPolicy {
      *
      * @return the authentication tag length
      */
-    public int getAuthTagLength ( ) {
+    public int getAuthTagLength () {
         return this.authTagLength;
     }
 
@@ -149,7 +149,7 @@ public class SRTPPolicy {
      *
      * @return the authentication type
      */
-    public int getAuthType ( ) {
+    public int getAuthType () {
         return this.authType;
     }
 
@@ -167,7 +167,7 @@ public class SRTPPolicy {
      *
      * @return the encryption key length
      */
-    public int getEncKeyLength ( ) {
+    public int getEncKeyLength () {
         return this.encKeyLength;
     }
 
@@ -185,7 +185,7 @@ public class SRTPPolicy {
      *
      * @return the encryption type
      */
-    public int getEncType ( ) {
+    public int getEncType () {
         return this.encType;
     }
 
@@ -203,7 +203,7 @@ public class SRTPPolicy {
      *
      * @return the salt key length
      */
-    public int getSaltKeyLength ( ) {
+    public int getSaltKeyLength () {
         return this.saltKeyLength;
     }
 

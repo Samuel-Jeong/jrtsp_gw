@@ -1276,7 +1276,7 @@ public class TlsUtils
             }
 
             /*
-             * TODO RFC 5246 7.4.6. The certificates MUST be signed using an acceptable hash/
+             * RFC 5246 7.4.6. The certificates MUST be signed using an acceptable hash/
              * signature algorithm pair, as described in Section 7.4.4. Note that this relaxes the
              * constraints on tlsCertificate-signing algorithms found in prior versions of TLS.
              */
@@ -1314,11 +1314,11 @@ public class TlsUtils
             if (publicKey instanceof ECPublicKeyParameters)
             {
                 validateKeyUsage(x509Cert, KeyUsage.digitalSignature);
-                // TODO Check the curve and point format
+                // Check the curve and point format
                 return ClientCertificateType.ecdsa_sign;
             }
 
-            // TODO Add support for ClientCertificateType.*_fixed_*
+            // Add support for ClientCertificateType.*_fixed_*
 
             throw new TlsFatalAlert(AlertDescription.unsupported_certificate);
         }
@@ -1344,7 +1344,7 @@ public class TlsUtils
                 }
                 else //if (HashAlgorithm.isPrivate(hashAlgorithm))
                 {
-                    // TODO Support values in the "Reserved for Private Use" range
+                    // Support values in the "Reserved for Private Use" range
                 }
             }
         }

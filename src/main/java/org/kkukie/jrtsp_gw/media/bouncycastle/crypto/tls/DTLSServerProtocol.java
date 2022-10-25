@@ -61,7 +61,7 @@ public class DTLSServerProtocol
 
         DTLSRecordLayer recordLayer = new DTLSRecordLayer(transport, state.serverContext, server, ContentType.handshake);
 
-        // TODO Need to handle sending of HelloVerifyRequest without entering a full connection
+        // Need to handle sending of HelloVerifyRequest without entering a full connection
 
         try
         {
@@ -295,7 +295,7 @@ public class DTLSServerProtocol
 //                .setPeerCertificate(state.clientTlsCertificate)
 //                .setPSKIdentity(securityParameters.getPSKIdentity())
 //                .setSRPIdentity(securityParameters.getSRPIdentity())
-//                // TODO Consider filtering extensions that aren't relevant to resumed sessions
+//                // Consider filtering extensions that aren't relevant to resumed sessions
 //                .setServerExtensions(state.serverExtensions)
 //                .build();
 //
@@ -349,7 +349,7 @@ public class DTLSServerProtocol
                 throw new TlsFatalAlert(AlertDescription.internal_error);
             }
     
-            // TODO Read RFCs for guidance on the expected record layer version number
+            // Read RFCs for guidance on the expected record layer version number
             // recordStream.setReadVersion(server_version);
             // recordStream.setWriteVersion(server_version);
             // recordStream.setRestrictReadVersion(true);
@@ -422,7 +422,7 @@ public class DTLSServerProtocol
         }
 
         /*
-         * TODO RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
+         * RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
          * extensions appearing in the client hello, and send a server hello containing no
          * extensions.
          */
@@ -437,7 +437,7 @@ public class DTLSServerProtocol
             securityParameters.truncatedHMac = TlsExtensionsUtils.hasTruncatedHMacExtension(state.serverExtensions);
 
             /*
-             * TODO It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be sent in
+             * It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be sent in
              * a session resumption handshake.
              */
             state.allowCertificateStatus = !state.resumedSession
@@ -501,7 +501,7 @@ public class DTLSServerProtocol
         {
 
             /*
-             * TODO RFC 5246 7.4.6. If the certificate_authorities list in the tlsCertificate request
+             * RFC 5246 7.4.6. If the certificate_authorities list in the tlsCertificate request
              * message was non-empty, one of the certificates in the tlsCertificate chain SHOULD be
              * issued by one of the listed CAs.
              */
@@ -592,7 +592,7 @@ public class DTLSServerProtocol
     {
         ByteArrayInputStream buf = new ByteArrayInputStream(body);
 
-        // TODO Read RFCs for guidance on the expected record layer version number
+        // Read RFCs for guidance on the expected record layer version number
         ProtocolVersion client_version = TlsUtils.readVersion(buf);
         if (!client_version.isDTLS())
         {
@@ -610,7 +610,7 @@ public class DTLSServerProtocol
             throw new TlsFatalAlert(AlertDescription.illegal_parameter);
         }
 
-        // TODO RFC 4347 has the cookie length restricted to 32, but not in RFC 6347
+        // RFC 4347 has the cookie length restricted to 32, but not in RFC 6347
         byte[] cookie = TlsUtils.readOpaque8(buf);
 
         int cipher_suites_length = TlsUtils.readUint16(buf);
@@ -634,7 +634,7 @@ public class DTLSServerProtocol
         state.offeredCompressionMethods = TlsUtils.readUint8Array(compression_methods_length, buf);
 
         /*
-         * TODO RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
+         * RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
          * extensions appearing in the client hello, and send a server hello containing no
          * extensions.
          */

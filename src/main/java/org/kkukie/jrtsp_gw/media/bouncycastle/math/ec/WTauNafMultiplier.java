@@ -8,7 +8,7 @@ import java.math.BigInteger;
  */
 public class WTauNafMultiplier extends AbstractECMultiplier
 {
-    // TODO Create WTauNafUtil class and move various functionality into it
+    // Create WTauNafUtil class and move various functionality into it
     static final String PRECOMP_NAME = "bc_wtnaf";
 
     /**
@@ -92,7 +92,7 @@ public class WTauNafMultiplier extends AbstractECMultiplier
 
         ECPoint.AbstractF2m[] pu = preCompInfo.getPreComp();
 
-        // TODO Include negations in precomp (optionally) and use from here
+        // Include negations in precomp (optionally) and use from here
         ECPoint.AbstractF2m[] puNeg = new ECPoint.AbstractF2m[pu.length];
         for (int i = 0; i < pu.length; ++i)
         {

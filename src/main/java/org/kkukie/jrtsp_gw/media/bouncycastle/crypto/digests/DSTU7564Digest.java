@@ -35,7 +35,7 @@ public class DSTU7564Digest
     private long[] tempState1;
     private long[] tempState2;
 
-    // TODO Guard against 'inputBlocks' overflow (2^64 blocks)
+    // Guard against 'inputBlocks' overflow (2^64 blocks)
     private long inputBlocks;
     private int bufOff;
     private byte[] buf;

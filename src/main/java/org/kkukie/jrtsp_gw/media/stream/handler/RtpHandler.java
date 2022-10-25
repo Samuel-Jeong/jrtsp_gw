@@ -55,7 +55,7 @@ public class RtpHandler implements PacketHandler {
         this.secure = false;
     }
 
-    public int getPipelinePriority ( ) {
+    public int getPipelinePriority () {
         return pipelinePriority;
     }
 
@@ -68,7 +68,7 @@ public class RtpHandler implements PacketHandler {
         this.dtlsHandler = handler;
     }
 
-    public void disableSrtp ( ) {
+    public void disableSrtp () {
         this.secure = false;
         this.dtlsHandler = null;
     }

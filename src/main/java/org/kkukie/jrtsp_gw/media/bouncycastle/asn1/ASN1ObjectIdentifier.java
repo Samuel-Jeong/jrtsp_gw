@@ -374,7 +374,7 @@ public class ASN1ObjectIdentifier
         {
             char ch = branchID.charAt(pos);
 
-            // TODO Leading zeroes?
+            // Leading zeroes?
             if ('0' <= ch && ch <= '9')
             {
                 periodAllowed = true;

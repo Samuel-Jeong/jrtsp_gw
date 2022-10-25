@@ -186,7 +186,7 @@ public class Curve25519Point extends ECPoint.AbstractFp
 
         int[] Z3Squared = (Z1IsOne && Z2IsOne) ? HSquared : null;
 
-        // TODO If the result will only be used in a subsequent addition, we don't need W3
+        // If the result will only be used in a subsequent addition, we don't need W3
         Curve25519FieldElement W3 = calculateJacobianModifiedW((Curve25519FieldElement)Z3, Z3Squared);
 
         ECFieldElement[] zs = new ECFieldElement[]{ Z3, W3 };

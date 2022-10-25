@@ -448,7 +448,7 @@ public class TlsServerProtocol
         {
 
             /*
-             * TODO RFC 5246 7.4.6. If the certificate_authorities list in the tlsCertificate request
+             * RFC 5246 7.4.6. If the certificate_authorities list in the tlsCertificate request
              * message was non-empty, one of the certificates in the tlsCertificate chain SHOULD be
              * issued by one of the listed CAs.
              */
@@ -543,7 +543,7 @@ public class TlsServerProtocol
         byte[] client_random = TlsUtils.readFully(32, buf);
 
         /*
-         * TODO RFC 5077 3.4. If a ticket is presented by the client, the server MUST NOT attempt to
+         * RFC 5077 3.4. If a ticket is presented by the client, the server MUST NOT attempt to
          * use the Session ID in the ClientHello for stateful session resumption.
          */
         byte[] sessionID = TlsUtils.readOpaque8(buf);
@@ -553,7 +553,7 @@ public class TlsServerProtocol
         }
 
         /*
-         * TODO RFC 5246 7.4.1.2. If the session_id field is not empty (implying a session
+         * RFC 5246 7.4.1.2. If the session_id field is not empty (implying a session
          * resumption request), this vector MUST include at least the cipher_suite from that
          * session.
          */
@@ -565,7 +565,7 @@ public class TlsServerProtocol
         this.offeredCipherSuites = TlsUtils.readUint16Array(cipher_suites_length / 2, buf);
 
         /*
-         * TODO RFC 5246 7.4.1.2. If the session_id field is not empty (implying a session
+         * RFC 5246 7.4.1.2. If the session_id field is not empty (implying a session
          * resumption request), it MUST include the compression_method from that session.
          */
         int compression_methods_length = TlsUtils.readUint8(buf);
@@ -576,7 +576,7 @@ public class TlsServerProtocol
         this.offeredCompressionMethods = TlsUtils.readUint8Array(compression_methods_length, buf);
 
         /*
-         * TODO RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
+         * RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
          * extensions appearing in the client hello, and send a server hello containing no
          * extensions.
          */
@@ -802,7 +802,7 @@ public class TlsServerProtocol
         }
 
         /*
-         * TODO RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
+         * RFC 3546 2.3 If [...] the older session is resumed, then the server MUST ignore
          * extensions appearing in the client hello, and send a server hello containing no
          * extensions.
          */
@@ -817,7 +817,7 @@ public class TlsServerProtocol
             this.securityParameters.truncatedHMac = TlsExtensionsUtils.hasTruncatedHMacExtension(serverExtensions);
 
             /*
-             * TODO It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be sent in
+             * It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be sent in
              * a session resumption handshake.
              */
             this.allowCertificateStatus = !resumedSession

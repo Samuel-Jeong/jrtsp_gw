@@ -28,8 +28,6 @@ import java.nio.channels.DatagramChannel;
  */
 public class CandidatePair {
 
-    // TODO add references to local and remote candidate
-
     private final DatagramChannel channel;
     private final int componentId;
 
@@ -38,15 +36,15 @@ public class CandidatePair {
         this.channel = channel;
     }
 
-    public int getComponentId ( ) {
+    public int getComponentId () {
         return this.componentId;
     }
 
-    public DatagramChannel getChannel ( ) {
+    public DatagramChannel getChannel () {
         return this.channel;
     }
 
-    public int getLocalPort ( ) {
+    public int getLocalPort () {
         try {
             return ((InetSocketAddress) this.channel.getLocalAddress()).getPort();
         } catch (IOException e) {
@@ -54,7 +52,7 @@ public class CandidatePair {
         }
     }
 
-    public String getLocalAddress ( ) {
+    public String getLocalAddress () {
         try {
             return ((InetSocketAddress) this.channel.getLocalAddress()).getHostName();
         } catch (IOException e) {
@@ -62,7 +60,7 @@ public class CandidatePair {
         }
     }
 
-    public int getRemotePort ( ) {
+    public int getRemotePort () {
         try {
             return ((InetSocketAddress) this.channel.getRemoteAddress()).getPort();
         } catch (IOException e) {
@@ -70,7 +68,7 @@ public class CandidatePair {
         }
     }
 
-    public String getRemoteAddress ( ) {
+    public String getRemoteAddress () {
         try {
             return ((InetSocketAddress) this.channel.getRemoteAddress()).getHostName();
         } catch (IOException e) {

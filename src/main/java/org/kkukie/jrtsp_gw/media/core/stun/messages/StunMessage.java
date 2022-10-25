@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-// TODO Implement STUN Properties. See StackProperties from ice4j - hrosa
+// Implement STUN Properties. See StackProperties from ice4j - hrosa
 public class StunMessage {
 
 	private static final Logger logger = LoggerFactory.getLogger(StunMessage.class.getName());

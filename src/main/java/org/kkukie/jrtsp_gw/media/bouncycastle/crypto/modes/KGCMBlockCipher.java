@@ -116,7 +116,7 @@ public class KGCMBlockCipher
             throw new IllegalArgumentException("Invalid parameter passed");
         }
 
-        // TODO Nonce re-use check (sample code from GCMBlockCipher)
+        // Nonce re-use check (sample code from GCMBlockCipher)
 //        if (forEncryption)
 //        {
 //            if (nonce != null && Arrays.areEqual(nonce, newNonce))
@@ -198,7 +198,7 @@ public class KGCMBlockCipher
             throw new InvalidCipherTextException("data too short");
         }
 
-        // TODO Total blocks restriction in GCM mode (extend limit naturally for larger block sizes?)
+        // Total blocks restriction in GCM mode (extend limit naturally for larger block sizes?)
 
         // Set up the multiplier
         {

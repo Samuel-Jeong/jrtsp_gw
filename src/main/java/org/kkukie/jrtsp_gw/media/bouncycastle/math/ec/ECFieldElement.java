@@ -230,7 +230,7 @@ public abstract class ECFieldElement
 
         public ECFieldElement invert()
         {
-            // TODO Modular inversion can be faster for a (Generalized) Mersenne Prime.
+            // Modular inversion can be faster for a (Generalized) Mersenne Prime.
             return new Fp(q, r, modInverse(x));
         }
 
@@ -271,7 +271,7 @@ public abstract class ECFieldElement
                     return checkSqrt(new Fp(q, r, t2));
                 }
 
-                // TODO This is constant and could be precomputed
+                // This is constant and could be precomputed
                 BigInteger t4 = ECConstants.TWO.modPow(q.shiftRight(2), q);
 
                 BigInteger y = modMult(t2, t4);
@@ -328,7 +328,7 @@ public abstract class ECFieldElement
             BigInteger  Q,
             BigInteger  k)
         {
-            // TODO Research and apply "common-multiplicand multiplication here"
+            // Research and apply "common-multiplicand multiplication here"
 
             int n = k.bitLength();
             int s = k.getLowestSetBit();

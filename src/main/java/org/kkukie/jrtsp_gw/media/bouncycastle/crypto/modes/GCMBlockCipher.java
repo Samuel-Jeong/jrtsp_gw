@@ -150,7 +150,7 @@ public class GCMBlockCipher
             lastKey = keyParam.getKey();
         }
 
-        // TODO Restrict macSize to 16 if nonce length not 12?
+        // Restrict macSize to 16 if nonce length not 12?
 
         // Cipher always used in forward mode
         // if keyParam is null we're reusing the last key.

@@ -334,7 +334,7 @@ public class DSAParametersGenerator
     private boolean isProbablePrime(BigInteger x)
     {
         /*
-         * TODO Use Primes class for FIPS 186-4 C.3 primality checking - but it breaks existing
+         * Use Primes class for FIPS 186-4 C.3 primality checking - but it breaks existing
          * tests using FixedSecureRandom
          */
 //        return !Primes.hasAnySmallFactors(x) && Primes.isMRProbablePrime(x, random, iterations);

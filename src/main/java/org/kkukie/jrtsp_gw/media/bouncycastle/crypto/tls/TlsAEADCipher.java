@@ -21,7 +21,7 @@ public class TlsAEADCipher
 
     protected TlsContext context;
     protected int macSize;
-    // TODO SecurityParameters.record_iv_length
+    // SecurityParameters.record_iv_length
     protected int record_iv_length;
 
     protected AEADBlockCipher encryptCipher;
@@ -47,7 +47,7 @@ public class TlsAEADCipher
 
         this.nonceMode = nonceMode;
 
-        // TODO SecurityParameters.fixed_iv_length
+        // SecurityParameters.fixed_iv_length
         int fixed_iv_length;
 
         switch (nonceMode)
@@ -115,7 +115,7 @@ public class TlsAEADCipher
 
     public int getPlaintextLimit(int ciphertextLimit)
     {
-        // TODO We ought to be able to ask the decryptCipher (independently of it's current state!)
+        // We ought to be able to ask the decryptCipher (independently of it's current state!)
         return ciphertextLimit - macSize - record_iv_length;
     }
 

@@ -220,7 +220,7 @@ public class SRTCPCryptoContext {
      * we cannot know if the CryptoContext was used and the application called
      * deriveSrtpKeys(...) tah would have cleaned the key data.
      */
-    public void close ( ) {
+    public void close () {
         Arrays.fill(masterKey, (byte) 0);
         Arrays.fill(masterSalt, (byte) 0);
     }
@@ -230,7 +230,7 @@ public class SRTCPCryptoContext {
      *
      * @return the authentication tag length of this SRTP cryptographic context
      */
-    public int getAuthTagLength ( ) {
+    public int getAuthTagLength () {
         return policy.getAuthTagLength();
     }
 
@@ -239,7 +239,7 @@ public class SRTCPCryptoContext {
      *
      * @return the MKI length of this SRTP cryptographic context
      */
-    public int getMKILength ( ) {
+    public int getMKILength () {
         if (mki != null) {
             return mki.length;
         }
@@ -251,7 +251,7 @@ public class SRTCPCryptoContext {
      *
      * @return the SSRC of this SRTP cryptographic context
      */
-    public long getSSRC ( ) {
+    public long getSSRC () {
         return ssrcCtx;
     }
 
@@ -523,7 +523,7 @@ public class SRTCPCryptoContext {
     /**
      * Derives the srtcp session keys from the master key.
      */
-    public void deriveSrtcpKeys ( ) {
+    public void deriveSrtcpKeys () {
         // compute the session encryption key
         byte label = 3;
         computeIv(label);

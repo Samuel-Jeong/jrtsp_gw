@@ -16,7 +16,7 @@ public class SecurityParameters
     byte[] pskIdentity = null;
     byte[] srpIdentity = null;
 
-    // TODO Keep these internal, since it's maybe not the ideal place for them
+    // Keep these internal, since it's maybe not the ideal place for them
     short maxFragmentLength = -1;
     boolean truncatedHMac = false;
     boolean encryptThenMAC = false;

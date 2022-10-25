@@ -48,7 +48,7 @@ public class RTPFormats {
     /**
      * Creates new format collection with default size.
      */
-    public RTPFormats ( ) {
+    public RTPFormats () {
         this.rtpFormats = new ArrayList<>(size);
     }
 
@@ -61,7 +61,7 @@ public class RTPFormats {
         this.rtpFormats = new ArrayList<>(size);
     }
 
-    public int getLen ( ) {
+    public int getLen () {
         return this.rtpFormats.size();
     }
 
@@ -92,13 +92,13 @@ public class RTPFormats {
         formats.remove(rtpFormat.getFormat());
     }
 
-    public void clean ( ) {
+    public void clean () {
         rtpFormats.clear();
         formats.clean();
         cursor = 0;
     }
 
-    public int size ( ) {
+    public int size () {
         return rtpFormats.size();
     }
 
@@ -127,12 +127,12 @@ public class RTPFormats {
         return null;
     }
 
-    public RTPFormat[] toArray ( ) {
+    public RTPFormat[] toArray () {
         RTPFormat[] fmts = new RTPFormat[rtpFormats.size()];
         return rtpFormats.toArray(fmts);
     }
 
-    public Formats getFormats ( ) {
+    public Formats getFormats () {
         return formats;
     }
 
@@ -167,19 +167,19 @@ public class RTPFormats {
         return null;
     }
 
-    public boolean isEmpty ( ) {
+    public boolean isEmpty () {
         return rtpFormats.isEmpty();
     }
 
-    public void rewind ( ) {
+    public void rewind () {
         cursor = 0;
     }
 
-    public boolean hasMore ( ) {
+    public boolean hasMore () {
         return cursor != rtpFormats.size();
     }
 
-    public RTPFormat next ( ) {
+    public RTPFormat next () {
         return rtpFormats.get(cursor++);
     }
 
@@ -198,7 +198,7 @@ public class RTPFormats {
     }
 
     @Override
-    public String toString ( ) {
+    public String toString () {
         StringBuilder buffer = new StringBuilder();
         buffer.append("RTPFormats{");
 

@@ -66,7 +66,7 @@ public class DtlsSrtpServerProvider {
         this.algorithmCertificate = algorithmCertificate;
     }
 
-    public DtlsSrtpServer provide ( ) {
+    public DtlsSrtpServer provide () {
         DtlsSrtpServer server = new DtlsSrtpServer(minVersion, maxVersion, cipherSuites, certificatePaths, keyPath, algorithmCertificate);
         return server;
     }

@@ -158,7 +158,7 @@ public class RFC4519Style
         DefaultLookUp.put("x121address", x121Address);
         DefaultLookUp.put("x500uniqueidentifier", x500UniqueIdentifier);
 
-        // TODO: need to add correct matching for equality comparisons.
+        // Need to add correct matching for equality comparisons.
     }
 
     /**

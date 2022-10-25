@@ -27,7 +27,7 @@ package org.kkukie.jrtsp_gw.media.dtls;
  */
 public interface DtlsListener {
 
-    void onDtlsHandshakeComplete ( );
+    void onDtlsHandshakeComplete ();
 
     void onDtlsHandshakeFailed (Throwable e);
 

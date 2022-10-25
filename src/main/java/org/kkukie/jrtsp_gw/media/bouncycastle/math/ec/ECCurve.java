@@ -243,7 +243,7 @@ public abstract class ECCurve
             return getInfinity();
         }
 
-        // TODO Default behaviour could be improved if the two curves have the same coordinate system by copying any Z coordinates.
+        // Default behaviour could be improved if the two curves have the same coordinate system by copying any Z coordinates.
         p = p.normalize();
 
         return createPoint(p.getXCoord().toBigInteger(), p.getYCoord().toBigInteger(), p.withCompression);

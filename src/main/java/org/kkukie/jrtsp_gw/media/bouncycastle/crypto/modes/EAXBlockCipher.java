@@ -161,7 +161,7 @@ public class EAXBlockCipher
     private void reset(
         boolean clearMac)
     {
-        cipher.reset(); // TODO Redundant since the mac will reset it?
+        cipher.reset(); // Redundant since the mac will reset it?
         mac.reset();
 
         bufOff = 0;
@@ -337,7 +337,7 @@ public class EAXBlockCipher
             {
                 throw new OutputLengthException("Output buffer is too short");
             }
-            // TODO Could move the processByte(s) calls to here
+            // Could move the processByte(s) calls to here
 //            initCipher();
 
             int size;

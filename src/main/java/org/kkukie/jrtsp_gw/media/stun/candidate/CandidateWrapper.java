@@ -27,6 +27,6 @@ package org.kkukie.jrtsp_gw.media.stun.candidate;
  */
 public interface CandidateWrapper {
 
-    IceCandidate getCandidate ( );
+    IceCandidate getCandidate ();
 
 }

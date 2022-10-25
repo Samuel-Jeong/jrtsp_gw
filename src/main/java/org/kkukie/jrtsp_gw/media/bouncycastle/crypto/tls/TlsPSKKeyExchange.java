@@ -289,7 +289,7 @@ public class TlsPSKKeyExchange
             byte[] encryptedPreMasterSecret;
             if (TlsUtils.isSSL(context))
             {
-                // TODO Do any SSLv3 clients actually include the length?
+                // Do any SSLv3 clients actually include the length?
                 encryptedPreMasterSecret = Streams.readAll(input);
             }
             else
@@ -347,7 +347,7 @@ public class TlsPSKKeyExchange
 
     protected RSAKeyParameters validateRSAPublicKey(RSAKeyParameters key) throws IOException
     {
-        // TODO What is the minimum bit length required?
+        // What is the minimum bit length required?
         // key.getModulus().bitLength();
 
         if (!key.getExponent().isProbablePrime(2))

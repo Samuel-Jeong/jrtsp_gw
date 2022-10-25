@@ -76,6 +76,9 @@ dtls:
   keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
   certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
 
+stun:
+  harvestIntervalMs: 3000
+
 ---
 
 spring:
@@ -150,6 +153,9 @@ sdp:
 dtls:
   keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
   certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
+
+stun:
+  harvestIntervalMs: 3000
 
 ---
 
@@ -227,5 +233,8 @@ sdp:
 dtls:
   keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
   certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
+
+stun:
+  harvestIntervalMs: 3000
 
 ---

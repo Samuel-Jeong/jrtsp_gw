@@ -117,7 +117,7 @@ public abstract class AbstractTlsClient
          */
         if (TlsUtils.isSignatureAlgorithmsExtensionAllowed(clientVersion))
         {
-            // TODO Provide a way for the user to specify the acceptable hash/signature algorithms.
+            // Provide a way for the user to specify the acceptable hash/signature algorithms.
 
             this.supportedSignatureAlgorithms = TlsUtils.getDefaultSupportedSignatureAlgorithms();
 
@@ -135,7 +135,7 @@ public abstract class AbstractTlsClient
              * Curves Extension and the Supported Point Formats Extension.
              */
             /*
-             * TODO Could just add all the curves since we support them all, but users may not want
+             * Could just add all the curves since we support them all, but users may not want
              * to use unnecessarily large fields. Need configuration options.
              */
             this.namedCurves = new int[]{ NamedCurve.secp256r1, NamedCurve.secp384r1 };

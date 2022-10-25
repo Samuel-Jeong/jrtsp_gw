@@ -94,7 +94,7 @@ class DTLSReliableHandshake
 
         byte[] buf = null;
 
-        // TODO Check the conditions under which we should reset this
+        // Check the conditions under which we should reset this
         int readTimeoutMillis = 1000;
 
         for (;;)
@@ -196,7 +196,7 @@ class DTLSReliableHandshake
             Integer key = (Integer)e.nextElement();
             if (key.intValue() >= next_receive_seq)
             {
-                // TODO Should this be considered an error?
+                // Should this be considered an error?
             }
         }
     }
@@ -336,10 +336,10 @@ class DTLSReliableHandshake
         int sendLimit = recordLayer.getSendLimit();
         int fragmentLimit = sendLimit - MESSAGE_HEADER_LENGTH;
 
-        // TODO Support a higher minimum fragment size?
+        // Support a higher minimum fragment size?
         if (fragmentLimit < 1)
         {
-            // TODO Should we be throwing an exception here?
+            // Should we be throwing an exception here?
             throw new TlsFatalAlert(AlertDescription.internal_error);
         }
 

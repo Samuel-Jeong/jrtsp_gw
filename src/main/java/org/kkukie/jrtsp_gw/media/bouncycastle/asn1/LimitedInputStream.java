@@ -21,7 +21,7 @@ abstract class LimitedInputStream
 
     int getRemaining()
     {
-        // TODO: maybe one day this can become more accurate
+        // maybe one day this can become more accurate
         return _limit;
     }
     

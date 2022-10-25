@@ -323,7 +323,7 @@ public class RtcpHandler implements PacketHandler {
                      */
                     int padding = (packet[offset] & 0x20) >> 5;
                     /*
-                     * TODO The length fields of the individual RTCP packets must add up to the overall length of the
+                     * The length fields of the individual RTCP packets must add up to the overall length of the
                      * compound RTCP packet as received. This is a fairly strong check.
                      */
                     return padding == 0;
@@ -582,7 +582,6 @@ public class RtcpHandler implements PacketHandler {
         return this.getPipelinePriority() - o.getPipelinePriority();
     }
 
-    // TODO
     public void sendRtcpPacket (RtcpPacketType rtcpPacketType) {
         TxTask txTask = new TxTask(rtcpPacketType);
         txTask.run();

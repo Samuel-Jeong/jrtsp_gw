@@ -47,11 +47,11 @@ public enum AlgorithmCertificate {
         this.clientCertificate = clientCertificate;
     }
 
-    public short getSignatureAlgorithm ( ) {
+    public short getSignatureAlgorithm () {
         return signatureAlgorithm;
     }
 
-    public short getClientCertificate ( ) {
+    public short getClientCertificate () {
         return clientCertificate;
     }
 

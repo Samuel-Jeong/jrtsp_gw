@@ -476,7 +476,7 @@ public class TlsECCUtils
         return (ECPrivateKeyParameters) kp.getPrivate();
     }
 
-    // TODO Refactor around ServerECDHParams before making this public
+    // Refactor around ServerECDHParams before making this public
     static ECPrivateKeyParameters generateEphemeralServerKeyExchange(SecureRandom random, int[] namedCurves,
         short[] ecPointFormats, OutputStream output) throws IOException
     {
@@ -484,7 +484,7 @@ public class TlsECCUtils
         int namedCurve = -1;
         if (namedCurves == null)
         {
-            // TODO Let the peer choose the default named curve
+            // Let the peer choose the default named curve
             namedCurve = NamedCurve.secp256r1;
         }
         else
@@ -541,7 +541,7 @@ public class TlsECCUtils
 
     public static ECPublicKeyParameters validateECPublicKey(ECPublicKeyParameters key) throws IOException
     {
-        // TODO Check RFC 4492 for validation
+        // Check RFC 4492 for validation
         return key;
     }
 
@@ -566,7 +566,7 @@ public class TlsECCUtils
 
     public static BigInteger readECParameter(InputStream input) throws IOException
     {
-        // TODO Are leading zeroes okay here?
+        // Are leading zeroes okay here?
         return new BigInteger(1, TlsUtils.readOpaque8(input));
     }
 

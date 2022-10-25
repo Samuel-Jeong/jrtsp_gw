@@ -149,7 +149,7 @@ public class ASN1InputStream
 
         if (isConstructed)
         {
-            // TODO There are other tags that may be constructed (e.g. BIT_STRING)
+            // There are other tags that may be constructed (e.g. BIT_STRING)
             switch (tagNo)
             {
                 case OCTET_STRING:
@@ -252,7 +252,7 @@ public class ASN1InputStream
                 return new BERTaggedObjectParser(true, tagNo, sp).getLoadedObject();
             }
 
-            // TODO There are other tags that may be constructed (e.g. BIT_STRING)
+            // There are other tags that may be constructed (e.g. BIT_STRING)
             switch (tagNo)
             {
                 case OCTET_STRING:

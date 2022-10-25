@@ -29,7 +29,7 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.asn1.*;
  *     otherRevInfo ANY DEFINED BY otherRevInfoFormat }
  * </pre>
  * <p>
- * TODO: RevocationInfoChoices / RevocationInfoChoice.
+ *  RevocationInfoChoices / RevocationInfoChoice.
  *       Constructor using CertificateSet, CertificationInfoChoices
  */
 public class OriginatorInfo

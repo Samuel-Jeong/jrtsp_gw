@@ -14,7 +14,7 @@ public class FixedPointCombMultiplier extends AbstractECMultiplier
         if (k.bitLength() > size)
         {
             /*
-             * TODO The comb works best when the scalars are less than the (possibly unknown) order.
+             * The comb works best when the scalars are less than the (possibly unknown) order.
              * Still, if we want to handle larger scalars, we could allow customization of the comb
              * size, or alternatively we could deal with the 'extra' bits either by running the comb
              * multiple times as necessary, or by using an alternative multiplier as prelude.

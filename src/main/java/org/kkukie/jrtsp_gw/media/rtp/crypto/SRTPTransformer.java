@@ -124,7 +124,7 @@ public class SRTPTransformer implements PacketTransformer {
      * The close functions closes all stored crypto contexts. This deletes key
      * data and forces a cleanup of the crypto contexts.
      */
-    public void close ( ) {
+    public void close () {
         forwardEngine.close();
         if (forwardEngine != reverseEngine) {
             reverseEngine.close();

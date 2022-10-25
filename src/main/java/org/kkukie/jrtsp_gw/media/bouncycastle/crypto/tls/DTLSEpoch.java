@@ -26,7 +26,7 @@ class DTLSEpoch
 
     long allocateSequenceNumber()
     {
-        // TODO Check for overflow
+        // Check for overflow
         return sequenceNumber++;
     }
 

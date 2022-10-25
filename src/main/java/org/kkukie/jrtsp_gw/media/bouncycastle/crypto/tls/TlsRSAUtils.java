@@ -31,7 +31,7 @@ public class TlsRSAUtils
 
             if (TlsUtils.isSSL(context))
             {
-                // TODO Do any SSLv3 servers actually expect the length?
+                // Do any SSLv3 servers actually expect the length?
                 output.write(encryptedPreMasterSecret);
             }
             else
@@ -58,7 +58,7 @@ public class TlsRSAUtils
          */
         ProtocolVersion clientVersion = context.getClientVersion();
 
-        // TODO Provide as configuration option?
+        // Provide as configuration option?
         boolean versionNumberCheckDisabled = false;
 
         /*

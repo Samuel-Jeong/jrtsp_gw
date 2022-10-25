@@ -494,7 +494,7 @@ public class TlsClientProtocol
                 this.keyExchange.validateCertificateRequest(this.certificateRequest);
 
                 /*
-                 * TODO Give the client a chance to immediately select the CertificateVerify hash
+                 * Give the client a chance to immediately select the CertificateVerify hash
                  * algorithm here to avoid tracking the other hash algorithms unnecessarily?
                  */
                 TlsUtils.trackHashAlgorithms(this.recordStream.getHandshakeHash(),
@@ -795,7 +795,7 @@ public class TlsClientProtocol
             this.securityParameters.truncatedHMac = TlsExtensionsUtils.hasTruncatedHMacExtension(sessionServerExtensions);
 
             /*
-             * TODO It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be sent in
+             * It's surprising that there's no provision to allow a 'fresh' CertificateStatus to be sent in
              * a session resumption handshake.
              */
             this.allowCertificateStatus = !this.resumedSession
@@ -847,7 +847,7 @@ public class TlsClientProtocol
         getContextAdmin().setClientVersion(client_version);
 
         /*
-         * TODO RFC 5077 3.4. When presenting a ticket, the client MAY generate and include a
+         * RFC 5077 3.4. When presenting a ticket, the client MAY generate and include a
          * Session ID in the TLS ClientHello.
          */
         byte[] session_id = TlsUtils.EMPTY_BYTES;
@@ -905,7 +905,7 @@ public class TlsClientProtocol
 
             if (noRenegExt && noRenegSCSV)
             {
-                // TODO Consider whether to default to a client extension instead
+                // Consider whether to default to a client extension instead
                 this.offeredCipherSuites = Arrays.append(offeredCipherSuites, CipherSuite.TLS_EMPTY_RENEGOTIATION_INFO_SCSV);
             }
 

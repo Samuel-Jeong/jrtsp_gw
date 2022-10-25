@@ -47,7 +47,7 @@ public class WNafL2RMultiplier extends AbstractECMultiplier
             {
                 int highest = LongArray.bitLengths[n];
 
-                // TODO Get addition/doubling cost ratio from curve and compare to 'scale' to see if worth substituting?
+                // Get addition/doubling cost ratio from curve and compare to 'scale' to see if worth substituting?
                 int scale = width - highest;
                 int lowBits =  n ^ (1 << (highest - 1));
 

@@ -81,7 +81,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
     }
 
     public void notifyAlertRaised (short alertLevel, short alertDescription, String message, Exception cause) {
-        logger.info("DTLS: notifyAlertRaised");
+        logger.debug("DTLS: notifyAlertRaised");
         if (alertLevel == AlertLevel.fatal) {
             logger.error("DTLS server raised alert (AlertLevel.{}, AlertDescription.{}, message='{}' {})", alertLevel, alertDescription, message, cause);
         } else {
@@ -90,7 +90,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
     }
 
     public void notifyAlertReceived (short alertLevel, short alertDescription) {
-        logger.info("DTLS: notifyAlertReceived");
+        logger.debug("DTLS: notifyAlertReceived");
         if (alertLevel == AlertLevel.fatal) {
             logger.error("DTLS server received alert (AlertLevel.{}, AlertDescription.{})", alertLevel, alertDescription);
         } else {
@@ -99,9 +99,9 @@ public class DtlsSrtpServer extends DefaultTlsServer {
     }
 
     @Override
-    public int getSelectedCipherSuite ( ) throws IOException {
+    public int getSelectedCipherSuite () throws IOException {
         /*
-         * TODO RFC 5246 7.4.3. In order to negotiate correctly, the server MUST check any candidate cipher suites against the
+         * RFC 5246 7.4.3. In order to negotiate correctly, the server MUST check any candidate cipher suites against the
          * "signature_algorithms" extension before selecting them. This is somewhat inelegant but is a compromise designed to
          * minimize changes to the original cipher suite design.
          */
@@ -112,7 +112,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
          * must be negotiated only if the server can successfully complete the handshake while using the curves and point
          * formats supported by the client [...].
          */
-        logger.info("DTLS: getSelectedCipherSuite");
+        logger.debug("DTLS: getSelectedCipherSuite");
         boolean eccCipherSuitesEnabled = supportsClientECCCapabilities(this.namedCurves, this.clientECPointFormats);
 
         int[] cipherSuites = getCipherSuites();
@@ -128,7 +128,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
         throw new TlsFatalAlert(AlertDescription.handshake_failure);
     }
 
-    public CertificateRequest getCertificateRequest ( ) {
+    public CertificateRequest getCertificateRequest () {
         Vector<SignatureAndHashAlgorithm> serverSigAlgs = null;
         if (org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.TlsUtils.isSignatureAlgorithmsExtensionAllowed(serverVersion)) {
             short[] hashAlgorithms = new short[]{HashAlgorithm.sha512, HashAlgorithm.sha384, HashAlgorithm.sha256, HashAlgorithm.sha224, HashAlgorithm.sha1};
@@ -151,33 +151,33 @@ public class DtlsSrtpServer extends DefaultTlsServer {
         }
     }
 
-    protected ProtocolVersion getMaximumVersion ( ) {
+    protected ProtocolVersion getMaximumVersion () {
         return maxVersion;
     }
 
-    protected ProtocolVersion getMinimumVersion ( ) {
+    protected ProtocolVersion getMinimumVersion () {
         return minVersion;
     }
 
     @Override
-    protected TlsSignerCredentials getECDSASignerCredentials ( ) throws IOException {
-        logger.info("DTLS: TlsSignerCredentials");
+    protected TlsSignerCredentials getECDSASignerCredentials () throws IOException {
+        logger.debug("DTLS: TlsSignerCredentials");
         return TlsUtils.loadSignerCredentials(context, certificateResources, keyResource, new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.ecdsa));
     }
 
     @Override
-    protected TlsEncryptionCredentials getRSAEncryptionCredentials ( ) throws IOException {
-        logger.info("DTLS: getRSAEncryptionCredentials");
+    protected TlsEncryptionCredentials getRSAEncryptionCredentials () throws IOException {
+        logger.debug("DTLS: getRSAEncryptionCredentials");
         return TlsUtils.loadEncryptionCredentials(context, certificateResources, keyResource);
     }
 
     @SuppressWarnings("unchecked")
-    protected TlsSignerCredentials getRSASignerCredentials ( ) throws IOException {
+    protected TlsSignerCredentials getRSASignerCredentials () throws IOException {
         /*
-         * TODO Note that this code fails to provide default value for the client supported
-         * algorithms if it wasn't sent.
+         * Note that this code fails to provide default value for the client supported algorithms if it wasn't sent.
+         * > Current supported algorithms : RSA
          */
-        logger.info("DTLS: getRSASignerCredentials");
+        logger.debug("DTLS: getRSASignerCredentials");
         SignatureAndHashAlgorithm signatureAndHashAlgorithm = null;
         Vector<SignatureAndHashAlgorithm> sigAlgs = supportedSignatureAlgorithms;
         if (sigAlgs != null) {
@@ -198,8 +198,8 @@ public class DtlsSrtpServer extends DefaultTlsServer {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Hashtable<Integer, byte[]> getServerExtensions ( ) throws IOException {
-        logger.info("DTLS: getServerExtensions");
+    public Hashtable<Integer, byte[]> getServerExtensions () throws IOException {
+        logger.debug("DTLS: getServerExtensions");
         Hashtable<Integer, byte[]> serverExtensions = (Hashtable<Integer, byte[]>) super.getServerExtensions();
         if (TlsSRTPUtils.getUseSRTPExtension(serverExtensions) == null) {
             if (serverExtensions == null) {
@@ -213,7 +213,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
     @SuppressWarnings("rawtypes")
     @Override
     public void processClientExtensions (Hashtable newClientExtensions) throws IOException {
-        logger.info("DTLS: processClientExtensions");
+        logger.debug("DTLS: processClientExtensions");
         super.processClientExtensions(newClientExtensions);
 
         // set to some reasonable default value
@@ -255,7 +255,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
     /**
      * @return the shared secret key that will be used for the SRTP session
      */
-    public void prepareSrtpSharedSecret ( ) {
+    public void prepareSrtpSharedSecret () {
         logger.debug("DtlsSrtpServer: Preparing SRTP Shared Secret...");
         SRTPParameters srtpParams = SRTPParameters.getSrtpParametersForProfile(serverSrtpData.getProtectionProfiles()[0]);
         final int keyLen = srtpParams.getCipherKeyLength();
@@ -310,27 +310,27 @@ public class DtlsSrtpServer extends DefaultTlsServer {
         logger.debug("DtlsSrtpServer: Done.");
     }
 
-    public SRTPPolicy getSrtpPolicy ( ) {
+    public SRTPPolicy getSrtpPolicy () {
         return srtpPolicy;
     }
 
-    public SRTPPolicy getSrtcpPolicy ( ) {
+    public SRTPPolicy getSrtcpPolicy () {
         return srtcpPolicy;
     }
 
-    public byte[] getSrtpMasterServerKey ( ) {
+    public byte[] getSrtpMasterServerKey () {
         return srtpMasterServerKey;
     }
 
-    public byte[] getSrtpMasterServerSalt ( ) {
+    public byte[] getSrtpMasterServerSalt () {
         return srtpMasterServerSalt;
     }
 
-    public byte[] getSrtpMasterClientKey ( ) {
+    public byte[] getSrtpMasterClientKey () {
         return srtpMasterClientKey;
     }
 
-    public byte[] getSrtpMasterClientSalt ( ) {
+    public byte[] getSrtpMasterClientSalt () {
         return srtpMasterClientSalt;
     }
 
@@ -353,7 +353,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
     }
 
     @Override
-    public int[] getCipherSuites ( ) {
+    public int[] getCipherSuites () {
         int[] cipherSuites = new int[this.cipherSuites.length];
         for (int i = 0; i < this.cipherSuites.length; i++) {
             cipherSuites[i] = this.cipherSuites[i].getValue();

@@ -54,7 +54,7 @@ public abstract class ASN1ApplicationSpecific
 
     protected static int getLengthOfHeader(byte[] data)
     {
-        int length = data[1] & 0xff; // TODO: assumes 1 byte tag
+        int length = data[1] & 0xff; // Must assumes 1 byte tag
 
         if (length == 0x80)
         {

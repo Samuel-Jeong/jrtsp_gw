@@ -48,7 +48,7 @@ public class RawPacket {
     /**
      * Initializes a new empty <tt>RawPacket</tt> instance.
      */
-    public RawPacket ( ) {
+    public RawPacket () {
         this.buffer = ByteBuffer.allocateDirect(RtpPacket.RTP_PACKET_MAX_SIZE);
     }
 
@@ -76,7 +76,7 @@ public class RawPacket {
         this.buffer.rewind();
     }
 
-    public byte[] getData ( ) {
+    public byte[] getData () {
         this.buffer.rewind();
         byte[] data = new byte[this.buffer.limit()];
         this.buffer.get(data, 0, data.length);
@@ -111,7 +111,7 @@ public class RawPacket {
      *
      * @return buffer containing the content of this packet
      */
-    public ByteBuffer getBuffer ( ) {
+    public ByteBuffer getBuffer () {
         return this.buffer;
     }
 
@@ -122,7 +122,7 @@ public class RawPacket {
      * @return <tt>true</tt> if the extension bit of this packet has been set
      * and <tt>false</tt> otherwise.
      */
-    public boolean getExtensionBit ( ) {
+    public boolean getExtensionBit () {
         buffer.rewind();
         return (buffer.get() & 0x10) == 0x10;
     }
@@ -132,7 +132,7 @@ public class RawPacket {
      *
      * @return the length of the extensions currently added to this packet.
      */
-    public int getExtensionLength ( ) {
+    public int getExtensionLength () {
         int length = 0;
         if (getExtensionBit()) {
             // the extension length comes after the RTP header, the CSRC list,
@@ -149,7 +149,7 @@ public class RawPacket {
      *
      * @return the CSRC count for this <tt>RawPacket</tt>.
      */
-    public int getCsrcCount ( ) {
+    public int getCsrcCount () {
         this.buffer.rewind();
         return (this.buffer.get() & 0x0f);
     }
@@ -159,7 +159,7 @@ public class RawPacket {
      *
      * @return RTP header length from source RTP packet
      */
-    public int getHeaderLength ( ) {
+    public int getHeaderLength () {
         int length = FIXED_HEADER_SIZE + 4 * getCsrcCount();
         if (getExtensionBit()) {
             length += EXT_HEADER_SIZE + getExtensionLength();
@@ -172,7 +172,7 @@ public class RawPacket {
      *
      * @return length of this packet's data
      */
-    public int getLength ( ) {
+    public int getLength () {
         return this.buffer.limit();
     }
 
@@ -181,7 +181,7 @@ public class RawPacket {
      *
      * @return RTP padding size from source RTP packet
      */
-    public int getPaddingSize ( ) {
+    public int getPaddingSize () {
         buffer.rewind();
         if ((this.buffer.get() & 0x20) == 0) {
             return 0;
@@ -195,7 +195,7 @@ public class RawPacket {
      * @return an array of <tt>byte</tt>s which represents the RTP payload of
      * this RTP packet
      */
-    public byte[] getPayload ( ) {
+    public byte[] getPayload () {
         return readRegion(getHeaderLength(), getPayloadLength());
     }
 
@@ -204,7 +204,7 @@ public class RawPacket {
      *
      * @return RTP payload length from source RTP packet
      */
-    public int getPayloadLength ( ) {
+    public int getPayloadLength () {
         return getLength() - getHeaderLength();
     }
 
@@ -213,7 +213,7 @@ public class RawPacket {
      *
      * @return RTP payload type of source RTP packet
      */
-    public byte getPayloadType ( ) {
+    public byte getPayloadType () {
         buffer.rewind();
         return (byte) (this.buffer.get(1) & (byte) 0x7F);
     }
@@ -223,7 +223,7 @@ public class RawPacket {
      *
      * @return RTP SSRC from source RTP packet
      */
-    public long getRTCPSSRC ( ) {
+    public long getRTCPSSRC () {
         return readUnsignedIntAsLong(4);
     }
 
@@ -232,7 +232,7 @@ public class RawPacket {
      *
      * @return RTP sequence num from source packet
      */
-    public int getSequenceNumber ( ) {
+    public int getSequenceNumber () {
         return readUnsignedShortAsInt(2);
     }
 
@@ -252,7 +252,7 @@ public class RawPacket {
      *
      * @return RTP SSRC from source RTP packet
      */
-    public long getSSRC ( ) {
+    public long getSSRC () {
         return readUnsignedIntAsLong(8);
     }
 
@@ -261,7 +261,7 @@ public class RawPacket {
      *
      * @return the timestamp for this RTP <tt>RawPacket</tt>.
      */
-    public long getTimestamp ( ) {
+    public long getTimestamp () {
         return readInt(4);
     }
 

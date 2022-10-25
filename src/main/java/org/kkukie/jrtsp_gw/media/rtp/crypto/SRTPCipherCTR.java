@@ -45,7 +45,7 @@ public class SRTPCipherCTR {
     private final byte[] tmpCipherBlock = new byte[BLKLEN];
     private byte[] streamBuf = new byte[1024];
 
-    public SRTPCipherCTR ( ) {
+    public SRTPCipherCTR () {
     }
 
     public void process (BlockCipher cipher, ByteBuffer data, int off, int len, byte[] iv) {

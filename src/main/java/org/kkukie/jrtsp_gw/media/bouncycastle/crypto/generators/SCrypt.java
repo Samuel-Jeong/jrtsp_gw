@@ -86,7 +86,7 @@ public class SCrypt
             int MFLenWords = MFLenBytes >>> 2;
             for (int BOff = 0; BOff < BLen; BOff += MFLenWords)
             {
-                // TODO These can be done in parallel threads
+                // These can be done in parallel threads
                 SMix(B, BOff, N, r);
             }
 

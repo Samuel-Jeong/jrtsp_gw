@@ -209,7 +209,7 @@ public class TlsDHKeyExchange
 
         if (clientCredentials instanceof TlsAgreementCredentials)
         {
-            // TODO Validate client cert has matching parameters (see 'areCompatibleParameters')?
+            // Validate client cert has matching parameters (see 'areCompatibleParameters')?
 
             this.agreementCredentials = (TlsAgreementCredentials)clientCredentials;
         }
@@ -245,8 +245,8 @@ public class TlsDHKeyExchange
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
 
-        // TODO Extract the public key
-        // TODO If the tlsCertificate is 'fixed', take the public key as dhAgreePublicKey
+        // Extract the public key
+        // If the tlsCertificate is 'fixed', take the public key as dhAgreePublicKey
     }
 
     public void processClientKeyExchange(InputStream input) throws IOException

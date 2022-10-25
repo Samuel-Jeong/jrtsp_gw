@@ -139,7 +139,7 @@ public class SecT163K1Point extends AbstractF2m
         ECFieldElement X3, L3, Z3;
         if (X2.isZero())
         {
-            // TODO This can probably be optimized quite a bit
+            // This can probably be optimized quite a bit
             ECPoint p = this.normalize();
             X1 = p.getXCoord();
             ECFieldElement Y1 = p.getYCoord();

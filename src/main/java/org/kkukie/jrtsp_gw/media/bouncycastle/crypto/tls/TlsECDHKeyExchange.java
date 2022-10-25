@@ -209,7 +209,7 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
 
         if (clientCredentials instanceof TlsAgreementCredentials)
         {
-            // TODO Validate client cert has matching parameters (see 'TlsECCUtils.areOnSameCurve')?
+            // Validate client cert has matching parameters (see 'TlsECCUtils.areOnSameCurve')?
 
             this.agreementCredentials = (TlsAgreementCredentials)clientCredentials;
         }
@@ -239,8 +239,8 @@ public class TlsECDHKeyExchange extends AbstractTlsKeyExchange
             throw new TlsFatalAlert(AlertDescription.unexpected_message);
         }
 
-        // TODO Extract the public key
-        // TODO If the tlsCertificate is 'fixed', take the public key as ecAgreeClientPublicKey
+        // Extract the public key
+        // If the tlsCertificate is 'fixed', take the public key as ecAgreeClientPublicKey
     }
 
     public void processClientKeyExchange(InputStream input) throws IOException

@@ -50,7 +50,7 @@ public class SHA3Digest
     }
 
     /*
-     * TODO Possible API change to support partial-byte suffixes.
+     * Possible API change to support partial-byte suffixes.
      */
     protected int doFinal(byte[] out, int outOff, byte partialByte, int partialBits)
     {
