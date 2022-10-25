@@ -57,6 +57,7 @@ default:
   localRtspListenPort: 8554
   localPortMin: 50000
   localPortMax: 60000
+  rtpBurstBufferCount: 50
 
 sdp:
   version: "0"
@@ -78,6 +79,9 @@ dtls:
 
 stun:
   harvestIntervalMs: 3000
+
+session:
+  maxSessionCount: 1000
 
 ---
 
@@ -149,6 +153,7 @@ sdp:
   sdpLocalIp: "192.168.2.159"
   audioAttributeList: control:trackID=1, ptime:20, sendonly
   videoAttributeList: control:trackID=2, sendonly
+  rtpBurstBufferCount: 50
 
 dtls:
   keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
@@ -156,6 +161,9 @@ dtls:
 
 stun:
   harvestIntervalMs: 3000
+
+session:
+  maxSessionCount: 1000
 
 ---
 
@@ -229,6 +237,7 @@ sdp:
   sdpLocalIp: "192.168.2.159"
   audioAttributeList: control:trackID=1, ptime:20, sendonly
   videoAttributeList: control:trackID=2, sendonly
+  rtpBurstBufferCount: 50
 
 dtls:
   keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
@@ -236,5 +245,8 @@ dtls:
 
 stun:
   harvestIntervalMs: 3000
+
+session:
+  maxSessionCount: 1000
 
 ---

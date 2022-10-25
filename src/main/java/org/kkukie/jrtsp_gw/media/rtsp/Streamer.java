@@ -10,6 +10,7 @@ import io.netty.handler.codec.rtsp.RtspHeaderNames;
 import io.netty.handler.codec.rtsp.RtspHeaderValues;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ntp.TimeStamp;
+import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.media.rtp.RtpPacket;
 import org.kkukie.jrtsp_gw.media.rtsp.base.MediaType;
 import org.kkukie.jrtsp_gw.media.rtsp.netty.NettyChannelManager;
@@ -38,7 +39,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class Streamer {
 
-    private static final int RTP_BURST_BUFFER_COUNT = 50;
+    private final int RTP_BURST_BUFFER_COUNT;
 
     private boolean isRtpBurstDone = false;
     private Queue<RtpDto> rtpBurstBuffer;
@@ -60,6 +61,8 @@ public class Streamer {
 
 
     public Streamer(MediaType mediaType, String callId, String sessionId, String trackId, boolean isTcp, String listenIp, int listenPort) {
+        this.RTP_BURST_BUFFER_COUNT = ConfigManager.getDefaultConfig().getRtpBurstBufferCount();
+
         this.streamInfo = new StreamInfo(
                 mediaType, callId, sessionId, trackId
         );

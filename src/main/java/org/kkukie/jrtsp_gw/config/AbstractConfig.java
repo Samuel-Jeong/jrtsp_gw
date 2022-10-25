@@ -12,4 +12,8 @@ public abstract class AbstractConfig {
         return gson.toJson(this);
     }
 
+    public Gson getGson() {
+        return gson;
+    }
+
 }

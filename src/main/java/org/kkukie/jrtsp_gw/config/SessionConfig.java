@@ -6,17 +6,17 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConfigurationProperties(prefix = "stun")
+@ConfigurationProperties(prefix = "session")
 @Getter
 @Setter
-public class StunConfig extends AbstractConfig {
+public class SessionConfig {
 
-    private int harvestIntervalMs;
+    private int maxSessionCount;
 
     @Override
     public String toString() {
-        return "StunConfig{" +
-                "harvestIntervalMs=" + harvestIntervalMs +
+        return "SessionConfig{" +
+                "maxSessionCount=" + maxSessionCount +
                 '}';
     }
 

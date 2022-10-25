@@ -16,12 +16,14 @@ public class ConfigManager {
         setSdpConfig();
         setDtlsConfig();
         setStunConfig();
+        setSessionConfig();
     }
 
     private static DefaultConfig defaultConfig = null;
     private static SdpConfig sdpConfig = null;
     private static DtlsConfig dtlsConfig = null;
     private static StunConfig stunConfig = null;
+    private static SessionConfig sessionConfig = null;
 
     public void setDefaultConfig() {
         if (defaultConfig == null) {
@@ -36,6 +38,7 @@ public class ConfigManager {
             defaultConfig.setLocalRtspListenPort(configEnv.getIntProperty("default.localRtspListenPort"));
             defaultConfig.setLocalPortMin(configEnv.getIntProperty("default.localPortMin"));
             defaultConfig.setLocalPortMax(configEnv.getIntProperty("default.localPortMax"));
+            defaultConfig.setRtpBurstBufferCount(configEnv.getIntProperty("default.rtpBurstBufferCount"));
             log.debug("DefaultConfig: {}", defaultConfig.toString());
         }
     }
@@ -90,6 +93,18 @@ public class ConfigManager {
 
     public static StunConfig getStunConfig() {
         return stunConfig;
+    }
+
+    public void setSessionConfig() {
+        if (sessionConfig == null) {
+            sessionConfig = new SessionConfig();
+            sessionConfig.setMaxSessionCount(configEnv.getIntProperty("session.maxSessionCount"));
+            log.debug("SessionConfig: {}", sessionConfig.toString());
+        }
+    }
+
+    public static SessionConfig getSessionConfig() {
+        return sessionConfig;
     }
 
 }

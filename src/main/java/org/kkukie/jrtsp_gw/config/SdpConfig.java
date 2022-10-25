@@ -9,6 +9,8 @@ import org.apache.commons.net.ntp.TimeStamp;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component
 @ConfigurationProperties(prefix = "sdp")
 @Getter
@@ -135,6 +137,24 @@ public class SdpConfig extends AbstractConfig {
             log.warn("Fail to load the local sdp.", e);
             return null;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "SdpConfig{" +
+                "version='" + version + '\'' +
+                ", origin='" + origin + '\'' +
+                ", session='" + session + '\'' +
+                ", time='" + time + '\'' +
+                ", connection='" + connection + '\'' +
+                ", audio='" + audio + '\'' +
+                ", audioRtpMap='" + audioRtpMap + '\'' +
+                ", video='" + video + '\'' +
+                ", videoRtpMap='" + videoRtpMap + '\'' +
+                ", sdpLocalIp='" + sdpLocalIp + '\'' +
+                ", audioAttributeList=" + Arrays.toString(audioAttributeList) +
+                ", videoAttributeList=" + Arrays.toString(videoAttributeList) +
+                '}';
     }
 
 }

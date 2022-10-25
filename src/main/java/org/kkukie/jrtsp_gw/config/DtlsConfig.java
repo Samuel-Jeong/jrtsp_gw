@@ -14,4 +14,12 @@ public class DtlsConfig extends AbstractConfig {
     private String keyPath;
     private String certPath;
 
+    @Override
+    public String toString() {
+        return "DtlsConfig{" +
+                "keyPath='" + keyPath + '\'' +
+                ", certPath='" + certPath + '\'' +
+                '}';
+    }
+
 }

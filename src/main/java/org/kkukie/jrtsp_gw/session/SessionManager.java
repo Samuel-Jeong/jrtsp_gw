@@ -1,6 +1,7 @@
 package org.kkukie.jrtsp_gw.session;
 
 import lombok.extern.slf4j.Slf4j;
+import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.session.call.CallInfo;
 import org.kkukie.jrtsp_gw.session.call.ConferenceInfo;
 import org.kkukie.jrtsp_gw.session.call.ConferenceState;
@@ -13,7 +14,7 @@ import java.util.List;
 public class SessionManager {
 
 
-    private static final int MAX_SESSION_COUNT = 100;
+    private final int MAX_SESSION_COUNT;
 
     private static final SessionManager sessionManager = new SessionManager();
 
@@ -21,6 +22,8 @@ public class SessionManager {
     private final HashMap<String, ConferenceInfo> conferenceInfos;
 
     private SessionManager() {
+        this.MAX_SESSION_COUNT = ConfigManager.getSessionConfig().getMaxSessionCount();
+
         callInfos = new HashMap<>();
         conferenceInfos = new HashMap<>();
     }

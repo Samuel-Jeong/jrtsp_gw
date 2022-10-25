@@ -21,5 +21,23 @@ public class DefaultConfig extends AbstractConfig {
     private int localRtspListenPort = 0;
     private int localPortMin = 0;
     private int localPortMax = 0;
+    private int rtpBurstBufferCount = 0;
+
+    @Override
+    public String toString() {
+        return "DefaultConfig{" +
+                "id='" + id + '\'' +
+                ", serverUri='" + serverUri + '\'' +
+                ", applicationName='" + applicationName + '\'' +
+                ", sendBufSize=" + sendBufSize +
+                ", recvBufSize=" + recvBufSize +
+                ", streamThreadPoolSize=" + streamThreadPoolSize +
+                ", localListenIp='" + localListenIp + '\'' +
+                ", localRtspListenPort=" + localRtspListenPort +
+                ", localPortMin=" + localPortMin +
+                ", localPortMax=" + localPortMax +
+                ", rtpBurstBufferCount=" + rtpBurstBufferCount +
+                '}';
+    }
 
 }
