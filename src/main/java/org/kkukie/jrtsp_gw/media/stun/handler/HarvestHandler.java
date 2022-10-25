@@ -10,6 +10,9 @@ import org.kkukie.jrtsp_gw.session.media.MediaInfo;
 
 import java.net.InetSocketAddress;
 import java.util.Queue;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class HarvestHandler {
@@ -17,7 +20,9 @@ public class HarvestHandler {
     private final int STUN_DELAY; // milliseconds
 
     private final String callId;
-    private Thread harvester = null;
+
+    private ScheduledThreadPoolExecutor executor = null;
+    private ScheduledFuture<?> harvesterFuture = null;
 
     public HarvestHandler(String callId) {
         this.callId = callId;
@@ -32,25 +37,23 @@ public class HarvestHandler {
         }
 
         stop();
-        harvester = new Thread(
-                () -> {
-                    try {
-                        while (!Thread.currentThread().isInterrupted()) {
-                            harvest(mediaInfo);
-                            Thread.sleep(STUN_DELAY);
-                        }
-                    } catch (Exception e) {
-                        // ignore
-                    }
-                }
+
+        executor = new ScheduledThreadPoolExecutor(1);
+        harvesterFuture = executor.scheduleWithFixedDelay(
+                () -> harvest(mediaInfo),
+                0, STUN_DELAY, TimeUnit.MILLISECONDS
         );
-        harvester.start();
     }
 
     public void stop() {
-        if (harvester != null) {
-            harvester.interrupt();
-            harvester = null;
+        if (harvesterFuture != null) {
+            harvesterFuture.cancel(true);
+            harvesterFuture = null;
+        }
+
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
         }
     }
 
