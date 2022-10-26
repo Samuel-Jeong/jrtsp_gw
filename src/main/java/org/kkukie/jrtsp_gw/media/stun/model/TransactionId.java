@@ -1,7 +1,7 @@
 package org.kkukie.jrtsp_gw.media.stun.model;
 
 import java.util.Arrays;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class TransactionId {
 
@@ -10,7 +10,7 @@ public class TransactionId {
 
     private final byte[] transactionId;
     private Object applicationData;
-    private static final Random random = new Random(System.currentTimeMillis());
+    private static final ThreadLocalRandom random = ThreadLocalRandom.current();
     private int hashCode;
 
     private TransactionId() {
@@ -21,6 +21,7 @@ public class TransactionId {
         this.applicationData = null;
         this.hashCode = 0;
         this.transactionId = new byte[rfc3489Compatibility ? 16 : 12];
+        random.setSeed(System.currentTimeMillis());
     }
 
     public static TransactionId createNewTransactionID() {

@@ -23,6 +23,7 @@ import org.kkukie.jrtsp_gw.media.webrtc.service.WebRtcService;
 import org.kkukie.jrtsp_gw.session.SessionManager;
 import org.kkukie.jrtsp_gw.session.call.CallInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
+import org.kkukie.jrtsp_gw.util.RandomManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -333,7 +334,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         // SESSION ID
         String curSessionId = req.headers().get(RtspHeaderNames.SESSION);
         if (curSessionId == null || curSessionId.isEmpty()) {
-            curSessionId = String.valueOf(random.nextInt(1000000));
+            curSessionId = String.valueOf(RandomManager.getIntegerLong(1000000));
         }
         logger.debug("({}) Current sessionId is [{}].", name, curSessionId);
         lastSessionId = curSessionId;

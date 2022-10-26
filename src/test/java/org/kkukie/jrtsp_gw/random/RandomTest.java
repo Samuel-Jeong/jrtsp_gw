@@ -3,7 +3,7 @@ package org.kkukie.jrtsp_gw.random;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.FingerPrintGen;
-import org.kkukie.jrtsp_gw.util.StringManager;
+import org.kkukie.jrtsp_gw.util.RandomManager;
 
 @Slf4j
 public class RandomTest {
@@ -14,7 +14,7 @@ public class RandomTest {
         int length = 24;
 
         // 2) When
-        String randomString = StringManager.getRandomString(length);
+        String randomString = RandomManager.getRandomString(length);
 
         // 3) Then
         log.info("RandomString: [ {} ]", randomString);

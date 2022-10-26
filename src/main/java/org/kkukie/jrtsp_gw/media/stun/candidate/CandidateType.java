@@ -28,12 +28,15 @@ package org.kkukie.jrtsp_gw.media.stun.candidate;
  */
 public enum CandidateType {
 
-    HOST("host", 126), PRFLX("prflx", 110), SRFLX("srflx", 100), RELAY("relay", 0);
+    HOST("host", 126),
+    PRFLX("prflx", 110),
+    SRFLX("srflx", 100),
+    RELAY("relay", 0);
 
-    private String description;
-    private int preference;
+    private final String description;
+    private final int preference;
 
-    private CandidateType(String description, int preference) {
+    CandidateType(String description, int preference) {
         this.description = description;
         this.preference = preference;
     }

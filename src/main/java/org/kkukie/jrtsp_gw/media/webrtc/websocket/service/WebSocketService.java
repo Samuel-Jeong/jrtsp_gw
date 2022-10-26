@@ -2,7 +2,6 @@ package org.kkukie.jrtsp_gw.media.webrtc.websocket.service;
 
 import com.google.gson.*;
 import com.neovisionaries.ws.client.*;
-import kotlin.random.Random;
 import lombok.extern.slf4j.Slf4j;
 import media.core.rtsp.sdp.*;
 import org.kkukie.jrtsp_gw.config.ConfigManager;
@@ -17,6 +16,7 @@ import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCPeerConnecti
 import org.kkukie.jrtsp_gw.session.SessionManager;
 import org.kkukie.jrtsp_gw.session.call.CallInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
+import org.kkukie.jrtsp_gw.util.RandomManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -345,13 +345,17 @@ public class WebSocketService {
                 new RTCIceCandidate(
                         localSdpSession.getMedia().get(0).getMid().getValue(),
                         0,
-                        "candidate:" + Random.Default.nextLong(10000, 99999) + "" + Random.Default.nextLong(10000, 99999) + " 1 udp"
-                                + " " + Random.Default.nextLong(10000, 99999) + "" + Random.Default.nextLong(10000, 99999)
+                        "candidate:" + getRandomLongValue() + "" + getRandomLongValue() + " 1 udp"
+                                + " " + getRandomLongValue() + "" + getRandomLongValue()
                                 + " " + UUID.randomUUID() + ".local"
                                 + " " + stunServerPort
                                 + " typ host generation 0"
                                 + " ufrag " + iceInfo.getLocalIceUfrag()
                 ) : null;
+    }
+
+    private long getRandomLongValue() {
+        return RandomManager.getRandomLong(10000, 99999);
     }
 
     private void setupMediaPorts(SdpSession localSdpSession, long audioPort, long videoPort) {

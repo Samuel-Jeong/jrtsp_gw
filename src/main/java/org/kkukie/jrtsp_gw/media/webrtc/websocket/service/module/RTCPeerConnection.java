@@ -1,11 +1,10 @@
 package org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module;
 
-import kotlin.random.Random;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import media.core.rtsp.sdp.*;
-import org.kkukie.jrtsp_gw.util.StringManager;
+import org.kkukie.jrtsp_gw.util.RandomManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +54,7 @@ public class RTCPeerConnection {
         SdpOrigin remoteDescOrigin = remoteDesc.getOrigin();
         localDesc.setOrigin(new SdpOrigin(
                 "-",
-                Random.Default.nextLong(0, Long.MAX_VALUE),
+                RandomManager.getRandomLong(0, Long.MAX_VALUE),
                 2,
                 "IN",
                 remoteDescOrigin != null ? remoteDescOrigin.getIpVer() : 4,
@@ -78,8 +77,8 @@ public class RTCPeerConnection {
         }
 
         // MEDIA:VIDEO
-        String newIcePwd = StringManager.getRandomString(24);
-        String newIceUfrag = StringManager.getRandomString(6);
+        String newIcePwd = RandomManager.getRandomString(24);
+        String newIceUfrag = RandomManager.getRandomString(6);
         SdpIceoptions remoteIceOptions = remoteDesc.getIceOptions();
         String newFingerPrint;
 
