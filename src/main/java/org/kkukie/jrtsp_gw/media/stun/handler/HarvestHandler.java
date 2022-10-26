@@ -8,6 +8,7 @@ import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
 
+import javax.xml.bind.DatatypeConverter;
 import java.net.InetSocketAddress;
 import java.util.Queue;
 import java.util.concurrent.ScheduledFuture;
@@ -38,11 +39,14 @@ public class HarvestHandler {
 
         stop();
 
-        executor = new ScheduledThreadPoolExecutor(1);
+        executor = new ScheduledThreadPoolExecutor(2);
         harvesterFuture = executor.scheduleWithFixedDelay(
                 () -> harvest(mediaInfo),
                 0, STUN_DELAY, TimeUnit.MILLISECONDS
         );
+        if (!harvesterFuture.isDone()) {
+            log.debug("|HarvestHandler({})| Started. (interval={}ms)", callId, STUN_DELAY);
+        }
     }
 
     public void stop() {
@@ -61,10 +65,16 @@ public class HarvestHandler {
         DataChannel dataChannel = mediaInfo.getDataChannel();
         if (dataChannel != null) {
             Queue<InetSocketAddress> targetAddressQueue = mediaInfo.getTargetAddressQueue();
-            if (targetAddressQueue == null) { return; }
+            if (targetAddressQueue == null) {
+                log.warn("|HarvestHandler({})| Fail to get the targetAddressQueue from mediainfo.", callId);
+                return;
+            }
 
             IceInfo iceInfo = mediaInfo.getIceInfo();
-            if (iceInfo == null) { return; }
+            if (iceInfo == null) {
+                log.warn("|HarvestHandler({})| Fail to get the iceInfo from mediainfo.", callId);
+                return;
+            }
 
             for (InetSocketAddress targetAddress : targetAddressQueue) {
                 try {
@@ -73,11 +83,15 @@ public class HarvestHandler {
                             iceInfo.getRemoteIcePasswd()
                     );
                     dataChannel.send(bindingRequest.encode(), targetAddress);
-                    //log.debug("|IceHandler({})| Send StunRequest to [{}]", callId, targetAddress);
+                    log.debug("|HarvestHandler({})| Send StunRequest(tid={}) to [{}].",
+                            callId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress
+                    );
                 } catch (Exception e) {
-                    //log.warn("|IceHandler({})| Fail to stun binding.", callId, e);
+                    log.warn("|HarvestHandler({})| Fail to stun binding.", callId, e);
                 }
             }
+        } else {
+            log.warn("|HarvestHandler({})| Fail to get the data channel from mediainfo.", callId);
         }
     }
 

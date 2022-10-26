@@ -99,7 +99,7 @@ public class RTCPeerConnection {
                 localMedia.setIceOptions(remoteIceOptions);
             }
             localMedia.setFingerprint(new SdpFingerprint(newFingerPrint, "sha-256"));
-            localMedia.setControl(new SdpControl("recvonly"));
+            localMedia.setDirection(new SdpDirection("recvonly"));
             localMedia.setSetup(new SdpSetup("active"));
             localMedia.setRtcp(new SdpRtcp(mline.getPort(), localDesc.getOrigin().getNetType(), localDesc.getOrigin().getIpVer(), "0.0.0.0"));
             localMedia.setSsrcGroups(new ArrayList<>());

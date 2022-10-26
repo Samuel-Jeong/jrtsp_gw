@@ -262,6 +262,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         if (!this.listeners.isEmpty()) {
             for (DtlsListener listener : listeners) {
                 listener.onDtlsHandshakeComplete();
+                log.debug("|DtlsHandler({})| DTLS DONE", callId);
             }
         }
     }
@@ -270,6 +271,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         if (!this.listeners.isEmpty()) {
             for (DtlsListener listener : listeners) {
                 listener.onDtlsHandshakeFailed(e);
+                log.warn("|DtlsHandler({})| DTLS FAILED", callId);
             }
         }
     }

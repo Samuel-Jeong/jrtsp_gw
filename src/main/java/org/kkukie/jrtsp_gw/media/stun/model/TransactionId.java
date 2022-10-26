@@ -21,7 +21,6 @@ public class TransactionId {
         this.applicationData = null;
         this.hashCode = 0;
         this.transactionId = new byte[rfc3489Compatibility ? 16 : 12];
-        random.setSeed(System.currentTimeMillis());
     }
 
     public static TransactionId createNewTransactionID() {

@@ -287,18 +287,22 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
     }
 
     private String getTrackIdFromCallId(String callId) {
-        int trackIdPos = callId.indexOf(RtpMeta.TRACK_ID_TAG);
-        String trackId = callId.substring(trackIdPos + RtpMeta.TRACK_ID_TAG.length() + 1);
-        if (!trackId.isEmpty()) {
-            if (trackId.equals(RtpMeta.AUDIO_TRACK_ID)) {
-                isAudioReq = true;
-            } else if (trackId.equals(RtpMeta.VIDEO_TRACK_ID)) {
-                isAudioReq = false;
-            } else {
-                return null;
+        try {
+            int trackIdPos = callId.indexOf(RtpMeta.TRACK_ID_TAG);
+            String trackId = callId.substring(trackIdPos + RtpMeta.TRACK_ID_TAG.length() + 1);
+            if (!trackId.isEmpty()) {
+                if (trackId.equals(RtpMeta.AUDIO_TRACK_ID)) {
+                    isAudioReq = true;
+                } else if (trackId.equals(RtpMeta.VIDEO_TRACK_ID)) {
+                    isAudioReq = false;
+                } else {
+                    return null;
+                }
             }
+            return trackId;
+        } catch (Exception e) {
+            return null;
         }
-        return trackId;
     }
 
     private void handleSetup(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res) {

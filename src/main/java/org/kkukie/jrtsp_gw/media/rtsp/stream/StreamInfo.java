@@ -17,7 +17,6 @@ public class StreamInfo {
     private final String callId;
     private final String sessionId;
     private final String trackId;
-    private final ReentrantLock playResponseLock = new ReentrantLock();
     private String clientUserAgent = null;
     private UdpStream udpStream = null;
     private ChannelHandlerContext rtspChannelContext = null;

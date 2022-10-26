@@ -18,6 +18,7 @@ import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;
 import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
 import org.kkukie.jrtsp_gw.session.media.MediaInfo;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -113,6 +114,10 @@ public class IceHandler implements PacketHandler {
             errorResponse.addAttribute(StunAttributeFactory.createErrorCodeAttribute('Ɛ', ErrorCodeAttribute.getDefaultReasonPhrase('Ɛ')));
             return errorResponse.encode();
         } else {
+            log.debug("|HarvestHandler({})| Recv StunRequest(tid={}) from [{}].",
+                    callId, DatatypeConverter.printHexBinary(transactionID), remotePeer
+            );
+
             String remoteUsername = new String(remoteUnameAttribute.getUsername(), StandardCharsets.UTF_8).trim();
             if (!this.authenticator.validateUsername(remoteUsername)) {
                 log.warn("|IceHandler({})| validateUsername: fail. (remoteUsername={})", callId, remoteUsername);
@@ -150,6 +155,9 @@ public class IceHandler implements PacketHandler {
                     );
                 }
 
+                log.debug("|HarvestHandler({})| Send StunResponse(tid={}) to [{}].",
+                        callId, DatatypeConverter.printHexBinary(response.getTransactionId()), remotePeer
+                );
                 return response.encode();
             }
         }
@@ -165,6 +173,9 @@ public class IceHandler implements PacketHandler {
 
                 char attributeType = attribute.getAttributeType();
                 if (attributeType == StunAttribute.MESSAGE_INTEGRITY) {
+                    log.debug("|HarvestHandler({})| Recv StunResponse(tid={}) from [{}].",
+                            callId, DatatypeConverter.printHexBinary(response.getTransactionId()), remotePeer
+                    );
                     this.iceListener.onSelectedCandidates(
                             new SelectedCandidatesEvent(remotePeer),
                             true

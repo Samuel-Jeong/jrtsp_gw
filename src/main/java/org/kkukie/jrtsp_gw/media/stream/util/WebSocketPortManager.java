@@ -43,26 +43,26 @@ public class WebSocketPortManager {
             try {
                 channelQueues.add(idx);
             } catch (Exception e) {
-                logger.error("|WebSocketPortManager| Exception to port resource in Queue", e);
+                logger.error("|WebSocketPortManager| Exception from port resource in Queue", e);
                 return;
             }
         }
 
-        logger.info("|WebSocketPortManager| Ready to port resource in Queue. (port range: {} - {}, gap={})",
+        logger.info("|WebSocketPortManager| Ready to use the port resources in Queue. (port range: {} - {}, gap={})",
                 localPortMin, localPortMax, portGap
         );
     }
 
     public void releaseResource() {
         channelQueues.clear();
-        logger.info("|WebSocketPortManager| Release port resource in Queue. (port range: {} - {}, gap={})",
+        logger.info("|WebSocketPortManager| Release all port resources in Queue. (port range: {} - {}, gap={})",
                 localPortMin, localPortMax, portGap
         );
     }
 
     public int takePort() {
         if (channelQueues.isEmpty()) {
-            logger.warn("|WebSocketPortManager| Port resource in Queue is empty.");
+            logger.warn("|WebSocketPortManager| Port resource Queue is empty.");
             return -1;
         }
 
@@ -76,7 +76,7 @@ public class WebSocketPortManager {
             logger.warn("|WebSocketPortManager| Exception to get port resource in Queue.", e);
         }
 
-        logger.debug("|WebSocketPortManager| Success to get port(={}) resource in Queue.", port);
+        logger.debug("|WebSocketPortManager| Success to get port(={}) resource from Queue.", port);
         return port;
     }
 

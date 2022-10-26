@@ -6,6 +6,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.rtsp.RtspHeaderNames;
 import io.netty.handler.codec.rtsp.RtspHeaderValues;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,7 @@ public class Streamer {
     private final AtomicBoolean isStarted;
 
     private final RtpRxStatistics rtpRxStatistics;
-
+    private boolean isNoRtp = true;
 
     public Streamer(MediaType mediaType, String callId, String sessionId, String trackId, boolean isTcp, String listenIp, int listenPort) {
         this.RTP_BURST_BUFFER_COUNT = ConfigManager.getDefaultConfig().getRtpBurstBufferCount();
@@ -277,31 +278,19 @@ public class Streamer {
         return localNetworkInfo.isTcp();
     }
 
-    public void sendPlayResponse(DefaultFullHttpResponse playResponse) {
+    public void sendPlayResponse(DefaultHttpResponse playResponse) {
         ChannelHandlerContext rtspChannelContext = streamInfo.getRtspChannelContext();
-        ReentrantLock playResponseLock = streamInfo.getPlayResponseLock();
-
         if (rtspChannelContext == null) {
             log.warn("|Streamer({})| Fail to send the play response. Context is null.", getKey());
             return;
-        } else if (playResponse == null) {
-            log.warn("|Streamer({})| Fail to send the play response. Response is null.", getKey());
-            return;
         }
 
-        playResponseLock.lock();
-        try {
-            playResponse.headers().add(
-                    RtspHeaderNames.RTP_INFO,
-                    makeRtpInfoData()
-            );
-            rtspChannelContext.writeAndFlush(playResponse);
-            log.debug("|Streamer({})| [PLAY] > Success to send the response: {}\n", getKey(), playResponse);
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            playResponseLock.unlock();
-        }
+        playResponse.headers().add(
+                RtspHeaderNames.RTP_INFO,
+                makeRtpInfoData()
+        );
+        rtspChannelContext.writeAndFlush(playResponse);
+        log.debug("|Streamer({})| [PLAY] > Success to send the response: {}\n", getKey(), playResponse);
     }
 
     private String makeRtpInfoData() {
@@ -349,6 +338,11 @@ public class Streamer {
                 sendRtpPacketWithUdp(rtpPacket);
             }
         }
+
+        if (isNoRtp) {
+            isNoRtp = false;
+        }
+
         rtpRxStatistics.calculate(rtpPacket.getRawData().length);
     }
 
@@ -485,6 +479,10 @@ public class Streamer {
         return (streamInfo.getTrackId() != null && !streamInfo.getTrackId().isEmpty()) ?
                 streamInfo.getCallId() + ":" + streamInfo.getTrackId() + ":" + streamInfo.getSessionId()
                 : streamInfo.getCallId() + ":" + streamInfo.getSessionId();
+    }
+
+    public boolean isNoRtp() {
+        return isNoRtp;
     }
 
 }

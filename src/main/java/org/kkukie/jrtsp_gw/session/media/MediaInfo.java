@@ -131,17 +131,21 @@ public class MediaInfo {
     }
 
     public boolean allocateMediaChannel(SocketAddress localAddress,
-                                        IceInfo iceInfo, Queue<InetSocketAddress> targetAddressQueue) {
+                                        IceInfo iceInfo,
+                                        Queue<InetSocketAddress> targetAddressQueue) {
         try {
             if (dataChannel == null) {
-                this.iceInfo = iceInfo;
                 this.targetAddressQueue = targetAddressQueue;
                 dataChannel = new DataChannel(
                         channelMaster, this,
                         callId, localAddress,
-                        mediaFormatMap, isSecure, isRtcpMux,
-                        iceInfo.getLocalIceUfrag(), iceInfo.getLocalIcePasswd()
+                        mediaFormatMap, isSecure, isRtcpMux
                 );
+
+                if (iceInfo != null) {
+                    this.iceInfo = iceInfo;
+                    dataChannel.initIce(iceInfo.getLocalIceUfrag(), iceInfo.getLocalIcePasswd());
+                }
             } else {
                 log.warn("|MediaInfo({})| Media channel Already Opened", callId);
                 return false;

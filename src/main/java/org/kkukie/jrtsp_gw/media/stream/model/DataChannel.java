@@ -79,9 +79,6 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     protected SelectionKey selectionKey;
 
-    private final String localIceUfrag;
-    private final String localIcePasswd;
-
     private final ChannelMaster channelMaster;
     private final MediaInfo mediaInfo;
 
@@ -89,8 +86,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     public DataChannel(ChannelMaster channelMaster, MediaInfo mediaInfo,
                        String callId, SocketAddress localMediaAddress, Map<String, RTPFormats> mediaFormatMap,
-                       boolean isSecure, boolean isRtcpMux,
-                       String localIceUfrag, String localIcePasswd) {
+                       boolean isSecure, boolean isRtcpMux) {
         this.channelMaster = channelMaster;
         this.mediaInfo = mediaInfo;
 
@@ -101,11 +97,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
         this.isRtcpMux = isRtcpMux;
         this.recvBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
 
-        this.localIceUfrag = localIceUfrag;
-        this.localIcePasswd = localIcePasswd;
-
         initChannel();
-        initIce(localIceUfrag, localIcePasswd);
     }
 
     private void initChannel() {
@@ -184,7 +176,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     /////////////////////////////////////////////////////////////////////////
 
-    private void initIce(String localIceUfrag, String localIcePasswd) {
+    public void initIce(String localIceUfrag, String localIcePasswd) {
         iceHandler = new IceHandler(callId, IceComponent.RTP_ID, this);
 
         IceAuthenticatorImpl iceAuthenticator = new IceAuthenticatorImpl();
