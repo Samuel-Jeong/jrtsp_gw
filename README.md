@@ -1,6 +1,6 @@
 # jrtsp_gw
 - RTSP Gateway with WAS
-- We can get the stream from OvenMediaEngine
+- We can get the stream from OvenMediaEngine with multiple clients
   
 ## REFERENCE
 ~~~
