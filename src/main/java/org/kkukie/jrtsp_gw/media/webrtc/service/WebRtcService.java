@@ -14,8 +14,9 @@ public class WebRtcService {
     private WebSocketService webSocketService = null;
 
     private final ReentrantLock handshakeLock = new ReentrantLock();
+    private final ReentrantLock clientCountLock = new ReentrantLock();
 
-    private final AtomicInteger clientCount = new AtomicInteger(0);
+    private int clientCount = 0;
 
     public void initWebSocketService(String conferenceId) {
         try {
@@ -55,14 +56,34 @@ public class WebRtcService {
     }
 
     public void addClient() {
-        int clientCount = this.clientCount.incrementAndGet();
-        log.debug("|WebRtcService({})| [ADD] Current client count: [ {} ]", conferenceId, clientCount);
+        clientCountLock.lock();
+        try {
+            log.debug("|WebRtcService({})| [ADD] Current client count: [ {} ]",
+                    conferenceId, ++clientCount
+            );
+        } catch (Exception e) {
+            log.warn("|WebRtcService({})| Fail to increase the client count.", conferenceId, e);
+        } finally {
+            clientCountLock.unlock();
+        }
     }
 
     public int removeClient() {
-        int clientCount = this.clientCount.decrementAndGet();
-        log.debug("|WebRtcService({})| [REMOVE] Current client count: [ {} ]", conferenceId, clientCount);
-        return clientCount;
+        if (clientCount <= 0) {
+            return 0;
+        }
+
+        clientCountLock.lock();
+        try {
+            log.debug("|WebRtcService({})| [REMOVE] Current client count: [ {} ]",
+                    conferenceId, --clientCount
+            );
+            return clientCount;
+        } catch (Exception e) {
+            log.warn("|WebRtcService({})| Fail to decrease the client count.", conferenceId, e);
+            return clientCount;
+        } finally {
+            clientCountLock.unlock();
+        }
     }
-    
 }
