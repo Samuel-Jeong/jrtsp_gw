@@ -19,7 +19,6 @@ import org.kkukie.jrtsp_gw.media.rtsp.Streamer;
 import org.kkukie.jrtsp_gw.media.rtsp.base.MediaType;
 import org.kkukie.jrtsp_gw.media.rtsp.netty.NettyChannelManager;
 import org.kkukie.jrtsp_gw.media.rtsp.stream.rtp.base.RtpMeta;
-import org.kkukie.jrtsp_gw.media.webrtc.service.WebRtcService;
 import org.kkukie.jrtsp_gw.session.ConferenceMaster;
 import org.kkukie.jrtsp_gw.session.call.ConferenceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
@@ -30,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * @class public class RtspChannelHandler extends ChannelInboundHandlerAdapter
