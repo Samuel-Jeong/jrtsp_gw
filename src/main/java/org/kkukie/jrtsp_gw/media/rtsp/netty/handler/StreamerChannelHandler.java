@@ -15,10 +15,10 @@ public class StreamerChannelHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(StreamerChannelHandler.class);
 
-    private final String callId;
+    private final String conferenceId;
 
-    public StreamerChannelHandler(String callId) {
-        this.callId = callId;
+    public StreamerChannelHandler(String conferenceId) {
+        this.conferenceId = conferenceId;
     }
 
     @Override
@@ -34,10 +34,10 @@ public class StreamerChannelHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         String causeString = cause.toString();
-        //logger.warn("({}) StreamerChannelHandler.Exception (cause={})", callId, causeString);
+        //logger.warn("({}) StreamerChannelHandler.Exception (cause={})", conferenceId, causeString);
 
         if (causeString.contains("PortUnreachable")) {
-            for (Streamer streamer : NettyChannelManager.getInstance().getStreamerListByCallId(callId)) {
+            for (Streamer streamer : NettyChannelManager.getInstance().getStreamerListByCallId(conferenceId)) {
                 if (streamer == null) {
                     return;
                 }

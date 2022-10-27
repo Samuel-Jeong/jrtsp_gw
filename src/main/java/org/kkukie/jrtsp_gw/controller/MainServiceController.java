@@ -2,7 +2,7 @@ package org.kkukie.jrtsp_gw.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.service.system.SystemManager;
-import org.kkukie.jrtsp_gw.session.SessionManager;
+import org.kkukie.jrtsp_gw.session.ConferenceMaster;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,9 +14,9 @@ public class MainServiceController {
 
     public MainServiceController() {}
 
-    @GetMapping("/v1/call_count")
+    @GetMapping("/v1/conference_count")
     public String getCallCountV1() {
-        return String.valueOf(SessionManager.getInstance().getCallInfoSize());
+        return String.valueOf(ConferenceMaster.getInstance().getConferenceInfoSize());
     }
 
     @GetMapping("/v1/cpu_usage")

@@ -20,9 +20,9 @@ import org.kkukie.jrtsp_gw.media.rtsp.base.MediaType;
 import org.kkukie.jrtsp_gw.media.rtsp.netty.NettyChannelManager;
 import org.kkukie.jrtsp_gw.media.rtsp.stream.rtp.base.RtpMeta;
 import org.kkukie.jrtsp_gw.media.webrtc.service.WebRtcService;
-import org.kkukie.jrtsp_gw.session.SessionManager;
-import org.kkukie.jrtsp_gw.session.call.CallInfo;
-import org.kkukie.jrtsp_gw.session.media.MediaInfo;
+import org.kkukie.jrtsp_gw.session.ConferenceMaster;
+import org.kkukie.jrtsp_gw.session.call.ConferenceInfo;
+import org.kkukie.jrtsp_gw.session.media.MediaSession;
 import org.kkukie.jrtsp_gw.util.RandomManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -52,8 +51,6 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
     private final String listenIp; // local ip
     private final int listenRtspPort; // local(listen) rtsp port
 
-    private final Random random = new Random();
-
     private Streamer audioContextStreamer = null;
     private Streamer videoContextStreamer = null;
 
@@ -61,7 +58,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
 
     private String lastSessionId = null;
 
-    private final WebRtcService webRtcService = new WebRtcService();
+    private ConferenceInfo conferenceInfo = null;
 
     ////////////////////////////////////////////////////////////////////////////////
 
@@ -211,35 +208,35 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
                 "application/sdp"
         );
 
-        String callId = getCallId(req);
-        if (callId == null) {
+        String conferenceId = getConferenceId(req);
+        if (conferenceId == null) {
             logger.warn("({}) Fail to get uri.", name);
             sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
             return;
         }
 
         // Find Track ID
-        callId = getParseCallIdFromTrackId(ctx, req, res, callId);
-        if (callId == null) {
+        conferenceId = getParseCallIdFromTrackId(ctx, req, res, conferenceId);
+        if (conferenceId == null) {
             return;
         }
 
-        CallInfo callInfo = getCallInfo(ctx, req, res, callId);
-        if (callInfo == null) {
+        ConferenceInfo conferenceInfo = getCallInfo(ctx, req, res, conferenceId);
+        if (conferenceInfo == null) {
             return;
         }
 
-        MediaInfo mediaInfo = callInfo.getMediaInfo();
-        if (mediaInfo == null) {
-            logger.warn("Fail to get media info. ({})", callInfo.getCallId());
+        MediaSession mediaSession = conferenceInfo.getMediaSession();
+        if (mediaSession == null) {
+            logger.warn("Fail to get media info. ({})", conferenceInfo.getConferenceId());
             sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.NOT_ACCEPTABLE);
             return;
         }
 
-        SdpRtp audioSdpRtp = mediaInfo.getRemoteAudioDesc().getRtp().get(0);
-        SdpRtp videoSdpRtp = mediaInfo.getRemoteVideoDesc().getRtp().get(0);
+        SdpRtp audioSdpRtp = mediaSession.getRemoteSdpMediaInfo().getAudioDesc().getRtp().get(0);
+        SdpRtp videoSdpRtp = mediaSession.getRemoteSdpMediaInfo().getVideoDesc().getRtp().get(0);
         if (audioSdpRtp == null || videoSdpRtp == null) {
-            logger.warn("Session media infos are not available. ({})", callInfo.getCallId());
+            logger.warn("Session media infos are not available. ({})", conferenceInfo.getConferenceId());
             sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.INTERNAL_SERVER_ERROR);
             return;
         }
@@ -247,10 +244,10 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         SdpSession localSdp = sdpConfig.loadLocalSdpConfig(
                 defaultConfig.getId(),
                 0, // RTP 를 수신할 필요가 없음 (sendonly)
-                mediaInfo.getRemoteAudioPayloadType(),
-                mediaInfo.getRemoteAudioRtpInfo(),
-                mediaInfo.getRemoteVideoPayloadType(),
-                mediaInfo.getRemoteVideoRtpInfo()
+                mediaSession.getRemoteSdpMediaInfo().getAudioPayloadType(),
+                mediaSession.getRemoteSdpMediaInfo().getAudioRtpInfo(),
+                mediaSession.getRemoteSdpMediaInfo().getVideoPayloadType(),
+                mediaSession.getRemoteSdpMediaInfo().getVideoRtpInfo()
         );
         ByteBuf buf = Unpooled.copiedBuffer(localSdp.write(), StandardCharsets.UTF_8);
         res.headers().add(
@@ -270,26 +267,26 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         return uri;
     }
 
-    private String getParseCallIdFromTrackId(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String callId) {
-        int trackIdPos = callId.indexOf(RtpMeta.TRACK_ID_TAG);
+    private String getParseCallIdFromTrackId(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String conferenceId) {
+        int trackIdPos = conferenceId.indexOf(RtpMeta.TRACK_ID_TAG);
         if (trackIdPos > 0) {
-            String trackId = getTrackIdFromCallId(callId);
+            String trackId = getTrackIdFromCallId(conferenceId);
             if (trackId == null || trackId.isEmpty()) {
                 logger.warn("({}) Fail to get uri. Predefined Track ID is wrong.", name);
                 sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
                 return null;
             }
-            callId = callId.substring(0, trackIdPos - 1);
-            logger.debug("callId: {}, trackId: {}", callId, trackId);
+            conferenceId = conferenceId.substring(0, trackIdPos - 1);
+            logger.debug("conferenceId: {}, trackId: {}", conferenceId, trackId);
         }
 
-        return callId;
+        return conferenceId;
     }
 
-    private String getTrackIdFromCallId(String callId) {
+    private String getTrackIdFromCallId(String conferenceId) {
         try {
-            int trackIdPos = callId.indexOf(RtpMeta.TRACK_ID_TAG);
-            String trackId = callId.substring(trackIdPos + RtpMeta.TRACK_ID_TAG.length() + 1);
+            int trackIdPos = conferenceId.indexOf(RtpMeta.TRACK_ID_TAG);
+            String trackId = conferenceId.substring(trackIdPos + RtpMeta.TRACK_ID_TAG.length() + 1);
             if (!trackId.isEmpty()) {
                 if (trackId.equals(RtpMeta.AUDIO_TRACK_ID)) {
                     isAudioReq = true;
@@ -316,22 +313,22 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
          * Transport: RTP/AVP;unicast;client_port=9406-9407
          */
 
-        String callId = getCallId(req);
-        if (callId == null) {
+        String conferenceId = getConferenceId(req);
+        if (conferenceId == null) {
             logger.warn("({}) Fail to get uri.", name);
             sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
             return;
         }
 
         // Find Track ID
-        String originCallId = callId;
-        callId = getParseCallIdFromTrackId(ctx, req, res, callId);
-        if (callId == null) {
+        String originCallId = conferenceId;
+        conferenceId = getParseCallIdFromTrackId(ctx, req, res, conferenceId);
+        if (conferenceId == null) {
             return;
         }
 
-        CallInfo callInfo = getCallInfo(ctx, req, res, callId);
-        if (callInfo == null) {
+        ConferenceInfo conferenceInfo = getCallInfo(ctx, req, res, conferenceId);
+        if (conferenceInfo == null) {
             return;
         }
 
@@ -347,7 +344,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         boolean isTcp = transportHeaderContent.contains(String.valueOf(RtspHeaderValues.INTERLEAVED));
 
         String trackId = getTrackIdFromCallId(originCallId);
-        if (!saveStreamer(ctx, req, res, curSessionId, trackId, callInfo, isTcp)) {
+        if (!saveStreamer(ctx, req, res, curSessionId, trackId, conferenceInfo, isTcp)) {
             return;
         }
 
@@ -383,8 +380,8 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private boolean saveStreamer(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String curSessionId, String trackId, CallInfo callInfo, boolean isTcp) {
-        Streamer streamer = addStreamer(callInfo.getCallId(), curSessionId, trackId, isTcp);
+    private boolean saveStreamer(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String curSessionId, String trackId, ConferenceInfo conferenceInfo, boolean isTcp) {
+        Streamer streamer = addStreamer(conferenceInfo.getConferenceId(), curSessionId, trackId, isTcp);
         if (streamer == null || streamer.getTrackId() == null) {
             logger.warn("({}) ({}) Streamer is not defined. (listenIp={}, listenPort={})",
                     name, curSessionId, listenIp, listenRtspPort
@@ -398,28 +395,29 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         return true;
     }
 
-    private CallInfo getCallInfo(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String callId) {
+    private ConferenceInfo getCallInfo(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String conferenceId) {
         // CHECK CALL INFO
-        CallInfo callInfo = SessionManager.getInstance().findCall(callId);
-        if (callInfo == null) {
-            callInfo = SessionManager.getInstance().createCall(UUID.randomUUID().toString(), callId, true);
-            if (callInfo == null) {
-                logger.warn("({}) Fail to get the callInfo. CallInfo is null.", name);
+        ConferenceInfo conferenceInfo = ConferenceMaster.getInstance().findConference(conferenceId);
+        if (conferenceInfo == null) {
+            conferenceInfo = ConferenceMaster.getInstance().createConference(conferenceId, true);
+            if (conferenceInfo == null) {
+                logger.warn("({}) Fail to get the conferenceInfo. ConferenceInfo is null.", name);
                 sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
                 return null;
             }
-
-            webRtcService.disposeWebSocketService();
-            webRtcService.initWebSocketService(callId);
-            webRtcService.handshake();
         }
-        return callInfo;
+        if (this.conferenceInfo == null) {
+            this.conferenceInfo = conferenceInfo;
+            this.conferenceInfo.addCall();
+        }
+
+        return conferenceInfo;
     }
 
-    private Streamer addStreamer(String callId, String curSessionId, String trackId, boolean isTcp) {
+    private Streamer addStreamer(String conferenceId, String curSessionId, String trackId, boolean isTcp) {
         // setup 요청 시마다 기존 streamer 삭제하고 새로운 streamer 생성
         Streamer streamer = NettyChannelManager.getInstance().getStreamer(
-                getStreamerKey(callId, trackId, curSessionId)
+                getStreamerKey(conferenceId, trackId, curSessionId)
         );
         if (streamer != null) {
             NettyChannelManager.getInstance().deleteStreamer(streamer);
@@ -427,7 +425,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
 
         return NettyChannelManager.getInstance().addStreamer(
                 isAudioReq ? MediaType.AUDIO : MediaType.VIDEO,
-                callId,
+                conferenceId,
                 curSessionId,
                 trackId,
                 isTcp
@@ -623,8 +621,8 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
                     audioContextStreamer.sendPlayResponse(res);
                 }
             } else {
-                String callId = getCallId(req);
-                if (callId == null) {
+                String conferenceId = getConferenceId(req);
+                if (conferenceId == null) {
                     logger.warn("({}) Fail to get uri.", name);
                     sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
                     return;
@@ -693,7 +691,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         }
     }
 
-    private String getCallId(DefaultHttpRequest req) {
+    private String getConferenceId(DefaultHttpRequest req) {
         String uri = req.uri();
 
         uri = uri.substring(uri.indexOf(RTSP_PREFIX) + RTSP_PREFIX.length());
@@ -701,18 +699,20 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
             uri = uri.substring(0, uri.length() - 1);
         }
 
-        String callId = uri.substring(uri.indexOf("/") + 1);
-        if (callId.isEmpty()) {
+        String conferenceId = uri.substring(uri.indexOf("/") + 1);
+        if (conferenceId.isEmpty()) {
             return null;
         }
-        logger.debug("({}) () Call-ID: {}", name, callId);
-        return callId;
+        logger.debug("({}) () Call-ID: {}", name, conferenceId);
+        return conferenceId;
     }
 
     private void handleTeardown(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res) {
         logger.debug("({}) () < TEARDOWN\n{}", name, req);
 
-        webRtcService.disposeWebSocketService();
+        if (conferenceInfo != null) {
+            conferenceInfo.removeCall();
+        }
 
         if (audioContextStreamer != null) {
             NettyChannelManager.getInstance().stopStreaming(audioContextStreamer.getKey());
@@ -792,7 +792,9 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        webRtcService.disposeWebSocketService();
+        if (conferenceInfo != null) {
+            conferenceInfo.removeCall();
+        }
 
         if (audioContextStreamer != null) {
             releaseStreamerFromContext(audioContextStreamer.getKey());
@@ -810,11 +812,11 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         logger.warn("({}) RtspChannelHandler.Exception (cause={})", name, cause.toString());
     }
 
-    private String getStreamerKey(String callId, String trackId, String sessionId) {
+    private String getStreamerKey(String conferenceId, String trackId, String sessionId) {
         if (trackId != null && !trackId.isEmpty()) {
-            return callId + ":" + trackId + ":" + sessionId;
+            return conferenceId + ":" + trackId + ":" + sessionId;
         }
-        return callId + ":" + sessionId;
+        return conferenceId + ":" + sessionId;
     }
 
 }

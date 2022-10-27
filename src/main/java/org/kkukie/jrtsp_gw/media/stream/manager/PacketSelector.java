@@ -24,9 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 @Slf4j
-public class ChannelMaster {
+public class PacketSelector {
 
-    private final String callId;
+    private final String conferenceId;
 
     private volatile boolean active;
     private final Object LOCK;
@@ -36,8 +36,8 @@ public class ChannelMaster {
     private final AtomicInteger currSelectorIndex;
     private final ServiceScheduler scheduler = new ServiceScheduler();
 
-    public ChannelMaster(String callId) {
-        this.callId = callId;
+    public PacketSelector(String conferenceId) {
+        this.conferenceId = conferenceId;
         
         LOCK = new Object();
         active = false;
@@ -59,11 +59,11 @@ public class ChannelMaster {
                     SelectionKey.OP_READ
             );
             key.attach(dataChannel);
-            log.debug("|ChannelMaster({})| Success to register the channel. (localAddress={}, isBlocking={})",
-                    callId, datagramChannel.getLocalAddress(), datagramChannel.isBlocking()
+            log.debug("|PacketSelector({})| Success to register the channel. (localAddress={}, isBlocking={})",
+                    conferenceId, datagramChannel.getLocalAddress(), datagramChannel.isBlocking()
             );
         } catch (Exception e) {
-            log.warn("|ChannelMaster({})| Fail to register the datagram channel.", callId, e);
+            log.warn("|PacketSelector({})| Fail to register the datagram channel.", conferenceId, e);
         }
     }
 
@@ -72,10 +72,10 @@ public class ChannelMaster {
             SelectionKey selectionKey = dataChannel.getSelectionKey();
             if (selectionKey != null) {
                 selectionKey.cancel();
-                log.debug("|ChannelMaster({})| Success to unregister the channel.", callId);
+                log.debug("|PacketSelector({})| Success to unregister the channel.", conferenceId);
             }
         } catch (Exception e) {
-            log.warn("|ChannelMaster({})| Fail to unregister the datagram channel.", callId, e);
+            log.warn("|PacketSelector({})| Fail to unregister the datagram channel.", conferenceId, e);
         }
     }
 
@@ -103,7 +103,7 @@ public class ChannelMaster {
                 try {
                     selector.close();
                 } catch (Exception e) {
-                    log.warn("|ChannelMaster({})| Could not close selector({}).", callId, i, e);
+                    log.warn("|PacketSelector({})| Could not close selector({}).", conferenceId, i, e);
                 }
             }
         }
@@ -121,9 +121,9 @@ public class ChannelMaster {
                 try {
                     scheduler.start();
                     generateTasks();
-                    log.debug("|ChannelMaster({})| Started.", callId);
+                    log.debug("|PacketSelector({})| Started.", conferenceId);
                 } catch (IOException e) {
-                    log.warn("|ChannelMaster({})| An error occurred while initializing the polling tasks.", callId, e);
+                    log.warn("|PacketSelector({})| An error occurred while initializing the polling tasks.", conferenceId, e);
                     stop();
                 }
             }
@@ -134,12 +134,12 @@ public class ChannelMaster {
         synchronized (LOCK) {
             if (active) {
                 active = false;
-                log.debug("|ChannelMaster({})| Stopping...", callId);
+                log.debug("|PacketSelector({})| Stopping...", conferenceId);
                 stopTasks();
                 closeSelectors();
                 cleanResources();
                 scheduler.stop();
-                log.debug("|ChannelMaster({})| Stopped.", callId);
+                log.debug("|PacketSelector({})| Stopped.", conferenceId);
             }
         }
     }
@@ -167,7 +167,7 @@ public class ChannelMaster {
                         return;
                     }
                 } catch (IOException e) {
-                    log.error("|ChannelMaster({})| |PollTask({})| Could not select channels from Selector!", callId, id);
+                    log.error("|PacketSelector({})| |PollTask({})| Could not select channels from Selector!", conferenceId, id);
                 }
 
                 // Iterate over selected channels
@@ -177,14 +177,14 @@ public class ChannelMaster {
                     it.remove();
 
                     // Get references to channel and associated RTP socket
-                    DatagramChannel udpChannel = (DatagramChannel) key.channel();
+                    DatagramChannel datagramChannel = (DatagramChannel) key.channel();
                     Object attachment = key.attachment();
                     if (attachment == null) { continue; }
 
                     try {
                         if (attachment instanceof DataChannel) {
                             DataChannel channel = (DataChannel) attachment;
-                            if (udpChannel.isOpen()) {
+                            if (datagramChannel.isOpen()) {
                                 if (key.isValid()) {
                                     channel.receive();
                                     if (channel.hasPendingData()) {
@@ -195,10 +195,10 @@ public class ChannelMaster {
                                 channel.close();
                             }
                         } else {
-                            log.warn("|ChannelMaster({})| |PollTask({})| Not defined the attachment.", callId, id);
+                            log.warn("|PacketSelector({})| |PollTask({})| Not defined the attachment.", conferenceId, id);
                         }
                     } catch (Exception e) {
-                        log.error("|ChannelMaster({})| |PollTask({})| An unexpected problem occurred while reading from channel.", callId, id, e);
+                        log.error("|PacketSelector({})| |PollTask({})| An unexpected problem occurred while reading from channel.", conferenceId, id, e);
                     }
                 }
 

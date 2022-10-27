@@ -5,7 +5,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpResponse;
 import io.netty.handler.codec.rtsp.RtspHeaderNames;
 import io.netty.handler.codec.rtsp.RtspHeaderValues;
@@ -35,7 +34,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 public class Streamer {
@@ -61,15 +59,15 @@ public class Streamer {
     private final RtpRxStatistics rtpRxStatistics;
     private boolean isNoRtp = true;
 
-    public Streamer(MediaType mediaType, String callId, String sessionId, String trackId, boolean isTcp, String listenIp, int listenPort) {
+    public Streamer(MediaType mediaType, String conferenceId, String sessionId, String trackId, boolean isTcp, String listenIp, int listenPort) {
         this.RTP_BURST_BUFFER_COUNT = ConfigManager.getDefaultConfig().getRtpBurstBufferCount();
 
         this.streamInfo = new StreamInfo(
-                mediaType, callId, sessionId, trackId
+                mediaType, conferenceId, sessionId, trackId
         );
         if (!isTcp) {
             UdpStream udpStream = new UdpStream();
-            udpStream.start(getCallId());
+            udpStream.start(getConferenceId());
             streamInfo.setUdpStream(udpStream);
         }
 
@@ -84,8 +82,8 @@ public class Streamer {
 
         this.rtpRxStatistics = new RtpRxStatistics();
 
-        log.debug("|Streamer({})| Streamer({}) is created. (callId={}, trackId={}, localNetworkInfo={})",
-                getKey(), mediaType.getName(), callId, trackId, localNetworkInfo
+        log.debug("|Streamer({})| Streamer({}) is created. (conferenceId={}, trackId={}, localNetworkInfo={})",
+                getKey(), mediaType.getName(), conferenceId, trackId, localNetworkInfo
         );
     }
 
@@ -114,8 +112,8 @@ public class Streamer {
         return streamInfo.getMediaType();
     }
 
-    public String getCallId() {
-        return streamInfo.getCallId();
+    public String getConferenceId() {
+        return streamInfo.getConferenceId();
     }
 
     public String getSessionId() {
@@ -477,8 +475,8 @@ public class Streamer {
 
     public String getKey() {
         return (streamInfo.getTrackId() != null && !streamInfo.getTrackId().isEmpty()) ?
-                streamInfo.getCallId() + ":" + streamInfo.getTrackId() + ":" + streamInfo.getSessionId()
-                : streamInfo.getCallId() + ":" + streamInfo.getSessionId();
+                streamInfo.getConferenceId() + ":" + streamInfo.getTrackId() + ":" + streamInfo.getSessionId()
+                : streamInfo.getConferenceId() + ":" + streamInfo.getSessionId();
     }
 
     public boolean isNoRtp() {

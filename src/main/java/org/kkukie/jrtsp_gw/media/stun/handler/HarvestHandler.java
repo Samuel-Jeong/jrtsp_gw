@@ -6,11 +6,10 @@ import org.kkukie.jrtsp_gw.media.core.stun.messages.StunRequest;
 import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
-import org.kkukie.jrtsp_gw.session.media.MediaInfo;
 
 import javax.xml.bind.DatatypeConverter;
 import java.net.InetSocketAddress;
-import java.util.Queue;
+import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -20,32 +19,40 @@ public class HarvestHandler {
 
     private final int STUN_DELAY; // milliseconds
 
-    private final String callId;
+    private final String conferenceId;
 
     private ScheduledThreadPoolExecutor executor = null;
     private ScheduledFuture<?> harvesterFuture = null;
 
-    public HarvestHandler(String callId) {
-        this.callId = callId;
+    public HarvestHandler(String conferenceId) {
+        this.conferenceId = conferenceId;
 
         this.STUN_DELAY = ConfigManager.getStunConfig().getHarvestIntervalMs();
     }
 
-    public void start(MediaInfo mediaInfo) {
-        if (mediaInfo == null) {
-            log.warn("|IceHandler({})| Fail to start harvesting. MediaInfo is null.", callId);
+    public void start(DataChannel dataChannel, IceInfo iceInfo, List<InetSocketAddress> targetAddressList) {
+        if (dataChannel == null) {
+            log.warn("|HarvestHandler({})| Fail to start harvesting. DataChannel is null.", conferenceId);
+            return;
+        }
+        if (iceInfo == null) {
+            log.warn("|HarvestHandler({})| Fail to start harvesting. IceInfo is null.", conferenceId);
+            return;
+        }
+        if (targetAddressList == null) {
+            log.warn("|HarvestHandler({})| Fail to start harvesting. TargetAddressQueue is null.", conferenceId);
             return;
         }
 
         stop();
 
-        executor = new ScheduledThreadPoolExecutor(2);
+        executor = new ScheduledThreadPoolExecutor(1);
         harvesterFuture = executor.scheduleWithFixedDelay(
-                () -> harvest(mediaInfo),
+                () -> harvest(dataChannel, iceInfo, targetAddressList),
                 0, STUN_DELAY, TimeUnit.MILLISECONDS
         );
         if (!harvesterFuture.isDone()) {
-            log.debug("|HarvestHandler({})| Started. (interval={}ms)", callId, STUN_DELAY);
+            log.debug("|HarvestHandler({})| Started. (interval={}ms)", conferenceId, STUN_DELAY);
         }
     }
 
@@ -61,37 +68,20 @@ public class HarvestHandler {
         }
     }
 
-    private void harvest(MediaInfo mediaInfo) {
-        DataChannel dataChannel = mediaInfo.getDataChannel();
-        if (dataChannel != null) {
-            Queue<InetSocketAddress> targetAddressQueue = mediaInfo.getTargetAddressQueue();
-            if (targetAddressQueue == null) {
-                log.warn("|HarvestHandler({})| Fail to get the targetAddressQueue from mediainfo.", callId);
-                return;
+    private void harvest(DataChannel dataChannel, IceInfo iceInfo, List<InetSocketAddress> targetAddressList) {
+        for (InetSocketAddress targetAddress : targetAddressList) {
+            try {
+                StunRequest bindingRequest = StunMessageFactory.createBindingRequest(
+                        iceInfo.getRemoteUsername(),
+                        iceInfo.getRemoteIcePasswd()
+                );
+                dataChannel.send(bindingRequest.encode(), targetAddress);
+                log.debug("|HarvestHandler({})| Send StunRequest(tid={}) to [{}].",
+                        conferenceId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress
+                );
+            } catch (Exception e) {
+                log.warn("|HarvestHandler({})| Fail to stun binding.", conferenceId, e);
             }
-
-            IceInfo iceInfo = mediaInfo.getIceInfo();
-            if (iceInfo == null) {
-                log.warn("|HarvestHandler({})| Fail to get the iceInfo from mediainfo.", callId);
-                return;
-            }
-
-            for (InetSocketAddress targetAddress : targetAddressQueue) {
-                try {
-                    StunRequest bindingRequest = StunMessageFactory.createBindingRequest(
-                            iceInfo.getRemoteUsername(),
-                            iceInfo.getRemoteIcePasswd()
-                    );
-                    dataChannel.send(bindingRequest.encode(), targetAddress);
-                    log.debug("|HarvestHandler({})| Send StunRequest(tid={}) to [{}].",
-                            callId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress
-                    );
-                } catch (Exception e) {
-                    log.warn("|HarvestHandler({})| Fail to stun binding.", callId, e);
-                }
-            }
-        } else {
-            log.warn("|HarvestHandler({})| Fail to get the data channel from mediainfo.", callId);
         }
     }
 

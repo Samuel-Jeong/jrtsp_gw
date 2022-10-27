@@ -1,6 +1,7 @@
 package org.kkukie.jrtsp_gw.media.stream.model;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.config.DtlsConfig;
@@ -8,23 +9,26 @@ import org.kkukie.jrtsp_gw.media.core.scheduler.ServiceScheduler;
 import org.kkukie.jrtsp_gw.media.core.scheduler.WallClock;
 import org.kkukie.jrtsp_gw.media.dtls.DtlsHandler;
 import org.kkukie.jrtsp_gw.media.dtls.DtlsListener;
-import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandler;
+import org.kkukie.jrtsp_gw.media.rtp.RtpInfo;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandlerPipeline;
 import org.kkukie.jrtsp_gw.media.rtp.crypto.DtlsSrtpClientProvider;
 import org.kkukie.jrtsp_gw.media.rtp.crypto.DtlsSrtpServerProvider;
 import org.kkukie.jrtsp_gw.media.rtp.format.RTPFormats;
 import org.kkukie.jrtsp_gw.media.rtp.statistics.RtpStatistics;
+import org.kkukie.jrtsp_gw.media.rtsp.Streamer;
+import org.kkukie.jrtsp_gw.media.rtsp.netty.NettyChannelManager;
 import org.kkukie.jrtsp_gw.media.rtsp.rtcp.module.RtpClock;
 import org.kkukie.jrtsp_gw.media.stream.handler.RtcpHandler;
 import org.kkukie.jrtsp_gw.media.stream.handler.RtpHandler;
-import org.kkukie.jrtsp_gw.media.stream.manager.ChannelMaster;
+import org.kkukie.jrtsp_gw.media.stream.manager.PacketSelector;
 import org.kkukie.jrtsp_gw.media.stun.candidate.IceComponent;
 import org.kkukie.jrtsp_gw.media.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;
 import org.kkukie.jrtsp_gw.media.stun.handler.IceHandler;
 import org.kkukie.jrtsp_gw.media.stun.model.IceAuthenticatorImpl;
-import org.kkukie.jrtsp_gw.session.SessionManager;
-import org.kkukie.jrtsp_gw.session.media.MediaInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
+import org.kkukie.jrtsp_gw.session.ConferenceMaster;
+import org.kkukie.jrtsp_gw.session.media.MediaSession;
 import org.kkukie.jrtsp_gw.session.media.MediaType;
 
 import java.io.File;
@@ -34,12 +38,26 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * [관리 항목]
+ * 1. 로컬 미디어 채널(소켓) 생성
+ * 2. 네트워크 패킷 핸들러 관리
+ *      - IceHandler
+ *      - DtlsHandler
+ *      - RtpHandler
+ *      - RtcpHandler
+ * 3. DTLS
+ * 4. PacketSelector 를 사용하여 채널 등록
+ *
+ */
 @Slf4j
 @Getter
+@Setter
 public class DataChannel implements DtlsListener, IceEventListener {
 
     private static final int RTP_PRIORITY = 4; // a packet each 20ms
@@ -49,16 +67,12 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     private static final int BUFFER_SIZE = 8192;
 
-    private final String callId;
+    private final String conferenceId;
     private final SocketAddress localMediaAddress;
     private SocketAddress realRemoteAddress = null;
     private DatagramChannel mediaChannel;
 
     public final PacketHandlerPipeline handlers = new PacketHandlerPipeline();
-
-    private final boolean isSecure;
-
-    private final boolean isRtcpMux;
 
     private IceHandler iceHandler;
     private DtlsHandler dtlsHandler;
@@ -68,7 +82,6 @@ public class DataChannel implements DtlsListener, IceEventListener {
     private DtlsSrtpServerProvider dtlsServerProvider;
     private DtlsSrtpClientProvider dtlsClientProvider;
 
-    private final Map<String, RTPFormats> mediaFormatMap;
 
     private final Queue<byte[]> packetQueue = new ConcurrentLinkedQueue<>();
     private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
@@ -79,28 +92,23 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     protected SelectionKey selectionKey;
 
-    private final ChannelMaster channelMaster;
-    private final MediaInfo mediaInfo;
+    private final PacketSelector packetSelector;
+    private final MediaSession mediaSession;
+
+    private List<InetSocketAddress> targetAddressList = null;
 
     ////////////////////////////////////////////////////////////////////////
+    public DataChannel(PacketSelector packetSelector, MediaSession mediaSession,
+                       String conferenceId, SocketAddress localMediaAddress) {
+        this.packetSelector = packetSelector;
+        this.mediaSession = mediaSession;
 
-    public DataChannel(ChannelMaster channelMaster, MediaInfo mediaInfo,
-                       String callId, SocketAddress localMediaAddress, Map<String, RTPFormats> mediaFormatMap,
-                       boolean isSecure, boolean isRtcpMux) {
-        this.channelMaster = channelMaster;
-        this.mediaInfo = mediaInfo;
-
-        this.callId = callId;
+        this.conferenceId = conferenceId;
         this.localMediaAddress = localMediaAddress;
-        this.mediaFormatMap = mediaFormatMap;
-        this.isSecure = isSecure;
-        this.isRtcpMux = isRtcpMux;
         this.recvBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
-
-        initChannel();
     }
 
-    private void initChannel() {
+    public void initChannel() {
         try {
             freeChannel();
 
@@ -108,22 +116,49 @@ public class DataChannel implements DtlsListener, IceEventListener {
             mediaChannel.configureBlocking(false);
             mediaChannel.bind(localMediaAddress);
 
-            channelMaster.registerChannel(mediaChannel, this);
+            packetSelector.registerChannel(mediaChannel, this);
         } catch (Exception e) {
-            log.warn("|DataChannel({})| Fail to create the media channel.", callId, e);
+            log.warn("|DataChannel({})| Fail to create the media channel.", conferenceId, e);
+        }
+    }
+
+    public void close() {
+        rtpHandler = null;
+        rtcpHandler = null;
+
+        if (iceHandler != null) {
+            iceHandler.stopHarvester();
+            iceHandler = null;
+        }
+
+        try {
+            if (dtlsHandler != null) {
+                dtlsHandler.close();
+                dtlsHandler = null;
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+
+        realRemoteAddress = null;
+        scheduler.stop();
+        flush();
+        freeChannel();
+        if (selectionKey != null) {
+            selectionKey.cancel();
         }
     }
 
     private void freeChannel() {
         try {
-            channelMaster.unregisterChannel(this);
+            packetSelector.unregisterChannel(this);
 
             if (mediaChannel != null) {
                 mediaChannel.close();
                 mediaChannel = null;
             }
         } catch (Exception e) {
-            log.warn("|DataChannel({})| Fail to remove the media channel.", callId, e);
+            log.warn("|DataChannel({})| Fail to remove the media channel.", conferenceId, e);
         }
     }
 
@@ -142,31 +177,78 @@ public class DataChannel implements DtlsListener, IceEventListener {
                                 RtpClock rtpClock,
                                 RtpClock oobClock, RtpStatistics rtpStatistics) {
         rtpHandler = new RtpHandler(
-                callId,
+                conferenceId,
                 rtpClock, oobClock,
                 rtpStatistics,
                 mediaFormatMap
         );
-        rtpHandler.setRtpRecvCallback(mediaInfo::handleRtpPacket);
+        rtpHandler.setRtpRecvCallback(this::handleRtpPacket);
         rtpHandler.setPipelinePriority(RTP_PRIORITY);
         handlers.addHandler(rtpHandler);
-        if (isSecure) {
+        if (mediaSession.isSecure()) {
             rtpHandler.enableSrtp(dtlsHandler);
         } else {
             rtpHandler.disableSrtp();
         }
     }
 
+    public void handleRtpPacket(RtpInfo rtpInfo) {
+        // Send to Rtsp Client
+        if (rtpInfo.getMediaType().equals(MediaType.AUDIO.getName())) {
+            mediaSession.getRemoteSdpMediaInfo().setAudioPayloadType(rtpInfo.getRtpPacket().getPayloadType());
+            /*log.info("|MediaSession({})| AUDIO [{}] >>> ({}) {}/{}", conferenceId,
+                    remoteAudioPayloadType,
+                    rtpInfo.getRtpPacket().getSyncSource(),
+                    rtpInfo.getRtpPacket().getSeqNumber(), rtpInfo.getRtpPacket().getTimestamp()
+            );*/
+        } else if (rtpInfo.getMediaType().equals(MediaType.VIDEO.getName())) {
+            mediaSession.getRemoteSdpMediaInfo().setVideoPayloadType(rtpInfo.getRtpPacket().getPayloadType());
+            /*log.info("|MediaSession({})| VIDEO [{}] >>> ({}) {}/{}", conferenceId,
+                    remoteVideoPayloadType,
+                    rtpInfo.getRtpPacket().getSyncSource(),
+                    rtpInfo.getRtpPacket().getSeqNumber(), rtpInfo.getRtpPacket().getTimestamp()
+            );*/
+        }
+
+        relayToRtspClient(rtpInfo);
+    }
+
+    private void relayToRtspClient(RtpInfo rtpInfo) {
+        List<Streamer> streamerList = NettyChannelManager.getInstance().getStreamerListByCallId(conferenceId);
+        if (streamerList == null || streamerList.isEmpty()) {
+            return;
+        }
+
+        for (Streamer streamer : streamerList) {
+            applyRtpMetaToStreamer(rtpInfo, streamer);
+            if (streamer.isStarted()) {
+                streamer.sendRtpPacket(rtpInfo.getRtpPacket(), rtpInfo.getMediaType());
+            }
+        }
+    }
+
+    private void applyRtpMetaToStreamer(RtpInfo rtpInfo, Streamer streamer) {
+        if (rtpInfo.getMediaType().equals(MediaType.AUDIO.getName())) {
+            streamer.setAudioSsrc(rtpInfo.getRtpPacket().getSyncSource());
+            streamer.setAudioCurSeqNum(rtpInfo.getRtpPacket().getSeqNumber());
+            streamer.setAudioCurTimeStamp(rtpInfo.getRtpPacket().getTimestamp());
+        } else if (rtpInfo.getMediaType().equals(MediaType.VIDEO.getName())) {
+            streamer.setVideoSsrc(rtpInfo.getRtpPacket().getSyncSource());
+            streamer.setVideoCurSeqNum(rtpInfo.getRtpPacket().getSeqNumber());
+            streamer.setVideoCurTimeStamp(rtpInfo.getRtpPacket().getTimestamp());
+        }
+    }
+
     private void initRtcpHandler(RtpStatistics rtpStatistics) {
-        if (isRtcpMux) {
+        if (mediaSession.isRtcpMux()) {
             scheduler.start();
             rtcpHandler = new RtcpHandler(
-                    callId, mediaChannel.socket(),
+                    conferenceId, mediaChannel.socket(),
                     scheduler, rtpStatistics, MediaType.AUDIO.getName(), realRemoteAddress
             );
             rtcpHandler.setPipelinePriority(RTCP_PRIORITY);
             handlers.addHandler(rtcpHandler);
-            if (isSecure) {
+            if (mediaSession.isSecure()) {
                 rtcpHandler.enableSRTCP(dtlsHandler);
             } else {
                 rtcpHandler.disableSRTCP();
@@ -176,39 +258,43 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     /////////////////////////////////////////////////////////////////////////
 
-    public void initIce(String localIceUfrag, String localIcePasswd) {
-        iceHandler = new IceHandler(callId, IceComponent.RTP_ID, this);
+    public void initIce(IceInfo iceInfo, List<InetSocketAddress> targetAddressList) {
+        iceHandler = new IceHandler(conferenceId, IceComponent.RTP_ID, this);
 
         IceAuthenticatorImpl iceAuthenticator = new IceAuthenticatorImpl();
-        iceAuthenticator.setUfrag(localIceUfrag);
-        iceAuthenticator.setPassword(localIcePasswd);
+        iceAuthenticator.setUfrag(iceInfo.getLocalIceUfrag());
+        iceAuthenticator.setPassword(iceInfo.getLocalIcePasswd());
         iceHandler.setAuthenticator(iceAuthenticator);
 
         iceHandler.setPipelinePriority(STUN_PRIORITY);
         handlers.addHandler(iceHandler);
 
-        iceHandler.startHarvester(mediaInfo);
+        this.targetAddressList = targetAddressList;
+        iceHandler.startHarvester(
+                this,
+                iceInfo,
+                targetAddressList
+        );
     }
 
     /////////////////////////////////////////////////////////////////////////
 
     private void initDtls() {
-
-        if (isSecure) {
+        if (mediaSession.isSecure()) {
             DtlsConfig dtlsConfig = ConfigManager.getDtlsConfig();
             String keyPath = dtlsConfig.getKeyPath();
             String certPath = dtlsConfig.getCertPath();
             File keyFile = new File(keyPath);
             File certFile = new File(certPath);
             if (!keyFile.exists() || !certFile.exists()) {
-                log.error("|DataChannel({})| Fail to find the key or cert file. (keyPath={}, certPath={})", callId, keyPath, certPath);
+                log.error("|DataChannel({})| Fail to find the key or cert file. (keyPath={}, certPath={})", conferenceId, keyPath, certPath);
                 return;
             }
 
             dtlsClientProvider = new DtlsSrtpClientProvider(certPath, keyPath);
             dtlsServerProvider = new DtlsSrtpServerProvider(certPath, keyPath);
 
-            dtlsHandler = new DtlsHandler(callId, dtlsServerProvider, dtlsClientProvider, realRemoteAddress);
+            dtlsHandler = new DtlsHandler(conferenceId, dtlsServerProvider, dtlsClientProvider, realRemoteAddress);
             dtlsHandler.setChannel(mediaChannel);
             dtlsHandler.addListener(this);
             dtlsHandler.setPipelinePriority(DTLS_PRIORITY);
@@ -217,7 +303,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
     }
 
     public void onSelectedCandidates (boolean useCandidate) {
-        if (isSecure && dtlsHandler != null) {
+        if (mediaSession.isSecure() && dtlsHandler != null) {
             dtlsHandler.handshake(useCandidate);
         }
     }
@@ -235,7 +321,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     public void connect(SocketAddress address) throws IOException {
         if(this.mediaChannel == null) {
-            throw new IOException("|DataChannel(" + callId + ")| No channel available to connect.");
+            throw new IOException("|DataChannel(" + conferenceId + ")| No channel available to connect.");
         }
         this.mediaChannel.connect(address);
     }
@@ -245,7 +331,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
             this.mediaChannel.disconnect();
         }
     }
-    
+
     /////////////////////////////////////////////////////////////////////////
 
 
@@ -257,7 +343,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     public byte[] receive() {
         recvBuffer.clear();
-        
+
         int dataLength;
         try {
             SocketAddress remotePeer = mediaChannel.receive(recvBuffer);
@@ -279,7 +365,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
             this.recvBuffer.get(dataCopy, 0, dataLength);
 
             // Delegate work to the proper handler
-            PacketHandler handler = this.handlers.getHandler(dataCopy);
+            org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandler handler = this.handlers.getHandler(dataCopy);
             if (handler != null) {
                 try {
                     byte[] response = handler.handle(
@@ -291,11 +377,11 @@ public class DataChannel implements DtlsListener, IceEventListener {
                         queueData(response);
                     }
                 } catch (Exception e) {
-                    log.error("|DataChannel({})| Could not handle incoming packet.", callId, e);
+                    log.error("|DataChannel({})| Could not handle incoming packet.", conferenceId, e);
                 }
             } else {
                 if (log.isDebugEnabled()) {
-                    log.debug("|DataChannel({})| No protocol handler was found to process an incoming packet. Packet will be dropped.", callId);
+                    log.debug("|DataChannel({})| No protocol handler was found to process an incoming packet. Packet will be dropped.", conferenceId);
                 }
             }
             return dataCopy;
@@ -345,36 +431,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
                 }
             } while (currAddress != null);
         } catch (Exception e) {
-            log.warn("|DataChannel({})| Stopped flushing the channel abruptly.", callId, e);
-        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-
-    public void close() {
-        rtpHandler = null;
-        rtcpHandler = null;
-
-        if (iceHandler != null) {
-            iceHandler.stopHarvester();
-            iceHandler = null;
-        }
-
-        try {
-            if (dtlsHandler != null) {
-                dtlsHandler.close();
-                dtlsHandler = null;
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-
-        realRemoteAddress = null;
-        scheduler.stop();
-        flush();
-        freeChannel();
-        if (selectionKey != null) {
-            selectionKey.cancel();
+            log.warn("|DataChannel({})| Stopped flushing the channel abruptly.", conferenceId, e);
         }
     }
 
@@ -382,16 +439,16 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
     @Override
     public void onDtlsHandshakeComplete () {
-        log.debug("|DataChannel({})| DTLS handshake completed for RTP candidate.", callId);
-        if (this.isRtcpMux) {
+        log.debug("|DataChannel({})| DTLS handshake completed for RTP candidate.", conferenceId);
+        if (mediaSession.isRtcpMux()) {
             this.rtcpHandler.joinRtpSession();
         }
     }
 
     @Override
     public void onDtlsHandshakeFailed (Throwable e) {
-        log.warn("|DataChannel({})| DTLS handshake failed for RTP candidate.", callId, e);
-        SessionManager.getInstance().deleteCall(callId);
+        log.warn("|DataChannel({})| DTLS handshake failed for RTP candidate.", conferenceId, e);
+        ConferenceMaster.getInstance().deleteConference(conferenceId);
         close();
     }
 
@@ -401,16 +458,18 @@ public class DataChannel implements DtlsListener, IceEventListener {
 
         realRemoteAddress = selectedCandidatesEvent.getRemotePeer();
         if (realRemoteAddress == null) {
-            log.warn("|DataChannel({})| Fail to get the remote address from SelectedCandidatesEvent. Fail to open dtls.", callId);
+            log.warn("|DataChannel({})| Fail to get the remote address from SelectedCandidatesEvent. Fail to open dtls.", conferenceId);
             return;
         } else {
-            mediaInfo.getTargetAddressQueue().removeIf(
-                    inetSocketAddress -> !inetSocketAddress.equals(realRemoteAddress)
-            );
+            if (targetAddressList != null) {
+                targetAddressList.removeIf(
+                        inetSocketAddress -> !inetSocketAddress.equals(realRemoteAddress)
+                );
+            }
         }
 
         initDtls();
-        initRtp(mediaFormatMap);
+        initRtp(mediaSession.getMediaFormatMap());
 
         onSelectedCandidates(useCandidate);
     }

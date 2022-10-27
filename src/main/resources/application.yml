@@ -48,7 +48,7 @@ server:
 
 default:
   id: 0
-  serverUri: "ws://192.168.5.222:9101"
+  serverUri: "ws://192.168.5.224:9101"
   applicationName: "app"
   sendBufSize: 33554432
   recvBufSize: 16777216
@@ -130,7 +130,7 @@ server:
 
 default:
   id: 0
-  serverUri: "ws://192.168.5.222:9101"
+  serverUri: "ws://192.168.5.224:9101"
   applicationName: "app"
   sendBufSize: 33554432
   recvBufSize: 16777216
@@ -214,7 +214,7 @@ server:
 
 default:
   id: 0
-  serverUri: "ws://192.168.5.222:9101"
+  serverUri: "ws://192.168.5.224:9101"
   applicationName: "app"
   sendBufSize: 33554432
   recvBufSize: 16777216

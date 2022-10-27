@@ -183,13 +183,13 @@ public class NettyChannelManager {
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    public Streamer addStreamer(MediaType mediaType, String callId, String sessionId, String trackId, boolean isTcp) {
+    public Streamer addStreamer(MediaType mediaType, String conferenceId, String sessionId, String trackId, boolean isTcp) {
         if (rtspNettyChannel == null) {
-            logger.warn("({}) Fail to add the message sender. Not found the netty channel. (callId={}, trackId={}", callId, trackId, sessionId);
+            logger.warn("({}) Fail to add the message sender. Not found the netty channel. (conferenceId={}, trackId={}", conferenceId, trackId, sessionId);
             return null;
         }
 
-        return rtspNettyChannel.addStreamer(mediaType, callId, sessionId, trackId, isTcp);
+        return rtspNettyChannel.addStreamer(mediaType, conferenceId, sessionId, trackId, isTcp);
     }
 
     public Streamer getStreamer(String key) {
@@ -239,7 +239,7 @@ public class NettyChannelManager {
         ).collect(Collectors.toList());
     }
 
-    public List<Streamer> getStreamerListByCallId(String callId) {
+    public List<Streamer> getStreamerListByCallId(String conferenceId) {
         Collection<Streamer> values = rtspNettyChannel.getCloneStreamerMap().values();
         if (values != null && !values.isEmpty()) {
             return values.stream().filter(
@@ -247,7 +247,7 @@ public class NettyChannelManager {
                         if (streamer == null) {
                             return false;
                         }
-                        return streamer.getCallId().equals(callId);
+                        return streamer.getConferenceId().equals(conferenceId);
                     }
             ).collect(Collectors.toList());
         }

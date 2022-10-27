@@ -1,95 +1,40 @@
 package org.kkukie.jrtsp_gw.session.call;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.kkukie.jrtsp_gw.media.webrtc.service.WebRtcService;
+import org.kkukie.jrtsp_gw.session.ConferenceMaster;
+import org.kkukie.jrtsp_gw.session.media.MediaSession;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+@Getter
+@Setter
 @Slf4j
 public class ConferenceInfo {
 
-    private static final int MAX_CLIENT_COUNT = 100;
-
-    private final Map<String, CallInfo> callInfos;
-
-    private final long createdTime;
-
     private final String conferenceId;
+    private final boolean isHost;
 
-    private String hostCallId;
+    private WebRtcService webRtcService = null;
+    private MediaSession mediaSession = null;
 
-    private ConferenceState state = ConferenceState.INIT;
-
-    public ConferenceInfo(String conferenceId) {
+    public ConferenceInfo(String conferenceId, boolean isHost) {
         this.conferenceId = conferenceId;
-        callInfos = new ConcurrentHashMap<>();
-        createdTime = System.currentTimeMillis();
+        this.isHost = isHost;
     }
 
-    public String getConferenceId() {
-        return conferenceId;
-    }
-
-    public boolean addCall(String callId, CallInfo callInfo) {
-        if (callInfos.containsKey(callId)) {
-            log.warn("Call-Id({}) is already exist. (conferenceId={})", callId, conferenceId);
-            return false;
-        }
-        if (callInfos.size() >= MAX_CLIENT_COUNT) {
-            log.warn("Conference's Call-ID list is full. (Call-ID={}, conferenceId={})", callId, conferenceId);
-            return false;
-        }
-        boolean result = callInfos.put(callId, callInfo) == null;
-        if (result && state != ConferenceState.ACTIVATE) {
-            state = ConferenceState.ACTIVATE;
-        }
-        return result;
-    }
-
-    public void removeCall(String callId) {
-        callInfos.remove(callId);
-        if (callInfos.isEmpty() && state != ConferenceState.EMPTY) {
-            state = ConferenceState.EMPTY;
+    public void addCall() {
+        if (webRtcService != null) {
+            webRtcService.addClient();
         }
     }
 
-    public List<String> getCallIds() {
-        synchronized (callInfos) {
-            return new ArrayList<>(callInfos.keySet());
+    public void removeCall() {
+        if (webRtcService != null && webRtcService.removeClient() == 0) {
+            log.debug("|ConferenceInfo({})| WebRtcService has no more client. Finishing this conference...", conferenceId);
+            webRtcService.disposeWebSocketService();
+            ConferenceMaster.getInstance().deleteConference(conferenceId);
         }
-    }
-
-    public List<CallInfo> getCallInfos() {
-        synchronized (callInfos) {
-            return new ArrayList<>(callInfos.values());
-        }
-    }
-
-    public int getCallIdSize() {
-        return callInfos.size();
-    }
-
-    public long getCreatedTime() {
-        return createdTime;
-    }
-
-    public ConferenceState getState() {
-        return state;
-    }
-
-    public void setState(ConferenceState state) {
-        this.state = state;
-    }
-
-    public String getHostCallId() {
-        return hostCallId;
-    }
-
-    public ConferenceInfo setHostCallId(String hostCallId) {
-        this.hostCallId = hostCallId;
-        return this;
     }
 
 }

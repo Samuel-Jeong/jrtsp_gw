@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class RtpHandler implements PacketHandler {
 
-    private final String callId;
+    private final String conferenceId;
 
     private final RtpClock rtpClock;
     private final RtpClock oobClock;
@@ -38,9 +38,9 @@ public class RtpHandler implements PacketHandler {
 
     private Consumer<RtpInfo> rtpRecvCallback = whatever -> {};
 
-    public RtpHandler (String callId, RtpClock clock, RtpClock oobClock,
+    public RtpHandler (String conferenceId, RtpClock clock, RtpClock oobClock,
                        RtpStatistics statistics, Map<String, RTPFormats> mediaFormatMap) {
-        this.callId = callId;
+        this.conferenceId = conferenceId;
 
         this.mediaFormatMap = mediaFormatMap;
         this.pipelinePriority = 0;
@@ -160,7 +160,7 @@ public class RtpHandler implements PacketHandler {
             // Decode SRTP packet into RTP. WebRTC calls only.
             byte[] decoded = this.dtlsHandler.decodeRTP(packet, offset, dataLength);
             if (decoded == null || decoded.length == 0) {
-                log.warn("|RtpHandler({})| SRTP packet is not valid! Dropping packet.", callId);
+                log.warn("|RtpHandler({})| SRTP packet is not valid! Dropping packet.", conferenceId);
                 return null;
             } else {
                 // Transform incoming data directly into an RTP Packet
@@ -200,7 +200,7 @@ public class RtpHandler implements PacketHandler {
                     }
                 }
             } else {
-                log.warn("|RtpHandler({})| Skipping packet because limit of the packets buffer is zero", callId);
+                log.warn("|RtpHandler({})| Skipping packet because limit of the packets buffer is zero", conferenceId);
             }
         }
 

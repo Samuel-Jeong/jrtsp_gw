@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 @Slf4j
 public class RtcpHandler implements PacketHandler {
 
-    private final String callId;
+    private final String conferenceId;
 
     /** Time (in ms) between SSRC Task executions */
     private static final long SSRC_TASK_DELAY = 7000;
@@ -69,8 +69,8 @@ public class RtcpHandler implements PacketHandler {
 
     private final SocketAddress remoteAddress;
 
-    public RtcpHandler(String callId, DatagramSocket datagramSocket, final Scheduler scheduler, final RtpStatistics statistics, String mediaType, SocketAddress remoteAddress) {
-        this.callId = callId;
+    public RtcpHandler(String conferenceId, DatagramSocket datagramSocket, final Scheduler scheduler, final RtpStatistics statistics, String mediaType, SocketAddress remoteAddress) {
+        this.conferenceId = conferenceId;
         this.datagramSocket = datagramSocket;
 
         this.mediaType = mediaType.equals(AUDIO_TYPE);
@@ -221,7 +221,7 @@ public class RtcpHandler implements PacketHandler {
             // Let the RTP handler know what is the type of scheduled packet
             this.statistics.setRtcpPacketType(packetType);
         } catch (IllegalStateException e) {
-            log.warn("|RtcpHandler({})| RTCP timer already canceled. No more reports will be scheduled.", callId);
+            log.warn("|RtcpHandler({})| RTCP timer already canceled. No more reports will be scheduled.", conferenceId);
         }
     }
 
@@ -232,7 +232,7 @@ public class RtcpHandler implements PacketHandler {
             // Let the RTP handler know what is the type of scheduled packet
             this.statistics.setRtcpPacketType(packetType);
         } catch (IllegalStateException e) {
-            log.warn("|RtcpHandler({})| RTCP timer already canceled. No more reports will be scheduled.", callId);
+            log.warn("|RtcpHandler({})| RTCP timer already canceled. No more reports will be scheduled.", conferenceId);
         }
     }
 
@@ -250,7 +250,7 @@ public class RtcpHandler implements PacketHandler {
         try {
             this.reportTaskFuture = this.scheduler.schedule(task, interval, TimeUnit.MILLISECONDS);
         } catch (IllegalStateException e) {
-            log.warn("|RtcpHandler({})| RTCP timer already canceled. Scheduled report was canceled and cannot be re-scheduled.", callId);
+            log.warn("|RtcpHandler({})| RTCP timer already canceled. Scheduled report was canceled and cannot be re-scheduled.", conferenceId);
         }
     }
 
@@ -330,7 +330,7 @@ public class RtcpHandler implements PacketHandler {
 
         // Check if incoming packet is supported by the handler
         if (!canHandle(packet, dataLength, offset)) {
-            log.warn("|RtcpHandler({})| Cannot handle incoming packet!", callId);
+            log.warn("|RtcpHandler({})| Cannot handle incoming packet!", conferenceId);
             throw new PacketHandlerException("Cannot handle incoming packet");
         }
 
@@ -340,7 +340,7 @@ public class RtcpHandler implements PacketHandler {
         if (this.secure) {
             decoded = this.dtlsHandler.decodeRTCP(packet, offset, dataLength);
             if (decoded == null || decoded.length == 0) {
-                log.warn("|RtcpHandler({})| Could not decode incoming SRTCP packet. Packet will be dropped.", callId);
+                log.warn("|RtcpHandler({})| Could not decode incoming SRTCP packet. Packet will be dropped.", conferenceId);
                 return null;
             }
             rtcpPacket.decode(decoded, 0);
@@ -350,7 +350,7 @@ public class RtcpHandler implements PacketHandler {
 
         // Trace incoming RTCP report
         if (log.isTraceEnabled()) {
-            log.trace("|RtcpHandler({})| RECEIVED RTCP\n[{}]", callId, rtcpPacket);
+            log.trace("|RtcpHandler({})| RECEIVED RTCP\n[{}]", conferenceId, rtcpPacket);
         }
 
         if (this.secure && decoded != null) {
@@ -416,12 +416,12 @@ public class RtcpHandler implements PacketHandler {
 
             // trace outgoing RTCP report
             if (log.isTraceEnabled()) {
-                log.trace("|RtcpHandler({})| SENDING RTCP [dataLen={}]", callId, data.length);
+                log.trace("|RtcpHandler({})| SENDING RTCP [dataLen={}]", conferenceId, data.length);
             }
 
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("|RtcpHandler({})| Could not send raw rtcp packet.", callId);
+                log.debug("|RtcpHandler({})| Could not send raw rtcp packet.", conferenceId);
             }
         }
     }
@@ -460,7 +460,7 @@ public class RtcpHandler implements PacketHandler {
 
             // trace outgoing RTCP report
             if (log.isTraceEnabled()) {
-                log.trace("|RtcpHandler({})| SENDING RTCP\n[{}]", callId, packet);
+                log.trace("|RtcpHandler({})| SENDING RTCP\n[{}]", conferenceId, packet);
             }
 
             // Make double sure channel is still open and connected before sending
@@ -475,11 +475,11 @@ public class RtcpHandler implements PacketHandler {
                 // cancel packet transmission
                 if (log.isDebugEnabled()) {
                     if (this.datagramSocket.isClosed()) {
-                        log.debug("|RtcpHandler({})| Channel is closed.", callId);
+                        log.debug("|RtcpHandler({})| Channel is closed.", conferenceId);
                     } else if (!this.datagramSocket.isConnected()) {
-                        log.debug("|RtcpHandler({})| RtChannel is disconnected.", callId);
+                        log.debug("|RtcpHandler({})| RtChannel is disconnected.", conferenceId);
                     }
-                    log.debug("|RtcpHandler({})| Could not send {} packet.", callId, type);
+                    log.debug("|RtcpHandler({})| Could not send {} packet.", conferenceId, type);
                 }
                 return;
             }
@@ -490,14 +490,14 @@ public class RtcpHandler implements PacketHandler {
             this.statistics.onRtcpSent(packet);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("|RtcpHandler({})| Could not send {} packet.", callId, type);
+                log.debug("|RtcpHandler({})| Could not send {} packet.", conferenceId, type);
             }
         }
     }
 
     public synchronized void reset() {
         if (joined.get()) {
-            throw new IllegalStateException("|RtcpHandler(" + callId + ")| Cannot reset handler while is part of active RTP session.");
+            throw new IllegalStateException("|RtcpHandler(" + conferenceId + ")| Cannot reset handler while is part of active RTP session.");
         }
 
         if (this.reportTaskFuture != null) {
@@ -567,7 +567,7 @@ public class RtcpHandler implements PacketHandler {
             try {
                 onExpire();
             } catch (IOException e) {
-                log.error("|RtcpHandler({})| Cannot send scheduled RTCP report. Stopping handler.", callId);
+                log.error("|RtcpHandler({})| Cannot send scheduled RTCP report. Stopping handler.", conferenceId);
                 reset();
             }
         }
@@ -633,7 +633,7 @@ public class RtcpHandler implements PacketHandler {
                     break;
 
                 default:
-                    log.warn("|RtcpHandler({})| Unknown scheduled event type!", callId);
+                    log.warn("|RtcpHandler({})| Unknown scheduled event type!", conferenceId);
                     break;
             }
         }

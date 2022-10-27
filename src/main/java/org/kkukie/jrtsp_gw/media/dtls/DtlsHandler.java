@@ -31,7 +31,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
     private static final int MAX_IP_OVERHEAD = MIN_IP_OVERHEAD + 64;
     private static final int UDP_OVERHEAD = 8;
 
-    private final String callId;
+    private final String conferenceId;
 
     private final int receiveLimit;
     private final int sendLimit;
@@ -64,8 +64,8 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
 
     private final SocketAddress remoteAddress;
 
-    public DtlsHandler (String callId, DtlsSrtpServerProvider tlsServerProvider, DtlsSrtpClientProvider tlsClientProvider, SocketAddress remoteAddress) {
-        this.callId = callId;
+    public DtlsHandler (String conferenceId, DtlsSrtpServerProvider tlsServerProvider, DtlsSrtpClientProvider tlsClientProvider, SocketAddress remoteAddress) {
+        this.conferenceId = conferenceId;
         this.pipelinePriority = 0;
         this.remoteAddress = remoteAddress;
 
@@ -262,7 +262,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         if (!this.listeners.isEmpty()) {
             for (DtlsListener listener : listeners) {
                 listener.onDtlsHandshakeComplete();
-                log.debug("|DtlsHandler({})| DTLS DONE", callId);
+                log.debug("|DtlsHandler({})| DTLS DONE", conferenceId);
             }
         }
     }
@@ -271,7 +271,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         if (!this.listeners.isEmpty()) {
             for (DtlsListener listener : listeners) {
                 listener.onDtlsHandshakeFailed(e);
-                log.warn("|DtlsHandler({})| DTLS FAILED", callId);
+                log.warn("|DtlsHandler({})| DTLS FAILED", conferenceId);
             }
         }
     }
@@ -363,7 +363,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
             try {
                 Thread.sleep(1);
             } catch (Exception e) {
-                log.warn("|DtlsHandler({})| Could not sleep thread to receive DTLS data.", callId);
+                log.warn("|DtlsHandler({})| Could not sleep thread to receive DTLS data.", conferenceId);
             } finally {
                 attempts--;
             }
@@ -382,10 +382,10 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                         remoteAddress
                 );
             } else {
-                log.warn("|DtlsHandler({})| Handler skipped send operation because channel is not open or connected.", callId);
+                log.warn("|DtlsHandler({})| Handler skipped send operation because channel is not open or connected.", conferenceId);
             }
         } else {
-            log.warn("|DtlsHandler({})| Handler has timed out so send operation will be skipped.", callId);
+            log.warn("|DtlsHandler({})| Handler has timed out so send operation will be skipped.", conferenceId);
         }
     }
 
@@ -411,7 +411,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                 // Perform the handshake in a non-blocking fashion
                 DTLSTransport var = serverProtocol.accept(server, DtlsHandler.this);
                 if (var == null) {
-                    log.warn("|DtlsHandler({})| serverProtocol.accept result is null", callId);
+                    log.warn("|DtlsHandler({})| serverProtocol.accept result is null", conferenceId);
                 }
                 // Prepare the shared key to be used in RTP streaming
                 server.prepareSrtpSharedSecret();
@@ -419,19 +419,19 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                 // Generate encoders for DTLS traffic
                 PacketTransformer var1 = srtpDecoder = generateRtpDecoder(true);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtpDecoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtpDecoder is null", conferenceId);
                 }
                 var1 = srtpEncoder = generateRtpEncoder(true);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtpEncoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtpEncoder is null", conferenceId);
                 }
                 var1 = srtcpDecoder = generateRtcpDecoder(true);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtcpDecoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtcpDecoder is null", conferenceId);
                 }
                 var1 = srtcpEncoder = generateRtcpEncoder(true);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtcpEncoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtcpEncoder is null", conferenceId);
                 }
 
                 // Declare handshake as complete
@@ -442,7 +442,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                 // Warn listeners handshake completed
                 fireHandshakeComplete();
             } catch (Exception e) {
-                log.error("|DtlsHandler({})| DtlsHandler.HandshakeServer: DTLS handshake failed. Reason:", callId, e);
+                log.error("|DtlsHandler({})| DtlsHandler.HandshakeServer: DTLS handshake failed. Reason:", conferenceId, e);
 
                 // Declare handshake as failed
                 handshakeComplete = false;
@@ -467,7 +467,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                 // Perform the handshake in a non-blocking fashion
                 DTLSTransport var = clientProtocol.connect(client, DtlsHandler.this);
                 if (var == null) {
-                    log.warn("|DtlsHandler({})| clientProtocol.connect result is null", callId);
+                    log.warn("|DtlsHandler({})| clientProtocol.connect result is null", conferenceId);
                 }
                 // Prepare the shared key to be used in RTP streaming
                 client.prepareSrtpSharedSecret();
@@ -475,19 +475,19 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                 // Generate encoders for DTLS traffic
                 PacketTransformer var1 = srtpDecoder = generateRtpDecoder(false);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtpDecoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtpDecoder is null", conferenceId);
                 }
                 var1 = srtpEncoder = generateRtpEncoder(false);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtpEncoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtpEncoder is null", conferenceId);
                 }
                 var1 = srtcpDecoder = generateRtcpDecoder(false);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtcpDecoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtcpDecoder is null", conferenceId);
                 }
                 var1 = srtcpEncoder = generateRtcpEncoder(false);
                 if (var1 == null) {
-                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtcpEncoder is null", callId);
+                    log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtcpEncoder is null", conferenceId);
                 }
 
                 // Declare handshake as complete
@@ -498,7 +498,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
                 // Warn listeners handshake completed
                 fireHandshakeComplete();
             } catch (Exception e) {
-                log.error("|DtlsHandler({})| DtlsHandler.HandshakeClient: DTLS handshake failed. Reason:", callId, e);
+                log.error("|DtlsHandler({})| DtlsHandler.HandshakeClient: DTLS handshake failed. Reason:", conferenceId, e);
 
                 // Declare handshake as failed
                 handshakeComplete = false;

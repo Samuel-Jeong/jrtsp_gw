@@ -4,7 +4,7 @@ package org.kkukie.jrtsp_gw.service.monitor;
 import org.kkukie.jrtsp_gw.service.scheduler.job.Job;
 import org.kkukie.jrtsp_gw.service.scheduler.job.JobContainer;
 import org.kkukie.jrtsp_gw.service.system.SystemManager;
-import org.kkukie.jrtsp_gw.session.SessionManager;
+import org.kkukie.jrtsp_gw.session.ConferenceMaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class HaHandler extends JobContainer {
             String memoryUsageStr = systemManager.getHeapMemoryUsage();
 
             logger.debug("| cpu=[{}], mem=[{}], thread=[{}] | CallCount=[{}]",
-                    cpuUsageStr, memoryUsageStr, Thread.activeCount(), SessionManager.getInstance().getCallInfoSize()
+                    cpuUsageStr, memoryUsageStr, Thread.activeCount(), ConferenceMaster.getInstance().getConferenceInfoSize()
             );
         });
     }

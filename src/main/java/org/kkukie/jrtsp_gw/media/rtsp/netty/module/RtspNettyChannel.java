@@ -147,11 +147,11 @@ public class RtspNettyChannel { // > TCP
 
     ////////////////////////////////////////////////////////////////////////////////
 
-    public Streamer addStreamer(MediaType mediaType, String callId, String sessionId, String trackId, boolean isTcp) {
+    public Streamer addStreamer(MediaType mediaType, String conferenceId, String sessionId, String trackId, boolean isTcp) {
         try {
             streamerMapLock.lock();
 
-            String key = (trackId != null && !trackId.isEmpty()) ? callId + ":" + trackId + ":" + sessionId : callId + ":" + sessionId;
+            String key = (trackId != null && !trackId.isEmpty()) ? conferenceId + ":" + trackId + ":" + sessionId : conferenceId + ":" + sessionId;
             if (streamerMap.get(key) != null) {
                 logger.warn("Streamer is already exist. (key={})", sessionId);
                 return null;
@@ -159,7 +159,7 @@ public class RtspNettyChannel { // > TCP
 
             Streamer streamer = new Streamer(
                     mediaType,
-                    callId,
+                    conferenceId,
                     sessionId,
                     trackId,
                     isTcp,
@@ -168,7 +168,7 @@ public class RtspNettyChannel { // > TCP
             streamerMap.putIfAbsent(streamer.getKey(), streamer);
             return streamer;
         } catch (Exception e) {
-            logger.warn("Fail to add streamer (callId={}, sessionId={}, trackId={})", callId, sessionId, trackId, e);
+            logger.warn("Fail to add streamer (conferenceId={}, sessionId={}, trackId={})", conferenceId, sessionId, trackId, e);
             return null;
         } finally {
             streamerMapLock.unlock();

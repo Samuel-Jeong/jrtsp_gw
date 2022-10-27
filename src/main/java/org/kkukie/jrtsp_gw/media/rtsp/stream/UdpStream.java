@@ -20,7 +20,7 @@ public class UdpStream {
     private final Bootstrap bootstrap = new Bootstrap();
     private NioEventLoopGroup nioEventLoopGroup = null;
 
-    public void start(String callId) {
+    public void start(String conferenceId) {
         DefaultConfig defaultConfig = ConfigManager.getDefaultConfig();
 
         nioEventLoopGroup = new NioEventLoopGroup(defaultConfig.getStreamThreadPoolSize());
@@ -37,7 +37,7 @@ public class UdpStream {
                         final ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast(
                                 //new DefaultEventExecutorGroup(1),
-                                new StreamerChannelHandler(callId)
+                                new StreamerChannelHandler(conferenceId)
                         );
                     }
                 });

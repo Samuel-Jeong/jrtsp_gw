@@ -13,15 +13,17 @@ import org.kkukie.jrtsp_gw.media.core.stun.messages.attributes.general.UsernameA
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandler;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandlerException;
 import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
+import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;
 import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
-import org.kkukie.jrtsp_gw.session.media.MediaInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.kkukie.jrtsp_gw.media.core.stun.messages.StunMessage.MAGIC_COOKIE;
@@ -29,7 +31,7 @@ import static org.kkukie.jrtsp_gw.media.core.stun.messages.StunMessage.MAGIC_COO
 @Slf4j
 public class IceHandler implements PacketHandler {
 
-    private final String callId;
+    private final String conferenceId;
     private final short componentId;
     private final IceEventListener iceListener;
     private final AtomicBoolean candidateSelected;
@@ -38,8 +40,8 @@ public class IceHandler implements PacketHandler {
 
     private HarvestHandler harvestHandler = null;
 
-    public IceHandler(String callId, short componentId, IceEventListener iceListener) {
-        this.callId = callId;
+    public IceHandler(String conferenceId, short componentId, IceEventListener iceListener) {
+        this.conferenceId = conferenceId;
 
         switch (componentId) {
             case 1:
@@ -49,7 +51,7 @@ public class IceHandler implements PacketHandler {
                 this.candidateSelected = new AtomicBoolean(false);
                 return;
             default:
-                throw new IllegalArgumentException("|IceHandler(" + callId + ")| Invalid component ID: " + componentId);
+                throw new IllegalArgumentException("|IceHandler(" + conferenceId + ")| Invalid component ID: " + componentId);
         }
     }
 
@@ -97,7 +99,7 @@ public class IceHandler implements PacketHandler {
                 return message instanceof StunResponse ? this.processResponse((StunResponse)message, remotePeer) : null;
             }
         } catch (StunException stunException) {
-            throw new PacketHandlerException("|IceHandler(" + callId + ")| Could not decode STUN packet", stunException);
+            throw new PacketHandlerException("|IceHandler(" + conferenceId + ")| Could not decode STUN packet", stunException);
         } catch (IOException ioException) {
             throw new PacketHandlerException(ioException.getMessage(), ioException);
         }
@@ -115,12 +117,12 @@ public class IceHandler implements PacketHandler {
             return errorResponse.encode();
         } else {
             log.debug("|HarvestHandler({})| Recv StunRequest(tid={}) from [{}].",
-                    callId, DatatypeConverter.printHexBinary(transactionID), remotePeer
+                    conferenceId, DatatypeConverter.printHexBinary(transactionID), remotePeer
             );
 
             String remoteUsername = new String(remoteUnameAttribute.getUsername(), StandardCharsets.UTF_8).trim();
             if (!this.authenticator.validateUsername(remoteUsername)) {
-                log.warn("|IceHandler({})| validateUsername: fail. (remoteUsername={})", callId, remoteUsername);
+                log.warn("|IceHandler({})| validateUsername: fail. (remoteUsername={})", conferenceId, remoteUsername);
                 return null;
             } else {
                 int colon = remoteUsername.indexOf(":");
@@ -132,7 +134,7 @@ public class IceHandler implements PacketHandler {
                 try {
                     response.setTransactionID(transactionID);
                 } catch (StunException var16) {
-                    throw new IOException("|IceHandler(" + callId + ")| Illegal STUN Transaction ID: " + new String(transactionID), var16);
+                    throw new IOException("|IceHandler(" + conferenceId + ")| Illegal STUN Transaction ID: " + new String(transactionID), var16);
                 }
 
                 String localUsername = remoteUfrag.concat(":").concat(localUFrag);
@@ -146,7 +148,7 @@ public class IceHandler implements PacketHandler {
                 if (!this.candidateSelected.get()) {
                     this.candidateSelected.set(true);
                     if (log.isDebugEnabled()) {
-                        log.debug("|IceHandler({})| Selected candidate={} (local={})", callId, remotePeer, localPeer.toString());
+                        log.debug("|IceHandler({})| Selected candidate={} (local={})", conferenceId, remotePeer, localPeer.toString());
                     }
 
                     this.iceListener.onSelectedCandidates(
@@ -156,7 +158,7 @@ public class IceHandler implements PacketHandler {
                 }
 
                 log.debug("|HarvestHandler({})| Send StunResponse(tid={}) to [{}].",
-                        callId, DatatypeConverter.printHexBinary(response.getTransactionId()), remotePeer
+                        conferenceId, DatatypeConverter.printHexBinary(response.getTransactionId()), remotePeer
                 );
                 return response.encode();
             }
@@ -174,7 +176,7 @@ public class IceHandler implements PacketHandler {
                 char attributeType = attribute.getAttributeType();
                 if (attributeType == StunAttribute.MESSAGE_INTEGRITY) {
                     log.debug("|HarvestHandler({})| Recv StunResponse(tid={}) from [{}].",
-                            callId, DatatypeConverter.printHexBinary(response.getTransactionId()), remotePeer
+                            conferenceId, DatatypeConverter.printHexBinary(response.getTransactionId()), remotePeer
                     );
                     this.iceListener.onSelectedCandidates(
                             new SelectedCandidatesEvent(remotePeer),
@@ -184,7 +186,7 @@ public class IceHandler implements PacketHandler {
                 }
             }
         } catch (Exception e) {
-            log.warn("|IceHandler({})| processResponse.Exception", callId, e);
+            log.warn("|IceHandler({})| processResponse.Exception", conferenceId, e);
         }
         return null;
     }
@@ -197,10 +199,10 @@ public class IceHandler implements PacketHandler {
         this.pipelinePriority = pipelinePriority;
     }
 
-    public void startHarvester(MediaInfo mediaInfo) {
+    public void startHarvester(DataChannel dataChannel, IceInfo iceInfo, List<InetSocketAddress> targetAddressList) {
         stopHarvester();
-        harvestHandler = new HarvestHandler(callId);
-        harvestHandler.start(mediaInfo);
+        harvestHandler = new HarvestHandler(conferenceId);
+        harvestHandler.start(dataChannel, iceInfo, targetAddressList);
     }
 
     public void stopHarvester() {

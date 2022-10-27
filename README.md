@@ -346,10 +346,10 @@ CSeq: 4
 User-Agent: LibVLC/3.0.17.3 (LIVE555 Streaming Media v2016.11.28)
 Transport: RTP/AVP;unicast;client_port=54650-54651
 08:12:18.690 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - (RTSP_127.0.0.1:8554) () Call-ID: abcd1234/trackID=1
-08:12:18.690 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - callId: abcd1234, trackId: 1
+08:12:18.690 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - conferenceId: abcd1234, trackId: 1
 08:12:18.690 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - (RTSP_127.0.0.1:8554) Current sessionId is [438758].
 08:12:18.696 [nioEventLoopGroup-2-1] DEBUG media.core.stream.util.WebSocketPortManager - |WebSocketPortManager| Success to get port(=50002) resource in Queue.
-08:12:18.706 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.Streamer - |Streamer(abcd1234:1:438758)| Streamer(audio) is created. (callId=abcd1234, trackId=1, localNetworkInfo={
+08:12:18.706 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.Streamer - |Streamer(abcd1234:1:438758)| Streamer(audio) is created. (conferenceId=abcd1234, trackId=1, localNetworkInfo={
   "listenIp": "127.0.0.1",
   "listenPort": 50002,
   "isTcp": false
@@ -375,10 +375,10 @@ User-Agent: LibVLC/3.0.17.3 (LIVE555 Streaming Media v2016.11.28)
 Transport: RTP/AVP;unicast;client_port=59782-59783
 Session: 438758
 08:12:18.712 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - (RTSP_127.0.0.1:8554) () Call-ID: abcd1234/trackID=2
-08:12:18.712 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - callId: abcd1234, trackId: 2
+08:12:18.712 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - conferenceId: abcd1234, trackId: 2
 08:12:18.712 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.netty.handler.RtspChannelHandler - (RTSP_127.0.0.1:8554) Current sessionId is [438758].
 08:12:18.712 [nioEventLoopGroup-2-1] DEBUG media.core.stream.util.WebSocketPortManager - |WebSocketPortManager| Success to get port(=50004) resource in Queue.
-08:12:18.713 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.Streamer - |Streamer(abcd1234:2:438758)| Streamer(video) is created. (callId=abcd1234, trackId=2, localNetworkInfo={
+08:12:18.713 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.Streamer - |Streamer(abcd1234:2:438758)| Streamer(video) is created. (conferenceId=abcd1234, trackId=2, localNetworkInfo={
   "listenIp": "127.0.0.1",
   "listenPort": 50004,
   "isTcp": false
@@ -511,7 +511,7 @@ cache-control: no-cache
 ~~~
 1. 세션(호) 개수 조회
   - Method : GET
-  - URI : http://[IP]:[PORT]/s/v1/call_count
+  - URI : http://[IP]:[PORT]/s/v1/conference_count
 
 2. CPU 사용량 조회
   - Method : GET
