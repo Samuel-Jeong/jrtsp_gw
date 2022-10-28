@@ -21,6 +21,7 @@
 package org.kkukie.jrtsp_gw.media.stun.candidate;
 
 import org.kkukie.jrtsp_gw.media.rtp.channels.TransportAddress;
+import org.kkukie.jrtsp_gw.media.stun.candidate.base.CandidateType;
 
 import java.net.InetAddress;
 

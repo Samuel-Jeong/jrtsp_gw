@@ -9,7 +9,9 @@ import media.core.rtsp.sdp.SdpRtp;
 import media.core.rtsp.sdp.SdpSession;
 import org.kkukie.jrtsp_gw.media.rtp.format.RTPFormat;
 import org.kkukie.jrtsp_gw.media.rtp.format.RTPFormats;
-import org.kkukie.jrtsp_gw.session.format.FormatFactory;
+import org.kkukie.jrtsp_gw.session.media.base.MediaType;
+import org.kkukie.jrtsp_gw.session.media.base.SdpMediaInfo;
+import org.kkukie.jrtsp_gw.session.media.format.FormatFactory;
 
 import java.net.SocketAddress;
 import java.util.HashMap;

@@ -2,7 +2,7 @@ package org.kkukie.jrtsp_gw.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.service.system.SystemManager;
-import org.kkukie.jrtsp_gw.session.ConferenceMaster;
+import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

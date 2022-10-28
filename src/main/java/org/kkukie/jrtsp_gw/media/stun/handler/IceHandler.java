@@ -17,7 +17,7 @@ import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;
 import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.ice.IceInfo;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;

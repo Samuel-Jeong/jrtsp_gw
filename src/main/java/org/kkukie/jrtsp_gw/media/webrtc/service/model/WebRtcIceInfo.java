@@ -3,8 +3,8 @@ package org.kkukie.jrtsp_gw.media.webrtc.service.model;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCIceCandidate;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.ice.IceInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.model.ice.RTCIceCandidate;
 
 import java.util.ArrayList;
 import java.util.List;

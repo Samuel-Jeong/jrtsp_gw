@@ -5,7 +5,7 @@ import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.media.core.stun.messages.StunRequest;
 import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.model.StunMessageFactory;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.ice.IceInfo;
 
 import javax.xml.bind.DatatypeConverter;
 import java.net.InetSocketAddress;

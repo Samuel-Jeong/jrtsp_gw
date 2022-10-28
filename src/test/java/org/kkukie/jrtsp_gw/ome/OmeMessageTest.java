@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.OmeAnswer;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCIceCandidate;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.model.ice.RTCIceCandidate;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,7 @@ package org.kkukie.jrtsp_gw.service.monitor;
 import org.kkukie.jrtsp_gw.service.scheduler.job.Job;
 import org.kkukie.jrtsp_gw.service.scheduler.job.JobContainer;
 import org.kkukie.jrtsp_gw.service.system.SystemManager;
-import org.kkukie.jrtsp_gw.session.ConferenceMaster;
+import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,6 +20,8 @@
 
 package org.kkukie.jrtsp_gw.media.stun.candidate;
 
+import org.kkukie.jrtsp_gw.media.stun.candidate.base.CandidateWrapper;
+
 import java.nio.channels.DatagramChannel;
 
 public class LocalCandidateWrapper implements CandidateWrapper, Comparable<LocalCandidateWrapper> {

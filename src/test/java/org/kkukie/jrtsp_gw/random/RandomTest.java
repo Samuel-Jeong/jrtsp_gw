@@ -2,7 +2,7 @@ package org.kkukie.jrtsp_gw.random;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.FingerPrintGen;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.FingerPrintGenerator;
 import org.kkukie.jrtsp_gw.util.RandomManager;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class RandomTest {
         String certPath = "/Users/jamesj/GIT_PROJECTS/UANGEL/urtsp_gw/src/main/resources/config/cert.pem";
 
         // 2) When
-        String fingerPrint = FingerPrintGen.getFingerPrint(certPath);
+        String fingerPrint = FingerPrintGenerator.getFingerPrint(certPath);
 
         // 3) Then
         log.info("FingerPrint: [ {} ]", fingerPrint);

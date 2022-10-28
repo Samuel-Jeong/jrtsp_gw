@@ -12,11 +12,12 @@ import org.kkukie.jrtsp_gw.media.stream.manager.PacketSelector;
 import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stream.util.WebSocketPortManager;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.*;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCIceCandidate;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCPeerConnection;
-import org.kkukie.jrtsp_gw.session.ConferenceMaster;
-import org.kkukie.jrtsp_gw.session.call.ConferenceInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.base.CommandType;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.ice.IceInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.model.ice.RTCIceCandidate;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCPeerConnectionMaster;
+import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
+import org.kkukie.jrtsp_gw.session.call.model.ConferenceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 import org.kkukie.jrtsp_gw.util.RandomManager;
 
@@ -34,7 +35,7 @@ public class WebSocketInfo {
 
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private final RTCPeerConnection localPeerConnection = new RTCPeerConnection();
+    private final RTCPeerConnectionMaster localPeerConnection = new RTCPeerConnectionMaster();
     private WebSocket webSocket = null;
 
     private String localIp = null;

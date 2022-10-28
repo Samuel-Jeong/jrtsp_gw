@@ -9,8 +9,8 @@ import org.kkukie.jrtsp_gw.media.stream.manager.PacketHandlerMaster;
 import org.kkukie.jrtsp_gw.media.stream.manager.PacketSelector;
 import org.kkukie.jrtsp_gw.media.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.stun.events.SelectedCandidatesEvent;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
-import org.kkukie.jrtsp_gw.session.ConferenceMaster;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.ice.IceInfo;
+import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 
 import java.io.IOException;

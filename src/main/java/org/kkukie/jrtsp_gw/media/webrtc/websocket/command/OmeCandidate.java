@@ -4,8 +4,10 @@ package org.kkukie.jrtsp_gw.media.webrtc.websocket.command;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.base.AbstractCommand;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.base.CommandType;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.WebSocketService;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCIceCandidate;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.model.ice.RTCIceCandidate;
 
 import java.util.List;
 

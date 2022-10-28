@@ -20,9 +20,9 @@ import org.kkukie.jrtsp_gw.media.stream.model.DataChannel;
 import org.kkukie.jrtsp_gw.media.stun.candidate.IceComponent;
 import org.kkukie.jrtsp_gw.media.stun.handler.IceHandler;
 import org.kkukie.jrtsp_gw.media.stun.model.IceAuthenticatorImpl;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
+import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.ice.IceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
-import org.kkukie.jrtsp_gw.session.media.MediaType;
+import org.kkukie.jrtsp_gw.session.media.base.MediaType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
