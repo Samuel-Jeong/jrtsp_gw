@@ -4,16 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.kkukie.jrtsp_gw.config.ConfigManager;
-import org.kkukie.jrtsp_gw.config.DtlsConfig;
-import org.kkukie.jrtsp_gw.media.core.scheduler.ServiceScheduler;
 import org.kkukie.jrtsp_gw.media.core.scheduler.WallClock;
 import org.kkukie.jrtsp_gw.media.dtls.DtlsHandler;
 import org.kkukie.jrtsp_gw.media.dtls.DtlsListener;
 import org.kkukie.jrtsp_gw.media.rtp.RtpInfo;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandlerPipeline;
-import org.kkukie.jrtsp_gw.media.rtp.crypto.DtlsSrtpClientProvider;
-import org.kkukie.jrtsp_gw.media.rtp.crypto.DtlsSrtpServerProvider;
 import org.kkukie.jrtsp_gw.media.rtp.format.RTPFormats;
 import org.kkukie.jrtsp_gw.media.rtp.statistics.RtpStatistics;
 import org.kkukie.jrtsp_gw.media.rtsp.Streamer;
@@ -29,7 +24,6 @@ import org.kkukie.jrtsp_gw.media.webrtc.websocket.model.IceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 import org.kkukie.jrtsp_gw.session.media.MediaType;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -55,11 +49,6 @@ public class PacketHandlerMaster {
     private RtpHandler rtpHandler;
     private RtcpHandler rtcpHandler;
 
-    private final ServiceScheduler scheduler = new ServiceScheduler();
-
-    private DtlsSrtpServerProvider dtlsServerProvider;
-    private DtlsSrtpClientProvider dtlsClientProvider;
-
     public void initIce(IceInfo iceInfo, List<InetSocketAddress> targetAddressList, DataChannel dataChannel) {
         iceHandler = new IceHandler(conferenceId, IceComponent.RTP_ID, dataChannel);
 
@@ -80,20 +69,7 @@ public class PacketHandlerMaster {
 
     public void initDtls(DatagramChannel mediaChannel, SocketAddress realRemoteAddress, DtlsListener dtlsListener) {
         if (mediaSession.isSecure()) {
-            DtlsConfig dtlsConfig = ConfigManager.getDtlsConfig();
-            String keyPath = dtlsConfig.getKeyPath();
-            String certPath = dtlsConfig.getCertPath();
-            File keyFile = new File(keyPath);
-            File certFile = new File(certPath);
-            if (!keyFile.exists() || !certFile.exists()) {
-                log.error("|DataChannel({})| Fail to find the key or cert file. (keyPath={}, certPath={})", conferenceId, keyPath, certPath);
-                return;
-            }
-
-            dtlsClientProvider = new DtlsSrtpClientProvider(certPath, keyPath);
-            dtlsServerProvider = new DtlsSrtpServerProvider(certPath, keyPath);
-
-            dtlsHandler = new DtlsHandler(conferenceId, dtlsServerProvider, dtlsClientProvider, realRemoteAddress);
+            dtlsHandler = new DtlsHandler(conferenceId, realRemoteAddress);
             dtlsHandler.setChannel(mediaChannel);
             dtlsHandler.addListener(dtlsListener);
             dtlsHandler.setPipelinePriority(DTLS_PRIORITY);
@@ -131,11 +107,11 @@ public class PacketHandlerMaster {
 
     private void initRtcpHandler(DatagramChannel mediaChannel, SocketAddress realRemoteAddress, RtpStatistics rtpStatistics) {
         if (mediaSession.isRtcpMux()) {
-            scheduler.start();
             rtcpHandler = new RtcpHandler(
                     conferenceId, mediaChannel.socket(),
-                    scheduler, rtpStatistics, MediaType.AUDIO.getName(), realRemoteAddress
+                    rtpStatistics, MediaType.AUDIO.getName(), realRemoteAddress
             );
+            rtcpHandler.start();
             rtcpHandler.setPipelinePriority(RTCP_PRIORITY);
             handlers.addHandler(rtcpHandler);
             if (mediaSession.isSecure()) {
@@ -200,14 +176,13 @@ public class PacketHandlerMaster {
     }
 
     public void reset() {
-        scheduler.stop();
-
         if (rtpHandler != null) {
             handlers.removeHandler(rtpHandler);
             rtpHandler = null;
         }
 
         if (rtcpHandler != null) {
+            rtcpHandler.stop();
             handlers.removeHandler(rtcpHandler);
             rtcpHandler = null;
         }
@@ -219,9 +194,6 @@ public class PacketHandlerMaster {
         }
 
         try {
-            dtlsClientProvider = null;
-            dtlsServerProvider = null;
-
             if (dtlsHandler != null) {
                 dtlsHandler.close();
                 handlers.removeHandler(dtlsHandler);

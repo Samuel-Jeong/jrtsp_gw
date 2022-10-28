@@ -1,6 +1,8 @@
 package org.kkukie.jrtsp_gw.media.dtls;
 
 import lombok.extern.slf4j.Slf4j;
+import org.kkukie.jrtsp_gw.config.ConfigManager;
+import org.kkukie.jrtsp_gw.config.DtlsConfig;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.DTLSClientProtocol;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.DTLSServerProtocol;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.DTLSTransport;
@@ -64,7 +66,7 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
 
     private final SocketAddress remoteAddress;
 
-    public DtlsHandler (String conferenceId, DtlsSrtpServerProvider tlsServerProvider, DtlsSrtpClientProvider tlsClientProvider, SocketAddress remoteAddress) {
+    public DtlsHandler (String conferenceId, SocketAddress remoteAddress) {
         this.conferenceId = conferenceId;
         this.pipelinePriority = 0;
         this.remoteAddress = remoteAddress;
@@ -75,17 +77,19 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         this.sendLimit = mtu - MAX_IP_OVERHEAD - UDP_OVERHEAD;
 
         // Handshake properties
-        this.server = tlsServerProvider.provide();
-        this.client = tlsClientProvider.provide();
-        this.rxQueue = new ConcurrentLinkedQueue<>();
+        DtlsConfig dtlsConfig = ConfigManager.getDtlsConfig();
+        DtlsSrtpServerProvider dtlsServerProvider = new DtlsSrtpServerProvider(dtlsConfig.getCertPath(), dtlsConfig.getKeyPath());
+        DtlsSrtpClientProvider dtlsClientProvider = new DtlsSrtpClientProvider(dtlsConfig.getCertPath(), dtlsConfig.getKeyPath());
+        this.tlsServerProvider = dtlsServerProvider;
+        this.server = dtlsServerProvider.provide();
+        this.client = dtlsClientProvider.provide();
 
+        this.listeners = new ArrayList<>();
+        this.rxQueue = new ConcurrentLinkedQueue<>();
         this.startTime = 0L;
         this.handshakeComplete = false;
         this.handshakeFailed = false;
         this.handshaking = false;
-
-        this.listeners = new ArrayList<>();
-        this.tlsServerProvider = tlsServerProvider;
     }
 
     public void setChannel (DatagramChannel datagramChannel) {

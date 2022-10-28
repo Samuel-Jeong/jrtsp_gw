@@ -3,6 +3,7 @@ package org.kkukie.jrtsp_gw.media.stream.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.media.core.rtcp.*;
 import org.kkukie.jrtsp_gw.media.core.scheduler.Scheduler;
+import org.kkukie.jrtsp_gw.media.core.scheduler.ServiceScheduler;
 import org.kkukie.jrtsp_gw.media.dtls.DtlsHandler;
 import org.kkukie.jrtsp_gw.media.rtp.RtpPacket;
 import org.kkukie.jrtsp_gw.media.rtp.channels.PacketHandler;
@@ -34,7 +35,7 @@ public class RtcpHandler implements PacketHandler {
     private int pipelinePriority;
 
     /* Scheduler */
-    private final Scheduler scheduler;
+    private final Scheduler serviceScheduler;
     private TxTask scheduledTask;
     private Future<?> reportTaskFuture;
     private final SsrcTask ssrcTask;
@@ -69,7 +70,7 @@ public class RtcpHandler implements PacketHandler {
 
     private final SocketAddress remoteAddress;
 
-    public RtcpHandler(String conferenceId, DatagramSocket datagramSocket, final Scheduler scheduler, final RtpStatistics statistics, String mediaType, SocketAddress remoteAddress) {
+    public RtcpHandler(String conferenceId, DatagramSocket datagramSocket, final RtpStatistics statistics, String mediaType, SocketAddress remoteAddress) {
         this.conferenceId = conferenceId;
         this.datagramSocket = datagramSocket;
 
@@ -77,7 +78,7 @@ public class RtcpHandler implements PacketHandler {
         this.remoteAddress = remoteAddress;
 
         // Scheduler
-        this.scheduler = scheduler;
+        this.serviceScheduler = new ServiceScheduler();
         this.ssrcTask = new SsrcTask();
 
         // core stuff
@@ -95,6 +96,14 @@ public class RtcpHandler implements PacketHandler {
         // webrtc
         this.secure = false;
         this.dtlsHandler = null;
+    }
+
+    public void start() {
+        serviceScheduler.start();
+    }
+
+    public void stop() {
+        serviceScheduler.stop();
     }
 
     @Override
@@ -155,7 +164,7 @@ public class RtcpHandler implements PacketHandler {
             scheduleRtcp(this.tn, RtcpPacketType.RTCP_REPORT);
 
             // Start SSRC timeout timer
-            this.ssrcTaskFuture = this.scheduler.scheduleWithFixedDelay(ssrcTask, SSRC_TASK_DELAY, SSRC_TASK_DELAY, TimeUnit.MILLISECONDS);
+            this.ssrcTaskFuture = this.serviceScheduler.scheduleWithFixedDelay(ssrcTask, SSRC_TASK_DELAY, SSRC_TASK_DELAY, TimeUnit.MILLISECONDS);
             this.joined.set(true);
         }
     }
@@ -217,7 +226,7 @@ public class RtcpHandler implements PacketHandler {
         this.scheduledTask = new TxTask(packetType);
 
         try {
-            this.reportTaskFuture = this.scheduler.schedule(this.scheduledTask, interval, TimeUnit.MILLISECONDS);
+            this.reportTaskFuture = this.serviceScheduler.schedule(this.scheduledTask, interval, TimeUnit.MILLISECONDS);
             // Let the RTP handler know what is the type of scheduled packet
             this.statistics.setRtcpPacketType(packetType);
         } catch (IllegalStateException e) {
@@ -228,7 +237,7 @@ public class RtcpHandler implements PacketHandler {
     private void scheduleNow(RtcpPacketType packetType) {
         this.scheduledTask = new TxTask(packetType);
         try {
-            this.reportTaskFuture = this.scheduler.submit(this.scheduledTask);
+            this.reportTaskFuture = this.serviceScheduler.submit(this.scheduledTask);
             // Let the RTP handler know what is the type of scheduled packet
             this.statistics.setRtcpPacketType(packetType);
         } catch (IllegalStateException e) {
@@ -248,7 +257,7 @@ public class RtcpHandler implements PacketHandler {
         // Re-schedule task execution
         long interval = resolveInterval(timestamp);
         try {
-            this.reportTaskFuture = this.scheduler.schedule(task, interval, TimeUnit.MILLISECONDS);
+            this.reportTaskFuture = this.serviceScheduler.schedule(task, interval, TimeUnit.MILLISECONDS);
         } catch (IllegalStateException e) {
             log.warn("|RtcpHandler({})| RTCP timer already canceled. Scheduled report was canceled and cannot be re-scheduled.", conferenceId);
         }
