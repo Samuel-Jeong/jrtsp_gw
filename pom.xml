@@ -179,7 +179,7 @@
 							<directory>/home/jrtspgw/${project.artifactId}/lib/</directory>
 							<sources>
 								<source>
-									<location>${project.basedir}/target//${project.artifactId}-${project.version}.jar</location>
+									<location>${project.basedir}/target/${project.artifactId}-${project.version}.jar</location>
 								</source>
 							</sources>
 						</mapping>
