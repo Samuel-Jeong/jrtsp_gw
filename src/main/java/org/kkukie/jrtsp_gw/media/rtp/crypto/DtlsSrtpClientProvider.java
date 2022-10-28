@@ -30,19 +30,20 @@ import static org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.CipherSuite.*;
  */
 public class DtlsSrtpClientProvider {
 
-    private static final int defaultCipherSuites[] = {
+    private static final int[] defaultCipherSuites = {
             TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
             TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
             TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_RSA_WITH_AES_256_CBC_SHA256, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
             TLS_DHE_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_AES_256_GCM_SHA384, TLS_RSA_WITH_AES_128_GCM_SHA256,
             TLS_RSA_WITH_AES_256_CBC_SHA256, TLS_RSA_WITH_AES_128_CBC_SHA256, TLS_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA,
             TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256};
-    private ProtocolVersion minVersion;
-    private ProtocolVersion maxVersion;
-    private CipherSuite[] cipherSuites;
-    private String[] certificatePaths;
-    private String keyPath;
-    private AlgorithmCertificate algorithmCertificate;
+
+    private final ProtocolVersion minVersion;
+    private final ProtocolVersion maxVersion;
+    private final CipherSuite[] cipherSuites;
+    private final String[] certificatePaths;
+    private final String keyPath;
+    private final AlgorithmCertificate algorithmCertificate;
 
     public DtlsSrtpClientProvider (String certificatePath, String keyPath) {
         this.minVersion = ProtocolVersion.DTLSv10;
@@ -56,23 +57,12 @@ public class DtlsSrtpClientProvider {
         this.algorithmCertificate = AlgorithmCertificate.RSA;
     }
 
-    public DtlsSrtpClientProvider (ProtocolVersion minVersion, ProtocolVersion maxVersion, CipherSuite[] cipherSuites,
-                                   String certificatePath, String keyPath, AlgorithmCertificate algorithmCertificate) {
-        this.minVersion = minVersion;
-        this.maxVersion = maxVersion;
-        this.cipherSuites = cipherSuites;
-        this.certificatePaths = new String[]{certificatePath};
-        this.keyPath = keyPath;
-        this.algorithmCertificate = algorithmCertificate;
-    }
-
     public DtlsSrtpClient provide () {
-        DtlsSrtpClient client = new DtlsSrtpClient(
-                minVersion, maxVersion, cipherSuites, certificatePaths, keyPath,
-                algorithmCertificate
+        return new DtlsSrtpClient(
+                minVersion, maxVersion,
+                cipherSuites, certificatePaths,
+                keyPath, algorithmCertificate
         );
-
-        return client;
     }
 
 }
