@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 
-    <property name="LOG_PATH" value="/var/jrtsp_gw/logs"/>
+    <property name="LOG_PATH" value="/home/jrtspgw/jrtsp_gw/logs"/>
     <timestamp key="dailyLog" datePattern="yyyy-MM-dd"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
@@ -26,7 +26,7 @@
         </encoder>
     </appender>
 
-    <root level="warn">
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ROLLING"/>
     </root>

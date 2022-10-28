@@ -4,13 +4,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.kkukie.jrtsp_gw.config.DefaultConfig;
+import org.kkukie.jrtsp_gw.config.DtlsConfig;
+import org.kkukie.jrtsp_gw.config.SdpConfig;
+import org.kkukie.jrtsp_gw.config.StunConfig;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.OmeAnswer;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.model.ice.RTCIceCandidate;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@ActiveProfiles("dev")
+@EnableConfigurationProperties({DefaultConfig.class, SdpConfig.class, DtlsConfig.class, StunConfig.class})
 public class OmeMessageTest {
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();

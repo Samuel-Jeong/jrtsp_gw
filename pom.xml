@@ -17,7 +17,9 @@
 	<properties>
 		<java.version>11</java.version>
 		<kotlin.version>1.7.20</kotlin.version>
+		<rpm.release.version>1</rpm.release.version>
 	</properties>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<!--COMMON-->
@@ -104,6 +106,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!--<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
@@ -111,14 +117,10 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -145,6 +147,77 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>rpm-maven-plugin</artifactId>
+				<version>2.0.1</version>
+				<executions>
+					<execution>
+						<phase>install</phase>
+						<goals>
+							<goal>rpm</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<copyright>2022, kkukie</copyright>
+					<group>${project.groupId}</group>
+					<description>${project.artifactId}</description>
+					<release>${rpm.release.version}</release>
+					<autoRequires>false</autoRequires>
+					<targetOS>linux</targetOS>
+					<defaultDirmode>755</defaultDirmode>
+					<defaultFilemode>644</defaultFilemode>
+					<defaultGroupname>jrtspgw</defaultGroupname>
+					<defaultUsername>jrtspgw</defaultUsername>
+					<mappings>
+						<mapping>
+							<directory>/home/jrtspgw/${project.artifactId}/</directory>
+						</mapping>
+
+						<mapping>
+							<directory>/home/jrtspgw/${project.artifactId}/lib/</directory>
+							<sources>
+								<source>
+									<location>${project.basedir}/target//${project.artifactId}-${project.version}.jar</location>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<directory>/home/jrtspgw/${project.artifactId}/bin/</directory>
+							<filemode>755</filemode>
+							<directoryIncluded>false</directoryIncluded>
+							<sources>
+								<source>
+									<location>${project.basedir}/src/main/resources/bin/run.sh</location>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<configuration>noreplace</configuration>
+							<directory>/home/jrtspgw/${project.artifactId}/config/</directory>
+							<sources>
+								<source>
+									<location>${project.basedir}/src/main/resources/application.yml</location>
+								</source>
+								<source>
+									<location>${project.basedir}/src/main/resources/dtls/cert.pem</location>
+								</source>
+								<source>
+									<location>${project.basedir}/src/main/resources/dtls/key.pem</location>
+								</source>
+							</sources>
+						</mapping>
+
+						<mapping>
+							<directory>/home/jrtspgw/${project.artifactId}/logs/</directory>
+						</mapping>
+					</mappings>
+				</configuration>
+			</plugin>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

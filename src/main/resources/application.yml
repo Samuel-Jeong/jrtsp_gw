@@ -53,7 +53,7 @@ default:
   sendBufSize: 33554432
   recvBufSize: 16777216
   streamThreadPoolSize: 10
-  localListenIp: "127.0.0.1"
+  localListenIp: "0.0.0.0"
   localRtspListenPort: 8554
   localPortMin: 50000
   localPortMax: 60000
@@ -103,7 +103,7 @@ spring:
 
   servlet:
     multipart:
-      location: /var/kkukie_bookstore/resources/images
+      location: /var/jrtspgw/resources/images
       maxFileSize: 200MB
       maxRequestSize: 100MB
 
@@ -130,15 +130,16 @@ server:
 
 default:
   id: 0
-  serverUri: "ws://192.168.5.224:9101"
+  serverUri: "ws://[SERVER_IP]:9101"
   applicationName: "app"
   sendBufSize: 33554432
   recvBufSize: 16777216
   streamThreadPoolSize: 10
-  localListenIp: "127.0.0.1"
+  localListenIp: "0.0.0.0"
   localRtspListenPort: 8554
   localPortMin: 50000
   localPortMax: 60000
+  rtpBurstBufferCount: 50
 
 sdp:
   version: "0"
@@ -153,7 +154,6 @@ sdp:
   sdpLocalIp: "192.168.2.159"
   audioAttributeList: control:trackID=1, ptime:20, sendonly
   videoAttributeList: control:trackID=2, sendonly
-  rtpBurstBufferCount: 50
 
 dtls:
   keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
@@ -187,7 +187,7 @@ spring:
 
   servlet:
     multipart:
-      location: /var/kkukie_bookstore/resources/images
+      location: /var/jrtspgw/resources/images
       maxFileSize: 200MB
       maxRequestSize: 100MB
 
@@ -214,15 +214,16 @@ server:
 
 default:
   id: 0
-  serverUri: "ws://192.168.5.224:9101"
+  serverUri: "ws://[SERVER_IP]:9101"
   applicationName: "app"
   sendBufSize: 33554432
   recvBufSize: 16777216
   streamThreadPoolSize: 10
-  localListenIp: "127.0.0.1"
+  localListenIp: "0.0.0.0"
   localRtspListenPort: 8554
   localPortMin: 50000
   localPortMax: 60000
+  rtpBurstBufferCount: 50
 
 sdp:
   version: "0"
@@ -237,11 +238,10 @@ sdp:
   sdpLocalIp: "192.168.2.159"
   audioAttributeList: control:trackID=1, ptime:20, sendonly
   videoAttributeList: control:trackID=2, sendonly
-  rtpBurstBufferCount: 50
 
 dtls:
-  keyPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/key.pem"
-  certPath: "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem"
+  keyPath: "/home/jrtspgw/jrtsp_gw/config/key.pem"
+  certPath: "/home/jrtspgw/jrtsp_gw/config/cert.pem"
 
 stun:
   harvestIntervalMs: 3000
