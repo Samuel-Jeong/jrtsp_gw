@@ -534,10 +534,10 @@ cache-control: no-cache
 3. mvn package 를 입력한다.
 4. 패키징 완료 후, mvn rpm:rpm 을 입력한다.
 5. 원하는 서버로 옮긴다. (scp)
-6. RPM 을 섶치힌다. (> sudo rpm -Uvh jrtsp_gw-0.0.1-1.noarch.rpm)
+6. RPM 을 설치힌다. (> sudo rpm -Uvh jrtsp_gw-0.0.1-1.noarch.rpm)
 7. 설정 파일을 수정한다.
-  - run.sh : jmx listen ip
-  - application.yml : webrtc server uri
+  - run.sh : jmx listen ip (-Djava.rmi.server.hostname)
+  - application.yml : webrtc server uri (default > serverUri)
 8. bin 폴더 안에 run.sh 를 조작한다.
   - 프로그램 시작 : ./run.sh start
   - 프로그램 재시작 : ./run.sh restart
