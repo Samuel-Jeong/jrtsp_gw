@@ -6,9 +6,6 @@
  */
 package org.kkukie.jrtsp_gw.media.rtp.crypto;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Hashtable;
 
 /**
@@ -25,8 +22,6 @@ import java.util.Hashtable;
  * @author Henrique Rosa (henrique.rosa@telestax.com)
  */
 public class SRTPTransformer implements PacketTransformer {
-
-    private static final Logger logger = LoggerFactory.getLogger(SRTPTransformer.class);
 
     private final RawPacket rawPacket;
 

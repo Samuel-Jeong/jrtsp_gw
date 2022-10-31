@@ -15,8 +15,6 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.engines.TwofishEngine;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.macs.HMac;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.KeyParameter;
 import org.kkukie.jrtsp_gw.media.rtp.RtpPacket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -47,8 +45,6 @@ import java.util.Formatter;
  * @author Bing SU (nova.su@gmail.com)
  */
 public class SRTPCryptoContext {
-
-    private static final Logger logger = LoggerFactory.getLogger(SRTPCryptoContext.class);
 
     /**
      * The replay check windows size
@@ -561,18 +557,18 @@ public class SRTPCryptoContext {
      * @param index 48bit RTP packet index
      */
     private void computeIv (long label, long index) {
-        long key_id;
+        long keyId;
 
         if (keyDerivationRate == 0) {
-            key_id = label << 48;
+            keyId = label << 48;
         } else {
-            key_id = ((label << 48) | (index / keyDerivationRate));
+            keyId = ((label << 48) | (index / keyDerivationRate));
         }
 
         System.arraycopy(masterSalt, 0, ivStore, 0, 7);
 
         for (int i = 7; i < 14; i++) {
-            ivStore[i] = (byte) ((byte) (0xFF & (key_id >> (8 * (13 - i)))) ^ masterSalt[i]);
+            ivStore[i] = (byte) ((byte) (0xFF & (keyId >> (8 * (13 - i)))) ^ masterSalt[i]);
         }
 
         ivStore[14] = ivStore[15] = 0;

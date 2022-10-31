@@ -10,7 +10,7 @@ import java.util.Vector;
 
 class DTLSReliableHandshake
 {
-    private final static int MAX_RECEIVE_AHEAD = 16;
+    private static final int MAX_RECEIVE_AHEAD = 16;
     private static final int MESSAGE_HEADER_LENGTH = 12;
 
     /*

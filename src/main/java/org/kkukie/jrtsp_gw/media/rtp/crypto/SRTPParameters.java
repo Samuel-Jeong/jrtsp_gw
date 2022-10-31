@@ -15,16 +15,16 @@ public enum SRTPParameters {
     SRTP_NULL_HMAC_SHA1_80(SRTPProtectionProfile.SRTP_NULL_HMAC_SHA1_80, SRTPPolicy.NULL_ENCRYPTION, 0, SRTPPolicy.HMACSHA1_AUTHENTICATION, 20, 10, 10, 0),
     SRTP_NULL_HMAC_SHA1_32(SRTPProtectionProfile.SRTP_NULL_HMAC_SHA1_32, SRTPPolicy.NULL_ENCRYPTION, 0, SRTPPolicy.HMACSHA1_AUTHENTICATION, 20, 4, 10, 0);
 
-    private int profile;
-    private int encType;
-    private int encKeyLength;
-    private int authType;
-    private int authKeyLength;
-    private int authTagLength;
-    private int rtcpAuthTagLength;
-    private int saltLength;
+    private final int profile;
+    private final int encType;
+    private final int encKeyLength;
+    private final int authType;
+    private final int authKeyLength;
+    private final int authTagLength;
+    private final int rtcpAuthTagLength;
+    private final int saltLength;
 
-    private SRTPParameters (int newProfile, int newEncType, int newEncKeyLength, int newAuthType, int newAuthKeyLength, int newAuthTagLength, int newRtcpAuthTagLength, int newSaltLength) {
+    SRTPParameters (int newProfile, int newEncType, int newEncKeyLength, int newAuthType, int newAuthKeyLength, int newAuthTagLength, int newRtcpAuthTagLength, int newSaltLength) {
         this.profile = newProfile;
         this.encType = newEncType;
         this.encKeyLength = newEncKeyLength;
@@ -66,16 +66,14 @@ public enum SRTPParameters {
      * @return an initialized SRTPPolicy instance that matches the current SRTPParameter values for the SRTP stream
      */
     public SRTPPolicy getSrtpPolicy () {
-        SRTPPolicy sp = new SRTPPolicy(encType, encKeyLength, authType, authKeyLength, authTagLength, saltLength);
-        return sp;
+        return new SRTPPolicy(encType, encKeyLength, authType, authKeyLength, authTagLength, saltLength);
     }
 
     /**
      * @return an initialized SRTPPolicy instance that matches the current SRTPParameter values for the SRTCP stream
      */
     public SRTPPolicy getSrtcpPolicy () {
-        SRTPPolicy sp = new SRTPPolicy(encType, encKeyLength, authType, authKeyLength, rtcpAuthTagLength, saltLength);
-        return sp;
+        return new SRTPPolicy(encType, encKeyLength, authType, authKeyLength, rtcpAuthTagLength, saltLength);
     }
 
 }

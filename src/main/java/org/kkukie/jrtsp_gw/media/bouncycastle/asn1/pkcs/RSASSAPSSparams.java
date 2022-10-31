@@ -14,10 +14,10 @@ public class RSASSAPSSparams
     private ASN1Integer saltLength;
     private ASN1Integer trailerField;
     
-    public final static AlgorithmIdentifier DEFAULT_HASH_ALGORITHM = new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
-    public final static AlgorithmIdentifier DEFAULT_MASK_GEN_FUNCTION = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, DEFAULT_HASH_ALGORITHM);
-    public final static ASN1Integer DEFAULT_SALT_LENGTH = new ASN1Integer(20);
-    public final static ASN1Integer DEFAULT_TRAILER_FIELD = new ASN1Integer(1);
+    public static final AlgorithmIdentifier DEFAULT_HASH_ALGORITHM = new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
+    public static final AlgorithmIdentifier DEFAULT_MASK_GEN_FUNCTION = new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, DEFAULT_HASH_ALGORITHM);
+    public static final ASN1Integer DEFAULT_SALT_LENGTH = new ASN1Integer(20);
+    public static final ASN1Integer DEFAULT_TRAILER_FIELD = new ASN1Integer(1);
     
     public static RSASSAPSSparams getInstance(
         Object  obj)

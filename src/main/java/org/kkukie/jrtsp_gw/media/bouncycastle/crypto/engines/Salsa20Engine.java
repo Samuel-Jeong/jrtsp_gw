@@ -12,12 +12,12 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.util.Strings;
 public class Salsa20Engine
     implements SkippingStreamCipher
 {
-    public final static int DEFAULT_ROUNDS = 20;
+    public static final int DEFAULT_ROUNDS = 20;
 
     /** Constants */
-    private final static int STATE_SIZE = 16; // 16, 32 bit ints = 64 bytes
+    private static final int STATE_SIZE = 16; // 16, 32 bit ints = 64 bytes
 
-    private final static int[] TAU_SIGMA = Pack.littleEndianToInt(Strings.toByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
+    private static final int[] TAU_SIGMA = Pack.littleEndianToInt(Strings.toByteArray("expand 16-byte k" + "expand 32-byte k"), 0, 8);
 
     protected void packTauOrSigma(int keyLength, int[] state, int stateOffset)
     {

@@ -19,7 +19,7 @@ public class SM4Engine
 {
     private static final int BLOCK_SIZE = 16;
 
-    private final static byte[] Sbox =
+    private static final byte[] Sbox =
     {
         (byte)0xd6, (byte)0x90, (byte)0xe9, (byte)0xfe, (byte)0xcc, (byte)0xe1, (byte)0x3d, (byte)0xb7, (byte)0x16, (byte)0xb6, (byte)0x14, (byte)0xc2, (byte)0x28, (byte)0xfb, (byte)0x2c, (byte)0x05,
         (byte)0x2b, (byte)0x67, (byte)0x9a, (byte)0x76, (byte)0x2a, (byte)0xbe, (byte)0x04, (byte)0xc3, (byte)0xaa, (byte)0x44, (byte)0x13, (byte)0x26, (byte)0x49, (byte)0x86, (byte)0x06, (byte)0x99,
@@ -39,7 +39,7 @@ public class SM4Engine
         (byte)0x18, (byte)0xf0, (byte)0x7d, (byte)0xec, (byte)0x3a, (byte)0xdc, (byte)0x4d, (byte)0x20, (byte)0x79, (byte)0xee, (byte)0x5f, (byte)0x3e, (byte)0xd7, (byte)0xcb, (byte)0x39, (byte)0x48
     };
 
-    private final static int[] CK =
+    private static final int[] CK =
     {
         0x00070e15, 0x1c232a31, 0x383f464d, 0x545b6269,
         0x70777e85, 0x8c939aa1, 0xa8afb6bd, 0xc4cbd2d9,
@@ -51,7 +51,7 @@ public class SM4Engine
         0x10171e25, 0x2c333a41, 0x484f565d, 0x646b7279
     };
 
-    private final static int[] FK =
+    private static final int[] FK =
     {
         0xa3b1bac6, 0x56aa3350, 0x677d9197, 0xb27022dc
     };

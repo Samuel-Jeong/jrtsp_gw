@@ -39,8 +39,8 @@ import java.nio.ByteBuffer;
  */
 public class SRTPCipherCTR {
 
-    private final static int BLKLEN = 16;
-    private final static int MAX_BUFFER_LENGTH = 10 * 1024;
+    private static final int BLKLEN = 16;
+    private static final int MAX_BUFFER_LENGTH = 10 * 1024;
     private final byte[] cipherInBlock = new byte[BLKLEN];
     private final byte[] tmpCipherBlock = new byte[BLKLEN];
     private byte[] streamBuf = new byte[1024];

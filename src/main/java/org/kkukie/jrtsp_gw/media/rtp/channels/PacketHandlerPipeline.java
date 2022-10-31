@@ -21,7 +21,6 @@
 package org.kkukie.jrtsp_gw.media.rtp.channels;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,13 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class PacketHandlerPipeline {
 
-    private static final Comparator<PacketHandler> REVERSE_COMPARATOR = new Comparator<PacketHandler>() {
-
-        @Override
-        public int compare(PacketHandler o1, PacketHandler o2) {
-            return o2.compareTo(o1);
-        }
-    };
+    private static final Comparator<PacketHandler> REVERSE_COMPARATOR = Comparator.reverseOrder();
 
     private final List<PacketHandler> handlers;
     private final AtomicInteger count;
@@ -62,7 +55,7 @@ public class PacketHandlerPipeline {
             if (!handlers.contains(handler)) {
                 handlers.add(handler);
                 this.count.incrementAndGet();
-                Collections.sort(this.handlers, REVERSE_COMPARATOR);
+                this.handlers.sort(REVERSE_COMPARATOR);
                 return true;
             }
             return false;

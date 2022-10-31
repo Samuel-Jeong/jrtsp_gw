@@ -14,7 +14,7 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.util.Arrays;
 public class DSTU7624Mac
     implements Mac
 {
-    private final static int BITS_IN_BYTE = 8;
+    private static final int BITS_IN_BYTE = 8;
 
     private byte[]              buf;
     private int                 bufOff;

@@ -17,13 +17,14 @@ package org.kkukie.jrtsp_gw.media.rtp.crypto;
  * @author Henrique Rosa (henrique.rosa@telestax.com)
  */
 public interface PacketTransformer {
+
     /**
      * Transforms a non-secure packet.
      *
      * @param pkt the packet to be transformed
      * @return The transformed packet. Returns null if the packet cannot be transformed.
      */
-    public byte[] transform (byte[] pkt);
+    byte[] transform (byte[] pkt);
 
     /**
      * Transforms a specific non-secure packet.
@@ -34,7 +35,7 @@ public interface PacketTransformer {
      * @return The transformed packet. Returns null if the packet cannot be
      * transformed.
      */
-    public byte[] transform (byte[] pkt, int offset, int length);
+    byte[] transform (byte[] pkt, int offset, int length);
 
     /**
      * Reverse-transforms a specific packet (i.e. transforms a transformed
@@ -43,7 +44,7 @@ public interface PacketTransformer {
      * @param pkt the transformed packet to be restored
      * @return Whether the packet was successfully restored
      */
-    public byte[] reverseTransform (byte[] pkt);
+    byte[] reverseTransform (byte[] pkt);
 
     /**
      * Reverse-transforms a specific packet (i.e. transforms a transformed
@@ -54,7 +55,7 @@ public interface PacketTransformer {
      * @param length the length of data in the packet
      * @return The restored packet. Returns null if packet cannot be restored.
      */
-    public byte[] reverseTransform (byte[] pkt, int offset, int length);
+    byte[] reverseTransform (byte[] pkt, int offset, int length);
 
     /**
      * Close the transformer and underlying transform engine.
@@ -62,5 +63,6 @@ public interface PacketTransformer {
      * The close functions closes all stored crypto contexts. This deletes key
      * data and forces a cleanup of the crypto contexts.
      */
-    public void close ();
+    void close ();
+
 }

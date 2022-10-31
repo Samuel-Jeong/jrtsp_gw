@@ -39,8 +39,8 @@ public enum AlgorithmCertificate {
     ECDSA(SignatureAlgorithm.ecdsa, ClientCertificateType.ecdsa_sign),
     ECDSA_FIXED_ECDH(SignatureAlgorithm.ecdsa, ClientCertificateType.ecdsa_fixed_ecdh);
 
-    private short signatureAlgorithm;
-    private short clientCertificate;
+    private final short signatureAlgorithm;
+    private final short clientCertificate;
 
     AlgorithmCertificate (short signatureAlgorithm, short clientCertificate) {
         this.signatureAlgorithm = signatureAlgorithm;

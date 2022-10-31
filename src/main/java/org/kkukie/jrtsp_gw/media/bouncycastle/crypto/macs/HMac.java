@@ -18,8 +18,8 @@ import java.util.Hashtable;
 public class HMac
     implements Mac
 {
-    private final static byte IPAD = (byte)0x36;
-    private final static byte OPAD = (byte)0x5C;
+    private static final byte IPAD = (byte)0x36;
+    private static final byte OPAD = (byte)0x5C;
 
     private Digest digest;
     private int digestSize;

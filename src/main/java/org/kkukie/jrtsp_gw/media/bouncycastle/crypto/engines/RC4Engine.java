@@ -8,7 +8,7 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.KeyParameter;
 
 public class RC4Engine implements StreamCipher
 {
-    private final static int STATE_LENGTH = 256;
+    private static final int STATE_LENGTH = 256;
 
     /*
      * variables to hold the state of the RC4 engine

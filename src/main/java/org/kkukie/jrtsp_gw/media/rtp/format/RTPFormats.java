@@ -36,7 +36,7 @@ import java.util.ArrayList;
  */
 public class RTPFormats {
     //the default size of this collection
-    private final static int size = 10;
+    private static final int size = 10;
 
     //backing array
     private ArrayList<RTPFormat> rtpFormats;

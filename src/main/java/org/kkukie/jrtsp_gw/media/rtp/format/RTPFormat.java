@@ -30,8 +30,10 @@ import org.kkukie.jrtsp_gw.session.media.format.Format;
  * @author kulikov
  */
 public class RTPFormat implements Cloneable {
+
     //payload id
     private int id;
+
     //format descriptor
     private Format format;
 
@@ -126,4 +128,5 @@ public class RTPFormat implements Cloneable {
     public String toString () {
         return id + " " + format;
     }
+
 }

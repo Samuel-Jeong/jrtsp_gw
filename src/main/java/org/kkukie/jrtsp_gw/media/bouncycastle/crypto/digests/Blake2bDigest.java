@@ -44,7 +44,7 @@ public class Blake2bDigest
     implements ExtendedDigest
 {
     // Blake2b Initialization Vector:
-    private final static long[] blake2b_IV =
+    private static final long[] blake2b_IV =
         // Produced from the square root of primes 2, 3, 5, 7, 11, 13, 17, 19.
         // The same as SHA-512 IV.
         {
@@ -54,7 +54,7 @@ public class Blake2bDigest
         };
 
     // Message word permutations:
-    private final static byte[][] blake2b_sigma =
+    private static final byte[][] blake2b_sigma =
         {
             {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15},
             {14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3},
@@ -71,7 +71,7 @@ public class Blake2bDigest
         };
 
     private static int ROUNDS = 12; // to use for Catenas H'
-    private final static int BLOCK_LENGTH_BYTES = 128;// bytes
+    private static final int BLOCK_LENGTH_BYTES = 128;// bytes
 
     // General parameters:
     private int digestLength = 64; // 1- 64 bytes

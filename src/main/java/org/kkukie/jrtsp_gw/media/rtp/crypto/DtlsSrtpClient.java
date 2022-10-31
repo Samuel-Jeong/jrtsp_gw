@@ -137,7 +137,7 @@ public class DtlsSrtpClient extends DefaultTlsClient {
             org.kkukie.jrtsp_gw.media.bouncycastle.asn1.x509.Certificate certificate = dtlsCertChain.getCertificateAt(0);
             return TlsUtils.fingerprint(this.hashFunction, certificate);
         } catch (IOException e) {
-            logger.error("Could not get local fingerprint: " + e.getMessage());
+            logger.error("Could not get local fingerprint: {}", e.getMessage());
             return "";
         }
     }
@@ -202,7 +202,6 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         System.arraycopy(sharedSecret, (2 * keyLen + saltLen), srtpMasterClientSalt, 0, saltLen);
 
         logger.debug("DtlsSrtpClient: SRTP Policy [authType={}] [encType={}]", srtpPolicy.getAuthType(), srtpPolicy.getEncType());
-
         logger.debug("DtlsSrtpClient: Done.");
     }
 
@@ -243,8 +242,7 @@ public class DtlsSrtpClient extends DefaultTlsClient {
     }
 
     public TlsKeyExchange getKeyExchange () throws IOException {
-        TlsKeyExchange keyExchange = super.getKeyExchange();
-        return keyExchange;
+        return super.getKeyExchange();
     }
 
     @Override
@@ -261,8 +259,8 @@ public class DtlsSrtpClient extends DefaultTlsClient {
                 short[] certificateTypes = certificateRequest.getCertificateTypes();
                 if (certificateTypes == null) return null;
 
-                for (int a = 0; a < certificateTypes.length; a++) {
-                    if (certificateTypes[a] == ClientCertificateType.rsa_sign) {
+                for (short certificateType : certificateTypes) {
+                    if (certificateType == ClientCertificateType.rsa_sign) {
                         ok = true;
                         break;
                     }

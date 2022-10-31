@@ -116,9 +116,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
         boolean eccCipherSuitesEnabled = supportsClientECCCapabilities(this.namedCurves, this.clientECPointFormats);
 
         int[] cipherSuites = getCipherSuites();
-        for (int i = 0; i < cipherSuites.length; ++i) {
-            int cipherSuite = cipherSuites[i];
-
+        for (int cipherSuite : cipherSuites) {
             if (Arrays.contains(this.offeredCipherSuites, cipherSuite)
                     && (eccCipherSuitesEnabled || !TlsECCUtils.isECCCipherSuite(cipherSuite))
                     && org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.TlsUtils.isValidCipherSuiteForVersion(cipherSuite, serverVersion)) {
@@ -135,9 +133,9 @@ public class DtlsSrtpServer extends DefaultTlsServer {
             short[] signatureAlgorithms = new short[]{algorithmCertificate.getSignatureAlgorithm(), SignatureAlgorithm.ecdsa};
 
             serverSigAlgs = new Vector<>();
-            for (int i = 0; i < hashAlgorithms.length; ++i) {
-                for (int j = 0; j < signatureAlgorithms.length; ++j) {
-                    serverSigAlgs.addElement(new SignatureAndHashAlgorithm(hashAlgorithms[i], signatureAlgorithms[j]));
+            for (short hashAlgorithm : hashAlgorithms) {
+                for (short signatureAlgorithm : signatureAlgorithms) {
+                    serverSigAlgs.addElement(new SignatureAndHashAlgorithm(hashAlgorithm, signatureAlgorithm));
                 }
             }
         }
@@ -220,24 +218,28 @@ public class DtlsSrtpServer extends DefaultTlsServer {
         int chosenProfile = SRTPProtectionProfile.SRTP_AES128_CM_HMAC_SHA1_80;
         UseSRTPData clientSrtpData = TlsSRTPUtils.getUseSRTPExtension(newClientExtensions);
 
-        for (int profile : clientSrtpData.getProtectionProfiles()) {
-            switch (profile) {
-                case SRTPProtectionProfile.SRTP_AES128_CM_HMAC_SHA1_32:
-                case SRTPProtectionProfile.SRTP_AES128_CM_HMAC_SHA1_80:
-                case SRTPProtectionProfile.SRTP_NULL_HMAC_SHA1_32:
-                case SRTPProtectionProfile.SRTP_NULL_HMAC_SHA1_80:
-                    chosenProfile = profile;
-                    break;
-                default:
+        if (clientSrtpData != null) {
+            for (int profile : clientSrtpData.getProtectionProfiles()) {
+                switch (profile) {
+                    case SRTPProtectionProfile.SRTP_AES128_CM_HMAC_SHA1_32:
+                    case SRTPProtectionProfile.SRTP_AES128_CM_HMAC_SHA1_80:
+                    case SRTPProtectionProfile.SRTP_NULL_HMAC_SHA1_32:
+                    case SRTPProtectionProfile.SRTP_NULL_HMAC_SHA1_80:
+                        chosenProfile = profile;
+                        break;
+                    default:
+                }
             }
+
+            // server chooses a mutually supported SRTP protection profile
+            // http://tools.ietf.org/html/draft-ietf-avt-dtls-srtp-07#section-4.1.2
+            int[] protectionProfiles = {chosenProfile};
+
+            // server agrees to use the MKI offered by the client
+            serverSrtpData = new UseSRTPData(protectionProfiles, clientSrtpData.getMki());
+        } else {
+            logger.warn("DLTS: Fail to get client srtp data. (from {})", newClientExtensions);
         }
-
-        // server chooses a mutually supported SRTP protection profile
-        // http://tools.ietf.org/html/draft-ietf-avt-dtls-srtp-07#section-4.1.2
-        int[] protectionProfiles = {chosenProfile};
-
-        // server agrees to use the MKI offered by the client
-        serverSrtpData = new UseSRTPData(protectionProfiles, clientSrtpData.getMki());
     }
 
     public byte[] getKeyingMaterial (int length) {
@@ -306,7 +308,6 @@ public class DtlsSrtpServer extends DefaultTlsServer {
         System.arraycopy(sharedSecret, (2 * keyLen + saltLen), srtpMasterServerSalt, 0, saltLen);
 
         logger.debug("DtlsSrtpServer: SRTP Policy [authType={}] [encType={}]", srtpPolicy.getAuthType(), srtpPolicy.getEncType());
-
         logger.debug("DtlsSrtpServer: Done.");
     }
 
@@ -347,7 +348,7 @@ public class DtlsSrtpServer extends DefaultTlsServer {
             Certificate certificate = chain.getCertificateAt(0);
             return TlsUtils.fingerprint(this.hashFunction, certificate);
         } catch (IOException e) {
-            logger.error("Could not get local fingerprint: " + e.getMessage());
+            logger.error("Could not get local fingerprint: {}", e.getMessage());
             return "";
         }
     }

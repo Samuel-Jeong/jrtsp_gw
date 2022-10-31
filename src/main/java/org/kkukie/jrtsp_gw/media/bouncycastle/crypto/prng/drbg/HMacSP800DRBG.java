@@ -11,8 +11,8 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.util.Arrays;
 public class HMacSP800DRBG
     implements SP80090DRBG
 {
-    private final static long       RESEED_MAX = 1L << (48 - 1);
-    private final static int        MAX_BITS_REQUEST = 1 << (19 - 1);
+    private static final long       RESEED_MAX = 1L << (48 - 1);
+    private static final int        MAX_BITS_REQUEST = 1 << (19 - 1);
 
     private byte[] _K;
     private byte[] _V;

@@ -335,12 +335,12 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
     }
 
     @Override
-    public int getReceiveLimit () throws IOException {
+    public int getReceiveLimit () {
         return this.receiveLimit;
     }
 
     @Override
-    public int getSendLimit () throws IOException {
+    public int getSendLimit () {
         return this.sendLimit;
     }
 
@@ -413,28 +413,28 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
 
             try {
                 // Perform the handshake in a non-blocking fashion
-                DTLSTransport var = serverProtocol.accept(server, DtlsHandler.this);
-                if (var == null) {
+                DTLSTransport dtlsTransport = serverProtocol.accept(server, DtlsHandler.this);
+                if (dtlsTransport == null) {
                     log.warn("|DtlsHandler({})| serverProtocol.accept result is null", conferenceId);
                 }
                 // Prepare the shared key to be used in RTP streaming
                 server.prepareSrtpSharedSecret();
 
                 // Generate encoders for DTLS traffic
-                PacketTransformer var1 = srtpDecoder = generateRtpDecoder(true);
-                if (var1 == null) {
+                PacketTransformer packetTransformer = srtpDecoder = generateRtpDecoder(true);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtpDecoder is null", conferenceId);
                 }
-                var1 = srtpEncoder = generateRtpEncoder(true);
-                if (var1 == null) {
+                packetTransformer = srtpEncoder = generateRtpEncoder(true);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtpEncoder is null", conferenceId);
                 }
-                var1 = srtcpDecoder = generateRtcpDecoder(true);
-                if (var1 == null) {
+                packetTransformer = srtcpDecoder = generateRtcpDecoder(true);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtcpDecoder is null", conferenceId);
                 }
-                var1 = srtcpEncoder = generateRtcpEncoder(true);
-                if (var1 == null) {
+                packetTransformer = srtcpEncoder = generateRtcpEncoder(true);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeServer: generateRtcpEncoder is null", conferenceId);
                 }
 
@@ -469,28 +469,28 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
 
             try {
                 // Perform the handshake in a non-blocking fashion
-                DTLSTransport var = clientProtocol.connect(client, DtlsHandler.this);
-                if (var == null) {
+                DTLSTransport dtlsTransport = clientProtocol.connect(client, DtlsHandler.this);
+                if (dtlsTransport == null) {
                     log.warn("|DtlsHandler({})| clientProtocol.connect result is null", conferenceId);
                 }
                 // Prepare the shared key to be used in RTP streaming
                 client.prepareSrtpSharedSecret();
 
                 // Generate encoders for DTLS traffic
-                PacketTransformer var1 = srtpDecoder = generateRtpDecoder(false);
-                if (var1 == null) {
+                PacketTransformer packetTransformer = srtpDecoder = generateRtpDecoder(false);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtpDecoder is null", conferenceId);
                 }
-                var1 = srtpEncoder = generateRtpEncoder(false);
-                if (var1 == null) {
+                packetTransformer = srtpEncoder = generateRtpEncoder(false);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtpEncoder is null", conferenceId);
                 }
-                var1 = srtcpDecoder = generateRtcpDecoder(false);
-                if (var1 == null) {
+                packetTransformer = srtcpDecoder = generateRtcpDecoder(false);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtcpDecoder is null", conferenceId);
                 }
-                var1 = srtcpEncoder = generateRtcpEncoder(false);
-                if (var1 == null) {
+                packetTransformer = srtcpEncoder = generateRtcpEncoder(false);
+                if (packetTransformer == null) {
                     log.warn("|DtlsHandler({})| DtlsHandler.HandshakeClient: generateRtcpEncoder is null", conferenceId);
                 }
 

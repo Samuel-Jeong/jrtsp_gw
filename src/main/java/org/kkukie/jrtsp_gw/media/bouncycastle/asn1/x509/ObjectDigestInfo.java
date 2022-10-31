@@ -28,17 +28,17 @@ public class ObjectDigestInfo
     /**
      * The public key is hashed.
      */
-    public final static int publicKey = 0;
+    public static final int publicKey = 0;
 
     /**
      * The public key tlsCertificate is hashed.
      */
-    public final static int publicKeyCert = 1;
+    public static final int publicKeyCert = 1;
 
     /**
      * An other object is hashed.
      */
-    public final static int otherObjectDigest = 2;
+    public static final int otherObjectDigest = 2;
 
     ASN1Enumerated digestedObjectType;
 

@@ -14,8 +14,6 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.engines.TwofishEngine;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.macs.HMac;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.KeyParameter;
 import org.kkukie.jrtsp_gw.media.rtp.RtpPacket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -47,8 +45,6 @@ import java.util.Arrays;
  * @author Henrique Rosa (henrique.rosa@telestax.com)
  */
 public class SRTCPCryptoContext {
-
-    private static final Logger logger = LoggerFactory.getLogger(SRTCPCryptoContext.class);
 
     /**
      * The replay check windows size
@@ -109,7 +105,7 @@ public class SRTCPCryptoContext {
     /**
      * Derived session salting key
      */
-    private byte[] saltKey;
+    private final byte[] saltKey;
     /**
      * The HMAC object we used to do packet authentication
      */
@@ -380,7 +376,7 @@ public class SRTCPCryptoContext {
      * @param pkt the RTP packet to be encrypted / decrypted
      */
     public void processPacketAESCM (RawPacket pkt, int index) {
-        long ssrc = pkt.getRTCPSSRC();
+        long ssrc = pkt.getRtcpSsrc();
 
         /* Compute the CM IV (refer to chapter 4.1.1 in RFC 3711):
          *

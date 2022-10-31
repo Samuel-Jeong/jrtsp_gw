@@ -42,7 +42,7 @@ public class IceComponent {
 
     public IceComponent(short componentId) {
         setComponentId(componentId);
-        this.localCandidates = new ArrayList<LocalCandidateWrapper>(5);
+        this.localCandidates = new ArrayList<>(5);
 //		this.remoteCandidates = new ArrayList<IceCandidate>(5);
     }
 
@@ -134,9 +134,9 @@ public class IceComponent {
      * </p>
      */
     private long calculatePriority (IceCandidate candidate) {
-        return (long) (candidate.getType().getPreference() << 24)
-                + (long) (candidate.getAddressPrecedence() << 8)
-                + (long) (256 - this.getComponentId());
+        return ((long) candidate.getType().getPreference() << 24)
+                + ((long) candidate.getAddressPrecedence() << 8)
+                + (256 - this.getComponentId());
     }
 
     public LocalCandidateWrapper selectDefaultLocalCandidate () {
@@ -151,7 +151,7 @@ public class IceComponent {
     public List<LocalCandidateWrapper> getLocalCandidates () {
         List<LocalCandidateWrapper> copy;
         synchronized (this.localCandidates) {
-            copy = new ArrayList<LocalCandidateWrapper>(this.localCandidates);
+            copy = new ArrayList<>(this.localCandidates);
         }
         return copy;
     }

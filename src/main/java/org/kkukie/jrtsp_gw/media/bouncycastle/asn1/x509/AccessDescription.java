@@ -13,9 +13,9 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.asn1.*;
 public class AccessDescription
     extends ASN1Object
 {
-    public final static ASN1ObjectIdentifier id_ad_caIssuers = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.48.2");
+    public static final ASN1ObjectIdentifier id_ad_caIssuers = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.48.2");
     
-    public final static ASN1ObjectIdentifier id_ad_ocsp = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.48.1");
+    public static final ASN1ObjectIdentifier id_ad_ocsp = new ASN1ObjectIdentifier("1.3.6.1.5.5.7.48.1");
         
     ASN1ObjectIdentifier accessMethod = null;
     GeneralName accessLocation = null;

@@ -13,12 +13,12 @@ import java.util.Hashtable;
 public class HashSP800DRBG
     implements SP80090DRBG
 {
-    private final static byte[]     ONE = { 0x01 };
+    private static final byte[]     ONE = { 0x01 };
 
-    private final static long       RESEED_MAX = 1L << (48 - 1);
-    private final static int        MAX_BITS_REQUEST = 1 << (19 - 1);
+    private static final long       RESEED_MAX = 1L << (48 - 1);
+    private static final int        MAX_BITS_REQUEST = 1 << (19 - 1);
 
-    private final static Hashtable  seedlens = new Hashtable();
+    private static final Hashtable  seedlens = new Hashtable();
 
     static
     {

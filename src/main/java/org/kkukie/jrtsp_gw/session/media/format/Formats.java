@@ -31,7 +31,7 @@ import java.util.ArrayList;
  */
 public class Formats {
     //the default size of format list
-    public final static int DEFAULT_SIZE = 15;
+    public static final int DEFAULT_SIZE = 15;
 
     //backing array
     private ArrayList<Format> list;

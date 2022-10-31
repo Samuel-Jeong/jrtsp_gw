@@ -13,8 +13,8 @@ package org.kkukie.jrtsp_gw.media.rtp.crypto;
  *
  * @author Ingo Bauersachs
  */
-public class AsymmetricSRTPTransformer
-        implements TransformEngine {
+public class AsymmetricSRTPTransformer implements TransformEngine {
+
     private SRTPTransformEngine forwardEngine;
     private SRTPTransformEngine reverseEngine;
 
@@ -61,4 +61,5 @@ public class AsymmetricSRTPTransformer
     public PacketTransformer getRTPTransformer () {
         return new SRTPTransformer(forwardEngine, reverseEngine);
     }
+
 }

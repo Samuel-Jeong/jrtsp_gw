@@ -37,7 +37,7 @@ public class V2TBSCertListGenerator
     private Extensions extensions = null;
     private ASN1EncodableVector crlentries = new ASN1EncodableVector();
 
-    private final static ASN1Sequence[] reasons;
+    private static final ASN1Sequence[] reasons;
 
     static
     {

@@ -29,7 +29,6 @@ import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.AsymmetricKeyParamet
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls.*;
 import org.kkukie.jrtsp_gw.media.bouncycastle.crypto.util.PrivateKeyFactory;
-import org.kkukie.jrtsp_gw.media.bouncycastle.util.encoders.Base64;
 import org.kkukie.jrtsp_gw.media.bouncycastle.util.encoders.Hex;
 import org.kkukie.jrtsp_gw.media.bouncycastle.util.io.pem.PemObject;
 import org.kkukie.jrtsp_gw.media.bouncycastle.util.io.pem.PemReader;
@@ -38,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Collection of utility functions for DTLS operations.
@@ -46,26 +46,6 @@ import java.io.InputStreamReader;
  */
 public class TlsUtils {
 
-    static final byte[] rsaCertData = Base64
-            .decode("MIICUzCCAf2gAwIBAgIBATANBgkqhkiG9w0BAQQFADCBjzELMAkGA1UEBhMCQVUxKDAmBgNVBAoMH1RoZSBMZWdpb2"
-                    + "4gb2YgdGhlIEJvdW5jeSBDYXN0bGUxEjAQBgNVBAcMCU1lbGJvdXJuZTERMA8GA1UECAwIVmljdG9yaWExLzAtBgkq"
-                    + "hkiG9w0BCQEWIGZlZWRiYWNrLWNyeXB0b0Bib3VuY3ljYXN0bGUub3JnMB4XDTEzMDIyNTA2MDIwNVoXDTEzMDIyNT"
-                    + "A2MDM0NVowgY8xCzAJBgNVBAYTAkFVMSgwJgYDVQQKDB9UaGUgTGVnaW9uIG9mIHRoZSBCb3VuY3kgQ2FzdGxlMRIw"
-                    + "EAYDVQQHDAlNZWxib3VybmUxETAPBgNVBAgMCFZpY3RvcmlhMS8wLQYJKoZIhvcNAQkBFiBmZWVkYmFjay1jcnlwdG"
-                    + "9AYm91bmN5Y2FzdGxlLm9yZzBaMA0GCSqGSIb3DQEBAQUAA0kAMEYCQQC0p+RhcFdPFqlwgrIr5YtqKmKXmEGb4Shy"
-                    + "pL26Ymz66ZAPdqv7EhOdzl3lZWT6srZUMWWgQMYGiHQg4z2R7X7XAgERo0QwQjAOBgNVHQ8BAf8EBAMCBSAwEgYDVR"
-                    + "0lAQH/BAgwBgYEVR0lADAcBgNVHREBAf8EEjAQgQ50ZXN0QHRlc3QudGVzdDANBgkqhkiG9w0BAQQFAANBAHU55Ncz"
-                    + "eglREcTg54YLUlGWu2WOYWhit/iM1eeq8Kivro7q98eW52jTuMI3CI5ulqd0hYzshQKQaZ5GDzErMyM=");
-    static final byte[] dudRsaCertData = Base64
-            .decode("MIICUzCCAf2gAwIBAgIBATANBgkqhkiG9w0BAQQFADCBjzELMAkGA1UEBhMCQVUxKDAmBgNVBAoMH1RoZSBMZWdpb2"
-                    + "4gb2YgdGhlIEJvdW5jeSBDYXN0bGUxEjAQBgNVBAcMCU1lbGJvdXJuZTERMA8GA1UECAwIVmljdG9yaWExLzAtBgkq"
-                    + "hkiG9w0BCQEWIGZlZWRiYWNrLWNyeXB0b0Bib3VuY3ljYXN0bGUub3JnMB4XDTEzMDIyNTA1NDcyOFoXDTEzMDIyNT"
-                    + "A1NDkwOFowgY8xCzAJBgNVBAYTAkFVMSgwJgYDVQQKDB9UaGUgTGVnaW9uIG9mIHRoZSBCb3VuY3kgQ2FzdGxlMRIw"
-                    + "EAYDVQQHDAlNZWxib3VybmUxETAPBgNVBAgMCFZpY3RvcmlhMS8wLQYJKoZIhvcNAQkBFiBmZWVkYmFjay1jcnlwdG"
-                    + "9AYm91bmN5Y2FzdGxlLm9yZzBaMA0GCSqGSIb3DQEBAQUAA0kAMEYCQQC0p+RhcFdPFqlwgrIr5YtqKmKXmEGb4Shy"
-                    + "pL26Ymz66ZAPdqv7EhOdzl3lZWT6srZUMWWgQMYGiHQg4z2R7X7XAgERo0QwQjAOBgNVHQ8BAf8EBAMCAAEwEgYDVR"
-                    + "0lAQH/BAgwBgYEVR0lADAcBgNVHREBAf8EEjAQgQ50ZXN0QHRlc3QudGVzdDANBgkqhkiG9w0BAQQFAANBAJg55PBS"
-                    + "weg6obRUKF4FF6fCrWFi6oCYSQ99LWcAeupc5BofW5MstFMhCOaEucuGVqunwT5G7/DweazzCIrSzB0=");
     private static final String SHA_1 = "sha-1";
     private static final String SHA_256 = "sha-256";
     private static final String SHA_512 = "sha-512";
@@ -75,23 +55,23 @@ public class TlsUtils {
         byte[] der = c.getEncoded();
         byte[] sha1 = digestOf(hashFunction, der);
         byte[] hexBytes = Hex.encode(sha1);
-        String hex = new String(hexBytes, "ASCII").toUpperCase();
+        String hex = new String(hexBytes, StandardCharsets.US_ASCII).toUpperCase();
 
-        StringBuffer fp = new StringBuffer();
+        StringBuilder fp = new StringBuilder();
         int i = 0;
-        fp.append(hex.substring(i, i + 2));
+        fp.append(hex, i, i + 2);
         while ((i += 2) < hex.length()) {
             fp.append(':');
-            fp.append(hex.substring(i, i + 2));
+            fp.append(hex, i, i + 2);
         }
 
         switch (hashFunction) {
             case SHA_1:
-                return SHA_1 + " " + fp.toString();
+                return SHA_1 + " " + fp;
             case SHA_512:
-                return SHA_512 + " " + fp.toString();
+                return SHA_512 + " " + fp;
             default:
-                return SHA_256 + " " + fp.toString();
+                return SHA_256 + " " + fp;
         }
     }
 
@@ -191,8 +171,7 @@ public class TlsUtils {
     static PemObject loadPemResource (String resource) throws IOException {
         InputStream s = new FileInputStream(resource);
         try (PemReader p = new PemReader(new InputStreamReader(s))) {
-            PemObject o = p.readPemObject();
-            return o;
+            return p.readPemObject();
         }
     }
 

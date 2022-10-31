@@ -30,6 +30,7 @@ import java.nio.ByteBuffer;
  * @author Henrique Rosa (henrique.rosa@telestax.com)
  */
 public class RawPacket {
+
     /**
      * The size of the extension header as defined by RFC 3550.
      */
@@ -223,7 +224,7 @@ public class RawPacket {
      *
      * @return RTP SSRC from source RTP packet
      */
-    public long getRTCPSSRC () {
+    public long getRtcpSsrc() {
         return readUnsignedIntAsLong(4);
     }
 
@@ -356,8 +357,7 @@ public class RawPacket {
         this.buffer.position(off);
         int b1 = (0x000000FF & (this.buffer.get()));
         int b2 = (0x000000FF & (this.buffer.get()));
-        int val = b1 << 8 | b2;
-        return val;
+        return b1 << 8 | b2;
     }
 
     /**
@@ -371,7 +371,7 @@ public class RawPacket {
         return (((long) (buffer.get() & 0xff) << 24) |
                 ((long) (buffer.get() & 0xff) << 16) |
                 ((long) (buffer.get() & 0xff) << 8) |
-                ((long) (buffer.get() & 0xff))) & 0xFFFFFFFFL;
+                ((buffer.get() & 0xff))) & 0xFFFFFFFFL;
     }
 
     /**

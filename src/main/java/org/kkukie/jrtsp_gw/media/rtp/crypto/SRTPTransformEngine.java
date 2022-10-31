@@ -6,9 +6,6 @@
  */
 package org.kkukie.jrtsp_gw.media.rtp.crypto;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * SRTPTransformEngine class implements TransformEngine interface. It stores
  * important information / objects regarding SRTP processing. Through
@@ -18,8 +15,6 @@ import org.slf4j.LoggerFactory;
  * @author Bing SU (nova.su@gmail.com)
  */
 public class SRTPTransformEngine implements TransformEngine {
-
-    private static final Logger logger = LoggerFactory.getLogger(SRTPTransformEngine.class);
 
     /**
      * The default SRTPCryptoContext, which will be used to derivate other

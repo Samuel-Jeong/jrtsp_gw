@@ -3,8 +3,8 @@ package org.kkukie.jrtsp_gw.media.bouncycastle.crypto.tls;
 /**
  * RFC 5764 4.1.1
  */
-public class UseSRTPData
-{
+public class UseSRTPData {
+
     protected int[] protectionProfiles;
     protected byte[] mki;
 
@@ -49,4 +49,5 @@ public class UseSRTPData
     {
         return mki;
     }
+
 }

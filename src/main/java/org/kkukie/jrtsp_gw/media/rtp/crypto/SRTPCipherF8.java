@@ -40,10 +40,11 @@ import java.util.Arrays;
  * @author Werner Dittmann <werner.dittmann@t-online.de>
  */
 public class SRTPCipherF8 {
+    
     /**
      * AES block size, just a short name.
      */
-    private final static int BLKLEN = 16;
+    private static final int BLKLEN = 16;
 
     public static void deriveForIV (BlockCipher f8Cipher, byte[] key, byte[] salt) {
         /*
@@ -136,7 +137,7 @@ public class SRTPCipherF8 {
         f8ctx.S[12] ^= f8ctx.J >> 24;
         f8ctx.S[13] ^= f8ctx.J >> 16;
         f8ctx.S[14] ^= f8ctx.J >> 8;
-        f8ctx.S[15] ^= f8ctx.J >> 0;
+        f8ctx.S[15] ^= f8ctx.J;
         f8ctx.J++;
 
         /*
@@ -161,4 +162,5 @@ public class SRTPCipherF8 {
         public byte[] ivAccent;
         long J;
     }
+
 }
