@@ -1,6 +1,7 @@
 package org.kkukie.jrtsp_gw.media.rtsp.base;
 
 public enum MediaType {
+
     AUDIO(0, "audio", 1),
     VIDEO(1, "video", 2);
 
@@ -39,4 +40,5 @@ public enum MediaType {
     public int getMask() {
         return this.mask;
     }
+
 }

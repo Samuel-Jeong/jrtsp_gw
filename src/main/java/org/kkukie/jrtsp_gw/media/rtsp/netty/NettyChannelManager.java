@@ -241,7 +241,7 @@ public class NettyChannelManager {
 
     public List<Streamer> getStreamerListByCallId(String conferenceId) {
         Collection<Streamer> values = rtspNettyChannel.getCloneStreamerMap().values();
-        if (values != null && !values.isEmpty()) {
+        if (!values.isEmpty()) {
             return values.stream().filter(
                     streamer -> {
                         if (streamer == null) {
