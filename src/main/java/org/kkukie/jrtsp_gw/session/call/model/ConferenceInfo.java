@@ -3,7 +3,7 @@ package org.kkukie.jrtsp_gw.session.call.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.kkukie.jrtsp_gw.media.webrtc.service.WebRtcService;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.WebRtcService;
 import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 

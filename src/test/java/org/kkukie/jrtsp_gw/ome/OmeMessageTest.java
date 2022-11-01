@@ -8,8 +8,8 @@ import org.kkukie.jrtsp_gw.config.DefaultConfig;
 import org.kkukie.jrtsp_gw.config.DtlsConfig;
 import org.kkukie.jrtsp_gw.config.SdpConfig;
 import org.kkukie.jrtsp_gw.config.StunConfig;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.command.OmeAnswer;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.model.ice.RTCIceCandidate;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.command.OmeAnswer;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.model.ice.RTCIceCandidate;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.ActiveProfiles;
 

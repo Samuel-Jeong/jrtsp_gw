@@ -5,7 +5,7 @@ import media.core.rtsp.sdp.SdpMedia;
 import media.core.rtsp.sdp.SdpParser;
 import media.core.rtsp.sdp.SdpSession;
 import org.junit.jupiter.api.Test;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.RTCPeerConnectionMaster;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.module.RTCPeerConnectionMaster;
 
 @Slf4j
 public class RTCPeerConnectionMasterTest {

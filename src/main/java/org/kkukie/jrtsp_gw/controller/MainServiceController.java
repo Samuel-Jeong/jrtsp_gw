@@ -1,16 +1,14 @@
 package org.kkukie.jrtsp_gw.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
-import org.kkukie.jrtsp_gw.media.webrtc.service.WebRtcService;
-import org.kkukie.jrtsp_gw.media.webrtc.service.model.WebRtcServiceInfo;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.WebSocketService;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.WebRtcService;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.model.WebRtcServiceInfo;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.WebSocketService;
 import org.kkukie.jrtsp_gw.service.system.SystemManager;
 import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.kkukie.jrtsp_gw.session.call.model.ConferenceInfo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -63,7 +61,7 @@ public class MainServiceController {
     @GetMapping("/{conferenceId}/uri")
     public String getUriByConferenceId(@PathVariable String conferenceId) {
         WebRtcServiceInfo webRtcServiceInfo = getWebRtcServiceInfo(conferenceId);
-        if (webRtcServiceInfo == null) return "none";
+        if (webRtcServiceInfo == null) { return "none"; }
 
         return webRtcServiceInfo.getUri();
     }
@@ -71,7 +69,7 @@ public class MainServiceController {
     @GetMapping("/{conferenceId}/local_sdp")
     public String getLocalSdpByConferenceId(@PathVariable String conferenceId) {
         WebRtcServiceInfo webRtcServiceInfo = getWebRtcServiceInfo(conferenceId);
-        if (webRtcServiceInfo == null) return "none";
+        if (webRtcServiceInfo == null)  { return "none"; }
 
         return webRtcServiceInfo.getLocalSdp();
     }
@@ -79,7 +77,7 @@ public class MainServiceController {
     @GetMapping("/{conferenceId}/remote_sdp")
     public String getRemoteSdpByConferenceId(@PathVariable String conferenceId) {
         WebRtcServiceInfo webRtcServiceInfo = getWebRtcServiceInfo(conferenceId);
-        if (webRtcServiceInfo == null) return "none";
+        if (webRtcServiceInfo == null) { return "none"; }
 
         return webRtcServiceInfo.getRemoteSdp();
     }

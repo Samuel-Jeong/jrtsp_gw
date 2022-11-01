@@ -2,7 +2,7 @@ package org.kkukie.jrtsp_gw.random;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.module.FingerPrintGenerator;
+import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.module.FingerPrintGenerator;
 import org.kkukie.jrtsp_gw.util.RandomManager;
 
 @Slf4j
