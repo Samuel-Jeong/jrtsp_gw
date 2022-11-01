@@ -3,6 +3,7 @@ package org.kkukie.jrtsp_gw.media.webrtc.websocket.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.neovisionaries.ws.client.WebSocketException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.config.DefaultConfig;
@@ -13,6 +14,7 @@ import org.kkukie.jrtsp_gw.media.webrtc.service.model.WebSocketInfo;
 import java.io.IOException;
 
 @Slf4j
+@Getter
 public class WebSocketService {
 
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();

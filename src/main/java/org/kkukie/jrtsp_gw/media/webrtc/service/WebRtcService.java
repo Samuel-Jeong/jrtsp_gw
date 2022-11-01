@@ -1,11 +1,13 @@
 package org.kkukie.jrtsp_gw.media.webrtc.service;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.media.webrtc.websocket.service.WebSocketService;
 
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
+@Getter
 public class WebRtcService {
 
     private String conferenceId;

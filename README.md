@@ -511,19 +511,34 @@ cache-control: no-cache
 ~~~
 1. 세션(호) 개수 조회
   - Method : GET
-  - URI : http://[IP]:[PORT]/s/v1/conference_count
+  - URI : http://[IP]:[PORT]/conference_count
 
 2. CPU 사용량 조회
   - Method : GET
-  - URI : http://[IP]:[PORT]/s/v1/cpu_usage
+  - URI : http://[IP]:[PORT]/cpu_usage
 
 3. 힙 메모리 사용량 조회
   - Method : GET
-  - URI : http://[IP]:[PORT]/s/v1/heap_memory_usage
+  - URI : http://[IP]:[PORT]/heap_memory_usage
 
 4. 프로세스 내 구동 중인 전체 쓰레드 개수 조회
   - Method : GET
-  - URI : http://[IP]:[PORT]/s/v1/total_thread_count
+  - URI : http://[IP]:[PORT]/total_thread_count
+
+5. 전체 ConferenceId 리스트 조회
+  - Method : GET
+  - URI : http://[IP]:[PORT]/all_conference_ids
+
+6. 특정 ConferenceId 데이터 조회
+  6.1. URI
+    - Method : GET
+    - URI : http://[IP]:[PORT]/{conferenceId}/uri
+  6.2. Local SDP
+    - Method : GET
+    - URI : http://[IP]:[PORT]/{conferenceId}/local_sdp
+  6.3. Remote SDP
+    - Method : GET
+    - URI : http://[IP]:[PORT]/{conferenceId}/remote_sdp
 
 ~~~
   
