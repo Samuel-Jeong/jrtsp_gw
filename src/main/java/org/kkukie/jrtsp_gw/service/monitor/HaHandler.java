@@ -27,7 +27,7 @@ public class HaHandler extends JobContainer {
             String cpuUsageStr = systemManager.getCpuUsage();
             String memoryUsageStr = systemManager.getHeapMemoryUsage();
 
-            logger.debug("| cpu=[{}], mem=[{}], thread=[{}] | CallCount=[{}]",
+            logger.debug("| cpu=[{}], mem=[{}], thread=[{}] | Conference=[{}]",
                     cpuUsageStr, memoryUsageStr, Thread.activeCount(), ConferenceMaster.getInstance().getConferenceInfoSize()
             );
         });

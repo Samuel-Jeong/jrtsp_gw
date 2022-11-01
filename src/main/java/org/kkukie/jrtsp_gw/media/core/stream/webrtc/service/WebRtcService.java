@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.WebSocketService;
 
+import java.util.HashSet;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
@@ -15,9 +16,13 @@ public class WebRtcService {
     private WebSocketService webSocketService = null;
 
     private final ReentrantLock handshakeLock = new ReentrantLock();
-    private final ReentrantLock clientCountLock = new ReentrantLock();
 
-    private int clientCount = 0;
+    private final HashSet<String> callInfos;
+    private final ReentrantLock callInfoSetLock = new ReentrantLock();
+
+    public WebRtcService() {
+        this.callInfos = new HashSet<>();
+    }
 
     public void initWebSocketService(String conferenceId) {
         try {
@@ -56,35 +61,43 @@ public class WebRtcService {
         }
     }
 
-    public void addClient() {
-        clientCountLock.lock();
+    public void addCall(String id) {
+        callInfoSetLock.lock();
         try {
-            log.debug("|WebRtcService({})| [ADD] Current client count: [ {} ]",
-                    conferenceId, ++clientCount
-            );
+            callInfos.add(id);
         } catch (Exception e) {
-            log.warn("|WebRtcService({})| Fail to increase the client count.", conferenceId, e);
+            log.warn("|WebRtcService({})| Fail to increase the call count.", conferenceId, e);
         } finally {
-            clientCountLock.unlock();
+            callInfoSetLock.unlock();
+            if (callInfos.contains(id)) {
+                log.debug("|WebRtcService({})| [ADD:{}] Current call count: [ {} ]",
+                        conferenceId, id, callInfos.size()
+                );
+            }
         }
     }
 
-    public int removeClient() {
-        if (clientCount <= 0) {
-            return 0;
+    public int removeCall(String id) {
+        if (!callInfos.contains(id)) {
+            return callInfos.size();
         }
 
-        clientCountLock.lock();
+        callInfoSetLock.lock();
         try {
-            log.debug("|WebRtcService({})| [REMOVE] Current client count: [ {} ]",
-                    conferenceId, --clientCount
-            );
-            return clientCount;
+            callInfos.remove(id);
+            return callInfos.size();
         } catch (Exception e) {
-            log.warn("|WebRtcService({})| Fail to decrease the client count.", conferenceId, e);
-            return clientCount;
+            log.warn("|WebRtcService({})| Fail to decrease the call count.", conferenceId, e);
+            return callInfos.size();
         } finally {
-            clientCountLock.unlock();
+            callInfoSetLock.unlock();
+            if (!callInfos.contains(id)) {
+                log.debug("|WebRtcService({})| [REMOVE:{}] Current call count: [ {} ]",
+                        conferenceId, id, callInfos.size()
+                );
+            }
         }
     }
+
 }
+

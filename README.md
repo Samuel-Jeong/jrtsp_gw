@@ -94,7 +94,7 @@ Accept: application/sdp
 {
   "command": "request_offer"
 }
-08:12:17.746 [MAIN_JobExecutor-0] DEBUG service.monitor.HaHandler - | cpu=[41.48], mem=[15.44/4096.00], thread=[27] | CallCount=[1]
+08:12:17.746 [MAIN_JobExecutor-0] DEBUG service.monitor.HaHandler - | cpu=[41.48], mem=[15.44/4096.00], thread=[27] | Conference=[1]
 08:12:17.753 [ReadingThread] INFO media.core.webrtc.websocket.service.WebSocketService - |WebSocketService(abcd1234)| Message >> {
   "candidates": [
     {
@@ -429,7 +429,7 @@ Range: npt=0.000-
   "rtpDestPort": 59782,
   "rtcpDestPort": 59783
 })
-08:12:18.775 [MAIN_JobExecutor-0] DEBUG service.monitor.HaHandler - | cpu=[58.73], mem=[43.73/4096.00], thread=[41] | CallCount=[1]
+08:12:18.775 [MAIN_JobExecutor-0] DEBUG service.monitor.HaHandler - | cpu=[58.73], mem=[43.73/4096.00], thread=[41] | Conference=[1]
 08:12:18.775 [nioEventLoopGroup-2-1] DEBUG media.core.rtsp.Streamer - |Streamer(abcd1234:2:438758)| Success to connect the UDP Rtcp endpoint. (targetNetworkInfo={
   "uri": "rtsp://127.0.0.1:8554/abcd1234",
   "destIp": "127.0.0.1",

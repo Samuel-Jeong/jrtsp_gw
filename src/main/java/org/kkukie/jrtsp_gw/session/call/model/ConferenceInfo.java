@@ -23,18 +23,17 @@ public class ConferenceInfo {
         this.isHost = isHost;
     }
 
-    public void addCall() {
+    public void addCall(String id) {
         if (webRtcService != null) {
-            webRtcService.addClient();
+            webRtcService.addCall(id);
         }
     }
 
-    public void removeCall() {
-        if (webRtcService != null && webRtcService.removeClient() == 0) {
+    public void removeCall(String id) {
+        if (webRtcService != null && webRtcService.removeCall(id) == 0) {
             log.debug("|ConferenceInfo({})| WebRtcService has no more client. Finishing this conference...", conferenceId);
             webRtcService.disposeWebSocketService();
             ConferenceMaster.getInstance().deleteConference(conferenceId);
         }
     }
-
 }

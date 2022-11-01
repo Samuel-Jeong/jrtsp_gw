@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * @class public class RtspChannelHandler extends ChannelInboundHandlerAdapter
@@ -61,7 +62,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
     ////////////////////////////////////////////////////////////////////////////////
 
     public RtspChannelHandler(String listenIp, int listenRtspPort) {
-        this.name = "RTSP_" + listenIp + ":" + listenRtspPort;
+        this.name = "RTSP_" + listenIp + ":" + listenRtspPort + "|" + System.currentTimeMillis() + "|" + UUID.randomUUID().toString().substring(0, 10);
 
         this.listenIp = listenIp;
         this.listenRtspPort = listenRtspPort;
@@ -406,7 +407,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         }
         if (this.conferenceInfo == null) {
             this.conferenceInfo = conferenceInfo;
-            this.conferenceInfo.addCall();
+            this.conferenceInfo.addCall(name);
         }
 
         return conferenceInfo;
@@ -709,7 +710,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         logger.debug("({}) () < TEARDOWN\n{}", name, req);
 
         if (conferenceInfo != null) {
-            conferenceInfo.removeCall();
+            conferenceInfo.removeCall(name);
         }
 
         if (audioContextStreamer != null) {
@@ -791,7 +792,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
         if (conferenceInfo != null) {
-            conferenceInfo.removeCall();
+            conferenceInfo.removeCall(name);
         }
 
         if (audioContextStreamer != null) {

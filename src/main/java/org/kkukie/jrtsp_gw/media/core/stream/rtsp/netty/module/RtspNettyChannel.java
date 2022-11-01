@@ -154,17 +154,16 @@ public class RtspNettyChannel { // > TCP
             return null;
         }
 
-        Streamer streamer = new Streamer(
-                mediaType,
-                conferenceId,
-                sessionId,
-                trackId,
-                isTcp,
-                listenIp, WebSocketPortManager.getInstance().takePort()
-        );
-
         streamerMapLock.lock();
         try {
+            Streamer streamer = new Streamer(
+                    mediaType,
+                    conferenceId,
+                    sessionId,
+                    trackId,
+                    isTcp,
+                    listenIp, WebSocketPortManager.getInstance().takePort()
+            );
             streamerMap.putIfAbsent(streamer.getKey(), streamer);
             return streamer;
         } catch (Exception e) {

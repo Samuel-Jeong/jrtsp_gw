@@ -20,22 +20,22 @@ public class MainServiceController {
     public MainServiceController() {}
 
     @GetMapping("/conference_count")
-    public String getCallCountV1() {
+    public String getConferenceCount() {
         return String.valueOf(ConferenceMaster.getInstance().getConferenceInfoSize());
     }
 
     @GetMapping("/cpu_usage")
-    public String getCpuUsageV1() {
+    public String getCpuUsage() {
         return String.valueOf(SystemManager.getInstance().getCpuUsage());
     }
 
     @GetMapping("/heap_memory_usage")
-    public String getHeapMemoryUsageV1() {
+    public String getHeapMemoryUsage() {
         return String.valueOf(SystemManager.getInstance().getHeapMemoryUsage());
     }
 
     @GetMapping("/total_thread_count")
-    public String getTotalThreadCountV1() {
+    public String getTotalThreadCount() {
         return String.valueOf(Thread.activeCount());
     }
 

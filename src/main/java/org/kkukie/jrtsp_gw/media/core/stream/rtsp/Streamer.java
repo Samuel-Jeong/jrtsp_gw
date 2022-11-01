@@ -132,8 +132,8 @@ public class Streamer {
         UdpStream udpStream = streamInfo.getUdpStream();
         if (udpStream != null) {
             udpStream.stop(targetNetworkInfo);
+            log.debug("|Streamer({})| Streamer is finished.", getKey());
         }
-        log.debug("|Streamer({})| Streamer is finished.", getKey());
     }
 
     public void start() {
