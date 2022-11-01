@@ -44,10 +44,13 @@ public class ConferenceMaster {
             conferenceInfos.put(conferenceId, conferenceInfo);
         }
 
+        // WEBRTC
         WebRtcService webRtcService = new WebRtcService();
         webRtcService.initWebSocketService(conferenceId);
         webRtcService.handshake();
         conferenceInfo.setWebRtcService(webRtcService);
+        conferenceInfo.getWebrtcHandshakeLatch().countDown();
+        // WEBRTC
 
         log.info("|ConferenceMaster{}| Conference is added.", conferenceInfo.getConferenceId());
         return conferenceInfo;
