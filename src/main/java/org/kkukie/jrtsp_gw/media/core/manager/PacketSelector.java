@@ -45,6 +45,8 @@ public class PacketSelector {
         pollTasks = new ArrayList<>(ServiceScheduler.POOL_SIZE);
         pollTaskFutures = new ArrayList<>(ServiceScheduler.POOL_SIZE);
         currSelectorIndex = new AtomicInteger(0);
+
+        log.debug("|PacketSelector({})| ServiceScheduler.POOL_SIZE = [ {} ]", conferenceId, ServiceScheduler.POOL_SIZE);
     }
 
     public void registerChannel(DatagramChannel datagramChannel, DataChannel dataChannel) {
@@ -163,7 +165,7 @@ public class PacketSelector {
                     // Select channels enabled for reading operation (without blocking!)
                     int selected = localSelector.selectNow();
                     if (selected == 0) {
-                        Thread.yield();
+                        //Thread.yield();
                         return;
                     }
                 } catch (IOException e) {

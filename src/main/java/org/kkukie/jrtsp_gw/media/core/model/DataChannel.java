@@ -268,10 +268,11 @@ public class DataChannel implements DtlsListener, IceEventListener {
             }
         }
 
-        packetHandlerMaster.initDtls(mediaChannel, realRemoteAddress, this);
-        packetHandlerMaster.initRtp(mediaChannel, realRemoteAddress, mediaSession.getMediaFormatMap());
-
-        packetHandlerMaster.selectCandidate(useCandidate);
+        synchronized (packetHandlerMaster) {
+            packetHandlerMaster.initDtls(mediaChannel, realRemoteAddress, this);
+            packetHandlerMaster.initRtp(mediaChannel, realRemoteAddress, mediaSession.getMediaFormatMap());
+            packetHandlerMaster.selectCandidate(useCandidate);
+        }
     }
 
 }
