@@ -1,6 +1,6 @@
 package org.kkukie.jrtsp_gw.media.core.stream.stun.model;
 
-import org.kkukie.jrtsp_gw.media.core.stream.stun.StunException;
+import org.kkukie.jrtsp_gw.media.core.stream.stun.exception.StunException;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.StunMessage;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.StunRequest;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.StunResponse;

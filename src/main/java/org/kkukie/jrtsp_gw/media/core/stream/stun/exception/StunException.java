@@ -6,7 +6,7 @@
  * See terms of license at gnu.org.
  */
 
-package org.kkukie.jrtsp_gw.media.core.stream.stun;
+package org.kkukie.jrtsp_gw.media.core.stream.stun.exception;
 
 public class StunException extends Exception {
 

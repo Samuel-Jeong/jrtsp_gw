@@ -1,7 +1,7 @@
 package org.kkukie.jrtsp_gw.media.core.stream.stun.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.kkukie.jrtsp_gw.media.core.stream.stun.StunException;
+import org.kkukie.jrtsp_gw.media.core.stream.stun.exception.StunException;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.events.IceEventListener;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.events.SelectedCandidatesEvent;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.StunMessage;

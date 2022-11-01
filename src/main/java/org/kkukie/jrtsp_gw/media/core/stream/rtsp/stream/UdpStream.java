@@ -13,6 +13,7 @@ import org.kkukie.jrtsp_gw.media.core.stream.rtsp.stream.network.TargetNetworkIn
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 @NoArgsConstructor
 public class UdpStream {
@@ -52,7 +53,7 @@ public class UdpStream {
         }
     }
 
-    public boolean connectTargetRtpEndpoint(TargetNetworkInfo targetNetworkInfo) throws Exception {
+    public boolean connectTargetRtpEndpoint(TargetNetworkInfo targetNetworkInfo) throws InterruptedException, UnknownHostException {
         if (targetNetworkInfo.getRtpDestPort() > 0) {
             InetAddress address = InetAddress.getByName(targetNetworkInfo.getDestIp());
             ChannelFuture rtpChannelFuture = bootstrap.connect(address, targetNetworkInfo.getRtpDestPort()).sync();
@@ -79,7 +80,7 @@ public class UdpStream {
         }
     }
 
-    public boolean connectTargetRtcpEndpoint(TargetNetworkInfo targetNetworkInfo) throws Exception {
+    public boolean connectTargetRtcpEndpoint(TargetNetworkInfo targetNetworkInfo) throws InterruptedException, UnknownHostException {
         if (targetNetworkInfo.getRtcpDestPort() > 0) {
             InetAddress address = InetAddress.getByName(targetNetworkInfo.getDestIp());
             ChannelFuture rtcpChannelFuture = bootstrap.connect(address, targetNetworkInfo.getRtcpDestPort()).sync();

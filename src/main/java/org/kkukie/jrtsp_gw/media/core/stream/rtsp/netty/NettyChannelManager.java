@@ -92,13 +92,10 @@ public class NettyChannelManager {
     ////////////////////////////////////////////////////////////////////////////////
 
     public RtcpNettyChannel openRtcpChannel(String streamerKey, String ip, int port) {
-        try {
-            rtcpChannelMapLock.lock();
-
-            if (rtcpChannelMap.get(streamerKey) != null) {
-                logger.trace("| ({}) Fail to add the rtcp channel. Key is duplicated.", streamerKey);
-                return null;
-            }
+        if (rtcpChannelMap.get(streamerKey) != null) {
+            logger.trace("| ({}) Fail to add the rtcp channel. Key is duplicated.", streamerKey);
+            return null;
+        }
 
             /*int port = WebSocketPortManager.getInstance().takePort();
             if (port == -1) {
@@ -106,73 +103,79 @@ public class NettyChannelManager {
                 return false;
             }*/
 
-            RtcpNettyChannel rtcpNettyChannel = new RtcpNettyChannel(streamerKey, ip, port);
-            rtcpNettyChannel.run(ip, port);
+        RtcpNettyChannel rtcpNettyChannel = new RtcpNettyChannel(streamerKey, ip, port);
+        rtcpNettyChannel.run(ip, port);
 
-            // 메시지 수신용 채널 open
-            Channel channel = rtcpNettyChannel.openChannel(
-                    ip,
-                    port
-            );
+        // 메시지 수신용 채널 open
+        Channel channel = rtcpNettyChannel.openChannel(
+                ip,
+                port
+        );
 
-            if (channel == null) {
-                rtcpNettyChannel.closeChannel();
-                rtcpNettyChannel.stop();
-                logger.warn("| ({}) Fail to add the rtcp channel.", streamerKey);
-                return null;
-            }
+        if (channel == null) {
+            rtcpNettyChannel.closeChannel();
+            rtcpNettyChannel.stop();
+            logger.warn("| ({}) Fail to add the rtcp channel.", streamerKey);
+            return null;
+        }
 
+        rtcpChannelMapLock.lock();
+        try {
             rtcpChannelMap.putIfAbsent(streamerKey, rtcpNettyChannel);
-            logger.debug("| ({}) Success to add rtcp channel.", streamerKey);
             return rtcpNettyChannel;
         } catch (Exception e) {
             logger.warn("| ({}) Fail to add rtcp channel (ip={}, port={}).", streamerKey, ip, port, e);
             return null;
         } finally {
             rtcpChannelMapLock.unlock();
+            if (rtcpChannelMap.get(streamerKey) != null) {
+                logger.debug("| ({}) Success to add rtcp channel.", streamerKey);
+            }
         }
     }
 
     public void deleteRtcpChannel(String streamerKey) {
+        if (!rtcpChannelMap.isEmpty()) {
+            return;
+        }
+
+        RtcpNettyChannel rtcpNettyChannel = rtcpChannelMap.get(streamerKey);
+        if (rtcpNettyChannel == null) {
+            return;
+        }
+        rtcpNettyChannel.closeChannel();
+        rtcpNettyChannel.stop();
+
+        rtcpChannelMapLock.lock();
         try {
-            rtcpChannelMapLock.lock();
-
-            if (!rtcpChannelMap.isEmpty()) {
-                RtcpNettyChannel rtcpNettyChannel = rtcpChannelMap.get(streamerKey);
-                if (rtcpNettyChannel == null) {
-                    return;
-                }
-
-                rtcpNettyChannel.closeChannel();
-                rtcpNettyChannel.stop();
-                rtcpChannelMap.remove(streamerKey);
-
-                logger.debug("| ({}) Success to close the rtcp channel.", streamerKey);
-            }
+            rtcpChannelMap.remove(streamerKey);
         } catch (Exception e) {
             logger.warn("| ({}) Fail to close the rtcp channel.", streamerKey, e);
         } finally {
             rtcpChannelMapLock.unlock();
+            if (rtcpChannelMap.get(streamerKey) == null) {
+                logger.debug("| ({}) Success to close the rtcp channel.", streamerKey);
+            }
         }
     }
 
     public void deleteAllRtcpChannels() {
+        rtcpChannelMapLock.lock();
         try {
-            rtcpChannelMapLock.lock();
             rtcpChannelMap.entrySet().removeIf(Objects::nonNull);
-
-            logger.debug("| Success to close all rtcp channel(s).");
         } catch (Exception e) {
             logger.warn("| Fail to close all rtcp channel(s).", e);
         } finally {
             rtcpChannelMapLock.unlock();
+            if (rtcpChannelMap.isEmpty()) {
+                logger.debug("| Success to close all rtcp channel(s).");
+            }
         }
     }
 
     public RtcpNettyChannel getRtcpChannel(String streamerKey) {
+        rtcpChannelMapLock.lock();
         try {
-            rtcpChannelMapLock.lock();
-
             return rtcpChannelMap.get(streamerKey);
         } catch (Exception e) {
             return null;

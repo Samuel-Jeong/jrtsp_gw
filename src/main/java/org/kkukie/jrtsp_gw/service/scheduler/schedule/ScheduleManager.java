@@ -34,9 +34,8 @@ public class ScheduleManager {
     public Map<String, ScheduleUnit> getCloneCallMap() {
         HashMap<String, ScheduleUnit> cloneMap;
 
+        scheduleUnitMapLock.lock();
         try {
-            scheduleUnitMapLock.lock();
-
             cloneMap = (HashMap<String, ScheduleUnit>) scheduleUnitMap.clone();
         } catch (Exception e) {
             logger.warn("Fail to clone the schedule unit map.", e);
@@ -58,9 +57,8 @@ public class ScheduleManager {
             return scheduleUnit;
         }
 
+        scheduleUnitMapLock.lock();
         try {
-            scheduleUnitMapLock.lock();
-
             scheduleUnit = new ScheduleUnit(
                     key,
                     poolSize,
@@ -81,9 +79,10 @@ public class ScheduleManager {
             return;
         }
 
+        Optional.ofNullable(scheduleUnitMap.get(key)).ifPresent(ScheduleUnit::stopAll);
+
+        scheduleUnitMapLock.lock();
         try {
-            scheduleUnitMapLock.lock();
-            Optional.ofNullable(scheduleUnitMap.get(key)).ifPresent(ScheduleUnit::stopAll);
             scheduleUnitMap.remove(key);
         } catch (Exception e) {
             logger.warn("Fail to delete the schedule unit map.", e);
@@ -101,15 +100,17 @@ public class ScheduleManager {
     }
 
     public void clearScheduleUnitMap() {
+        scheduleUnitMapLock.lock();
         try {
-            scheduleUnitMapLock.lock();
             scheduleUnitMap.values().forEach(ScheduleUnit::stopAll);
             scheduleUnitMap.clear();
-            logger.debug("Success to clear the schedule unit map.");
         } catch (Exception e) {
             logger.warn("Fail to clear the schedule unit map.", e);
         } finally {
             scheduleUnitMapLock.unlock();
+            if (scheduleUnitMap.isEmpty()) {
+                logger.debug("Success to clear the schedule unit map.");
+            }
         }
     }
 

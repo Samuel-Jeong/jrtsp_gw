@@ -8,7 +8,7 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.control;
 
-import org.kkukie.jrtsp_gw.media.core.stream.stun.StunException;
+import org.kkukie.jrtsp_gw.media.core.stream.stun.exception.StunException;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.StunAttribute;
 
 public abstract class ControlAttribute extends StunAttribute {

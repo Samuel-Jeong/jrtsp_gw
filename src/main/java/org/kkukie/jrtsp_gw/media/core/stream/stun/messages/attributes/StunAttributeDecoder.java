@@ -13,7 +13,7 @@ import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.control.Co
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.control.ControllingAttribute;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.data.DataAttribute;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.general.*;
-import org.kkukie.jrtsp_gw.media.core.stream.stun.StunException;
+import org.kkukie.jrtsp_gw.media.core.stream.stun.exception.StunException;
 
 /**
  * Provides utilities for decoding a binary stream into an Stun Attribute

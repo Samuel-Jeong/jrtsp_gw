@@ -148,23 +148,23 @@ public class RtspNettyChannel { // > TCP
     ////////////////////////////////////////////////////////////////////////////////
 
     public Streamer addStreamer(MediaType mediaType, String conferenceId, String sessionId, String trackId, boolean isTcp) {
+        String key = (trackId != null && !trackId.isEmpty()) ? conferenceId + ":" + trackId + ":" + sessionId : conferenceId + ":" + sessionId;
+        if (getStreamer(key) != null) {
+            logger.warn("Streamer is already exist. (key={})", sessionId);
+            return null;
+        }
+
+        Streamer streamer = new Streamer(
+                mediaType,
+                conferenceId,
+                sessionId,
+                trackId,
+                isTcp,
+                listenIp, WebSocketPortManager.getInstance().takePort()
+        );
+
+        streamerMapLock.lock();
         try {
-            streamerMapLock.lock();
-
-            String key = (trackId != null && !trackId.isEmpty()) ? conferenceId + ":" + trackId + ":" + sessionId : conferenceId + ":" + sessionId;
-            if (streamerMap.get(key) != null) {
-                logger.warn("Streamer is already exist. (key={})", sessionId);
-                return null;
-            }
-
-            Streamer streamer = new Streamer(
-                    mediaType,
-                    conferenceId,
-                    sessionId,
-                    trackId,
-                    isTcp,
-                    listenIp, WebSocketPortManager.getInstance().takePort()
-            );
             streamerMap.putIfAbsent(streamer.getKey(), streamer);
             return streamer;
         } catch (Exception e) {
@@ -176,29 +176,29 @@ public class RtspNettyChannel { // > TCP
     }
 
     public void deleteStreamer(String key) {
+        Streamer streamer = getStreamer(key);
+        if (streamer == null) {
+            //logger.warn("Streamer is null. Fail to delete the Streamer. (key={})", key);
+            return;
+        }
+        streamer.close();
+
+        streamerMapLock.lock();
         try {
-            streamerMapLock.lock();
-
-            Streamer streamer = streamerMap.get(key);
-            if (streamer == null) {
-                //logger.warn("Streamer is null. Fail to delete the Streamer. (key={})", key);
-                return;
-            }
-
-            streamer.close();
             streamerMap.remove(key);
-            logger.debug("Streamer is deleted. (key={})", key);
         } catch (Exception e) {
             logger.warn("Fail to delete the Streamer. (key={})", key, e);
         } finally {
             streamerMapLock.unlock();
+            if (streamerMap.get(key) == null) {
+                logger.debug("Streamer is deleted. (key={})", key);
+            }
         }
     }
 
     public void deleteAllStreamers() {
+        streamerMapLock.lock();
         try {
-            streamerMapLock.lock();
-
             for (Map.Entry<String, Streamer> entry : getCloneStreamerMap().entrySet()) {
                 String key = entry.getKey();
                 if (key == null) {
@@ -223,9 +223,8 @@ public class RtspNettyChannel { // > TCP
     public Map<String, Streamer> getCloneStreamerMap() {
         HashMap<String, Streamer> cloneMap;
 
+        streamerMapLock.lock();
         try {
-            streamerMapLock.lock();
-
             cloneMap = (HashMap<String, Streamer>) streamerMap.clone();
         } catch (Exception e) {
             logger.warn("Fail to clone the message sender map.");

@@ -8,7 +8,7 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes;
 
-import org.kkukie.jrtsp_gw.media.core.stream.stun.StunException;
+import org.kkukie.jrtsp_gw.media.core.stream.stun.exception.StunException;
 
 /**
  * After the header are 0 or more attributes.  Each attribute is TLV

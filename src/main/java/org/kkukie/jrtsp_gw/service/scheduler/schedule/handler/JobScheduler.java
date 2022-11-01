@@ -44,21 +44,21 @@ public class JobScheduler {
             return false;
         }
 
+        if (job.isLasted() && job.getInterval() <= 0) {
+            logger.warn("[JobScheduler({})] Fail to start [{}]. Job is lasted, but interval is not positive. (interval={})",
+                    scheduleUnitKey,
+                    job.getName(), job.getInterval()
+            );
+            return false;
+        }
+
+        if (scheduleMap.get(scheduleUnitKey + ":" + job.getName()) != null) {
+            logger.warn("[JobScheduler({})] Job is already scheduled. ({})", scheduleUnitKey, job.getName());
+            return false;
+        }
+
         scheduleLock.lock();
         try {
-            if (job.isLasted() && job.getInterval() <= 0) {
-                logger.warn("[JobScheduler({})] Fail to start [{}]. Job is lasted, but interval is not positive. (interval={})",
-                        scheduleUnitKey,
-                        job.getName(), job.getInterval()
-                );
-                return false;
-            }
-
-            if (scheduleMap.get(scheduleUnitKey + ":" + job.getName()) != null) {
-                logger.warn("[JobScheduler({})] Job is already scheduled. ({})", scheduleUnitKey, job.getName());
-                return false;
-            }
-
             JobAdder jobAdder = new JobAdder(this, job, curExecutorIndex);
             jobAdder.run();
             curExecutorIndex++;
@@ -109,11 +109,13 @@ public class JobScheduler {
         try {
             scheduleMap.values().forEach(JobAdder::stop);
             scheduleMap.clear();
-            logger.debug("[JobScheduler({})] Success to stop all the jobs.", scheduleUnitKey);
         } catch (Exception e) {
             logger.warn("[JobScheduler({})] Fail to stop the jobs.", scheduleUnitKey, e);
         } finally {
             scheduleLock.unlock();
+            if (scheduleMap.isEmpty()) {
+                logger.debug("[JobScheduler({})] Success to stop all the jobs.", scheduleUnitKey);
+            }
         }
 
         executorLock.lock();
@@ -136,11 +138,11 @@ public class JobScheduler {
         executorLock.lock();
         try {
             jobExecutors[executorIndex].addJob(job);
-            //logger.debug("jobExecutor[{}] add job ({})", curExecutorIndex, job.getName());
         } catch (Exception e) {
             logger.warn("[JobScheduler({})] Fail to add the job to executors. Exception", scheduleUnitKey, e);
         } finally {
             executorLock.unlock();
+            //logger.debug("jobExecutor[{}] add job ({})", curExecutorIndex, job.getName());
         }
     }
 
