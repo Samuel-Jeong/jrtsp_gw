@@ -8,8 +8,8 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.address;
 
-import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.StunMessage;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.channels.TransportAddress;
+import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.StunMessage;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

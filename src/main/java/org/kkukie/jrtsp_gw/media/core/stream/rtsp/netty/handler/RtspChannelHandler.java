@@ -24,14 +24,11 @@ import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.kkukie.jrtsp_gw.session.call.model.ConferenceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 import org.kkukie.jrtsp_gw.util.RandomManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @class public class RtspChannelHandler extends ChannelInboundHandlerAdapter

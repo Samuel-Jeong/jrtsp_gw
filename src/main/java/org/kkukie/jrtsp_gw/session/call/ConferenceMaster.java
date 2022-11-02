@@ -2,7 +2,6 @@ package org.kkukie.jrtsp_gw.session.call;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.config.ConfigManager;
-import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.WebRtcService;
 import org.kkukie.jrtsp_gw.session.call.model.ConferenceInfo;
 
 import java.util.ArrayList;

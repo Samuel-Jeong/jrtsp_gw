@@ -21,9 +21,9 @@
 package org.kkukie.jrtsp_gw.media.core.stream.rtp.statistics;
 
 import org.apache.commons.net.ntp.TimeStamp;
+import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
 import org.kkukie.jrtsp_gw.media.core.stream.rtcp.RtcpSenderReport;
 import org.kkukie.jrtsp_gw.media.core.stream.rtcp.ntp.NtpUtils;
-import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.RtpPacket;
 import org.kkukie.jrtsp_gw.media.core.stream.rtsp.rtcp.module.RtpClock;
 import org.slf4j.Logger;

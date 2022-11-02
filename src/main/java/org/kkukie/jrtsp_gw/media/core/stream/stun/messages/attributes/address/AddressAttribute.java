@@ -8,9 +8,9 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.address;
 
+import org.kkukie.jrtsp_gw.media.core.stream.rtp.channels.TransportAddress;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.exception.StunException;
 import org.kkukie.jrtsp_gw.media.core.stream.stun.messages.attributes.StunAttribute;
-import org.kkukie.jrtsp_gw.media.core.stream.rtp.channels.TransportAddress;
 
 /**
  * This class is used to represent Stun attributes that contain an address. Such
