@@ -23,7 +23,7 @@ public class RandomTest {
     @Test
     public void fingerPrint() throws Exception {
         // 1) Given
-        String certPath = "/Users/jamesj/GIT_PROJECTS/UANGEL/urtsp_gw/src/main/resources/config/cert.pem";
+        String certPath = "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem";
 
         // 2) When
         String fingerPrint = FingerPrintGenerator.getFingerPrint(certPath);

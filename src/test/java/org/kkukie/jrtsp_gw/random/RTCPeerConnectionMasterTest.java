@@ -10,7 +10,7 @@ import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.module.RTC
 @Slf4j
 public class RTCPeerConnectionMasterTest {
 
-    String certPath = "/Users/jamesj/GIT_PROJECTS/UANGEL/urtsp_gw/src/main/resources/config/cert.pem";
+    String certPath = "/Users/jamesj/GIT_PROJECTS/jrtsp_gw/src/main/resources/dtls/cert.pem";
 
     SdpParser sdpParser = SdpParser.INSTANCE;
 
