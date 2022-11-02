@@ -5,31 +5,36 @@ import lombok.extern.slf4j.Slf4j;
 import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.WebSocketService;
 
 import java.util.HashSet;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 @Getter
 public class WebRtcService {
 
-    private String conferenceId;
+    private final String conferenceId;
 
     private WebSocketService webSocketService = null;
 
     private final ReentrantLock handshakeLock = new ReentrantLock();
+    private final CountDownLatch handshakeLatch = new CountDownLatch(1);
+    private static final int WEBRTC_HANDSHAKE_TIMEOUT_VALUE = 2;
+    private static final TimeUnit WEBRTC_HANDSHAKE_TIMEOUT_UNIT = TimeUnit.SECONDS;
 
     private final HashSet<String> callInfos;
     private final ReentrantLock callInfoSetLock = new ReentrantLock();
 
-    public WebRtcService() {
+    public WebRtcService(String conferenceId) {
+        this.conferenceId = conferenceId;
         this.callInfos = new HashSet<>();
     }
 
-    public void initWebSocketService(String conferenceId) {
+    public void initWebSocketService() {
         try {
             if (webSocketService == null) {
                 webSocketService = new WebSocketService();
                 webSocketService.start(conferenceId);
-                this.conferenceId = conferenceId;
             }
         } catch (Exception e) {
             log.error("|WebRtcService({})| init.Exception", conferenceId, e);
@@ -58,6 +63,26 @@ public class WebRtcService {
             log.error("|WebRtcService({})| handshake.Exception", conferenceId, e);
         } finally {
             handshakeLock.unlock();
+            handshakeLatch.countDown();
+        }
+    }
+
+    public boolean waitHandshake() {
+        try {
+            if (handshakeLatch.getCount() > 0) {
+                log.debug("|WebRtcService({})| Waiting handshaking... (timeout=[{}]{})", conferenceId, WEBRTC_HANDSHAKE_TIMEOUT_VALUE, WEBRTC_HANDSHAKE_TIMEOUT_UNIT);
+            } else {
+                return true;
+            }
+
+            if (!handshakeLatch.await(WEBRTC_HANDSHAKE_TIMEOUT_VALUE, WEBRTC_HANDSHAKE_TIMEOUT_UNIT)) {
+                log.warn("|WebRtcService({})| Timeout! Fail to wait the handshakeLatch.", conferenceId);
+                return false;
+            }
+            return true;
+        } catch (InterruptedException e) {
+            log.warn("|WebRtcService({})| Fail to wait the handshakeLatch.", conferenceId, e);
+            return false;
         }
     }
 
@@ -99,5 +124,18 @@ public class WebRtcService {
         }
     }
 
-}
+    public void removeAllCalls() {
+        callInfoSetLock.lock();
+        try {
+            callInfos.clear();
+        } catch (Exception e) {
+            log.warn("|WebRtcService({})| Fail to decrease the call count.", conferenceId, e);
+        } finally {
+            callInfoSetLock.unlock();
+            if (callInfos.isEmpty()) {
+                log.debug("|WebRtcService({})| [REMOVE ALL]", conferenceId);
+            }
+        }
+    }
 
+}

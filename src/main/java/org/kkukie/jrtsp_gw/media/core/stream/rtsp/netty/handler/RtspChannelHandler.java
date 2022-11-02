@@ -412,14 +412,8 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
             }
         }
 
-        try {
-            if (!conferenceInfo.getWebrtcHandshakeLatch().await(2, TimeUnit.SECONDS)) {
-                // TIMEOUT !
-                log.warn("({}) Timeout! Fail to wait the getWebrtcHandshakeLatch.", name);
-                return null;
-            }
-        } catch (InterruptedException e) {
-            log.warn("({}) Fail to wait the getWebrtcHandshakeLatch.", name, e);
+        if (!conferenceInfo.waitWebRtcPrepared()) {
+            sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.INTERNAL_SERVER_ERROR);
             return null;
         }
 

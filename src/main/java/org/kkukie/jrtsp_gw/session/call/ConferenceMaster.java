@@ -44,13 +44,7 @@ public class ConferenceMaster {
             conferenceInfos.put(conferenceId, conferenceInfo);
         }
 
-        // WEBRTC
-        WebRtcService webRtcService = new WebRtcService();
-        webRtcService.initWebSocketService(conferenceId);
-        webRtcService.handshake();
-        conferenceInfo.setWebRtcService(webRtcService);
-        conferenceInfo.getWebrtcHandshakeLatch().countDown();
-        // WEBRTC
+        conferenceInfo.startWebRtcService();
 
         log.info("|ConferenceMaster{}| Conference is added.", conferenceInfo.getConferenceId());
         return conferenceInfo;
@@ -61,16 +55,15 @@ public class ConferenceMaster {
         if (conferenceInfo == null) { return; }
 
         try {
-            WebRtcService webRtcService = conferenceInfo.getWebRtcService();
-            if (webRtcService != null) {
-                webRtcService.disposeWebSocketService();
-                conferenceInfo.setWebRtcService(null);
-            }
-        } finally {
+            conferenceInfo.stopWebRtcService();
+
             synchronized (conferenceInfos) {
                 conferenceInfos.remove(conferenceId);
             }
-            log.info("|ConferenceMaster{}| Conference is deleted.", conferenceInfo.getConferenceId());
+        } finally {
+            if (!conferenceInfos.containsKey(conferenceId)) {
+                log.info("|ConferenceMaster({})| Conference is deleted.", conferenceInfo.getConferenceId());
+            }
         }
     }
 

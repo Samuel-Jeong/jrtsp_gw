@@ -7,8 +7,6 @@ import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.WebRtcService;
 import org.kkukie.jrtsp_gw.session.call.ConferenceMaster;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 
-import java.util.concurrent.CountDownLatch;
-
 @Getter
 @Setter
 @Slf4j
@@ -18,13 +16,32 @@ public class ConferenceInfo {
     private final boolean isHost;
 
     private WebRtcService webRtcService = null;
-    private final CountDownLatch webrtcHandshakeLatch = new CountDownLatch(1);
 
     private MediaSession mediaSession = null;
 
     public ConferenceInfo(String conferenceId, boolean isHost) {
         this.conferenceId = conferenceId;
         this.isHost = isHost;
+    }
+
+    public void startWebRtcService() {
+        if (webRtcService == null) {
+            webRtcService = new WebRtcService(conferenceId);
+            webRtcService.initWebSocketService();
+            webRtcService.handshake();
+        }
+    }
+
+    public void stopWebRtcService() {
+        if (webRtcService != null) {
+            webRtcService.removeAllCalls();
+            webRtcService.disposeWebSocketService();
+            webRtcService = null;
+        }
+    }
+
+    public boolean waitWebRtcPrepared() {
+        return webRtcService.waitHandshake();
     }
 
     public void addCall(String id) {
