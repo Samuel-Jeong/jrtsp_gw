@@ -5,21 +5,24 @@ import org.kkukie.jrtsp_gw.config.ConfigManager;
 import org.kkukie.jrtsp_gw.session.call.model.ConferenceInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
 public class ConferenceMaster {
 
 
-    private final int maxConferenceSessionCount;
+    private final int maxSessionCount;
 
     private static final ConferenceMaster conferenceMaster = new ConferenceMaster();
 
     private final HashMap<String, ConferenceInfo> conferenceInfos;
+    private final ReentrantLock conferenceInfoMapLock = new ReentrantLock();
 
     private ConferenceMaster() {
-        this.maxConferenceSessionCount = ConfigManager.getSessionConfig().getMaxSessionCount();
+        this.maxSessionCount = ConfigManager.getSessionConfig().getMaxSessionCount();
 
         conferenceInfos = new HashMap<>();
     }
@@ -30,22 +33,29 @@ public class ConferenceMaster {
 
     public ConferenceInfo createConference(String conferenceId, boolean isHost) {
         if (conferenceInfos.containsKey(conferenceId)) {
-            log.warn("|ConferenceMaster{}| Conference is already exist.", conferenceId);
+            log.warn("|ConferenceMaster| Conference is already exist. (conferenceId={})", conferenceId);
             return null;
         }
-        if (conferenceInfos.size() >= maxConferenceSessionCount) {
-            log.warn("|ConferenceMaster{}| Conference count is maximum size. (size={})", conferenceId, conferenceInfos.size());
+        if (conferenceInfos.size() >= maxSessionCount) {
+            log.warn("|ConferenceMaster| Conference count is maximum size. (conferenceId={}, size={})", conferenceId, conferenceInfos.size());
             return null;
         }
 
-        ConferenceInfo conferenceInfo = new ConferenceInfo(conferenceId, isHost);
-        synchronized (conferenceInfos) {
+        ConferenceInfo conferenceInfo;
+        conferenceInfoMapLock.lock();
+        try {
+            conferenceInfo = new ConferenceInfo(conferenceId, isHost);
             conferenceInfos.put(conferenceId, conferenceInfo);
+        } catch (Exception e) {
+            log.warn("|ConferenceMaster| Fail to add new conferenceInfo. (conferenceId={})", conferenceId);
+            return null;
+        } finally {
+            conferenceInfoMapLock.unlock();
+            if (conferenceInfos.get(conferenceId) != null) {
+                log.debug("|ConferenceMaster| Conference is added. (conferenceId={})", conferenceId);
+            }
         }
 
-        conferenceInfo.startWebRtcService();
-
-        log.info("|ConferenceMaster{}| Conference is added.", conferenceInfo.getConferenceId());
         return conferenceInfo;
     }
 
@@ -53,20 +63,22 @@ public class ConferenceMaster {
         ConferenceInfo conferenceInfo = findConference(conferenceId);
         if (conferenceInfo == null) { return; }
 
+        conferenceInfoMapLock.lock();
         try {
             conferenceInfo.stopWebRtcService();
-
-            synchronized (conferenceInfos) {
-                conferenceInfos.remove(conferenceId);
-            }
+            conferenceInfos.remove(conferenceId);
+        } catch (Exception e) {
+            log.warn("|ConferenceMaster| Fail to delete the conferenceInfo. (conferenceId={})", conferenceInfo.getConferenceId(), e);
         } finally {
-            if (!conferenceInfos.containsKey(conferenceId)) {
-                log.info("|ConferenceMaster({})| Conference is deleted.", conferenceInfo.getConferenceId());
+            conferenceInfoMapLock.unlock();
+            if (conferenceInfos.get(conferenceId) == null) {
+                log.debug("|ConferenceMaster| Conference is deleted. (conferenceId={})", conferenceInfo.getConferenceId());
             }
         }
     }
 
     public ConferenceInfo findConference(String conferenceId) {
+        if (conferenceId == null) { return null; }
         return conferenceInfos.get(conferenceId);
     }
 
@@ -75,8 +87,14 @@ public class ConferenceMaster {
     }
 
     public List<ConferenceInfo> getConferenceInfos() {
-        synchronized (conferenceInfos) {
+        conferenceInfoMapLock.lock();
+        try {
             return new ArrayList<>(conferenceInfos.values());
+        } catch (Exception e) {
+            log.warn("|ConferenceMaster| Fail to get the conferenceInfo list.", e);
+            return Collections.emptyList();
+        } finally {
+            conferenceInfoMapLock.unlock();
         }
     }
 

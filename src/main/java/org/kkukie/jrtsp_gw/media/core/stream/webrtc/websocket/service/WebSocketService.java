@@ -12,6 +12,7 @@ import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.model.WebRtcServiceI
 import org.kkukie.jrtsp_gw.media.core.stream.webrtc.service.model.WebSocketInfo;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @Slf4j
 @Getter
@@ -32,7 +33,7 @@ public class WebSocketService {
         this.webSocketInfo = new WebSocketInfo();
     }
 
-    public void start(String conferenceId) throws WebSocketException, IOException {
+    public void start(String conferenceId) throws WebSocketException, IOException, NoSuchAlgorithmException {
         if (conferenceId == null || conferenceId.isEmpty()) { return; }
 
         webRtcServiceInfo.setConferenceId(conferenceId);

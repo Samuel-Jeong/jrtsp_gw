@@ -27,6 +27,7 @@ import org.kkukie.jrtsp_gw.util.RandomManager;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,11 +59,16 @@ public class WebSocketInfo {
         localPeerConnection.setCertPath(dtlsConfig.getCertPath());
     }
 
-    public void start(WebRtcServiceInfo webRtcServiceInfo) throws WebSocketException, IOException {
+    public void start(WebRtcServiceInfo webRtcServiceInfo) throws WebSocketException, IOException, NoSuchAlgorithmException {
         if (webRtcServiceInfo == null) { return; }
 
         this.webRtcServiceInfo = webRtcServiceInfo;
-        webSocket = connect(webRtcServiceInfo.getUri() + "/" + webRtcServiceInfo.getApplicationName() + "/" + webRtcServiceInfo.getConferenceId());
+
+        String serverUri = webRtcServiceInfo.getUri()
+                + "/" + webRtcServiceInfo.getApplicationName()
+                + "/" + webRtcServiceInfo.getConferenceId();
+        log.debug("|WebSocketInfo({})| Connecting to [ {} ] ...", webRtcServiceInfo.getConferenceId(), serverUri);
+        webSocket = connect(serverUri);
 
         localIp = webSocket.getSocket().getLocalAddress().getHostAddress();
         localPort = webSocket.getSocket().getLocalPort();
@@ -77,8 +83,14 @@ public class WebSocketInfo {
         log.debug("|WebSocketInfo({})| LOCAL NETWORK = {}:{}", webRtcServiceInfo.getConferenceId(), localIp, localPort);
     }
 
-    private WebSocket connect(String uri) throws IOException, WebSocketException {
-        return new WebSocketFactory()
+    private WebSocket connect(String uri) throws IOException, WebSocketException, NoSuchAlgorithmException {
+        WebSocketFactory webSocketFactory = new WebSocketFactory();
+        if (uri.startsWith("wss")) {
+            webSocketFactory = webSocketFactory.setSSLContext(NaiveSSLContext.getInstance("TLS"))
+                    .setVerifyHostname(false);
+        }
+
+        return webSocketFactory
                 .setConnectionTimeout(5000)
                 .createSocket(uri)
                 .addListener(new WebSocketAdapter() {

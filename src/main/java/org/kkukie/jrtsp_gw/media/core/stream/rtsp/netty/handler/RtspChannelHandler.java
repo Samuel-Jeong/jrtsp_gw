@@ -407,6 +407,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
                 sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
                 return null;
             }
+            conferenceInfo.startWebRtcService();
         }
 
         if (!conferenceInfo.waitWebRtcPrepared()) {
