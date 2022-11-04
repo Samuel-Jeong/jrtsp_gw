@@ -110,11 +110,11 @@ public class IceComponent {
         // Configure the candidate before registration
         candidate.setPriority(calculatePriority(candidate));
 
-        synchronized (this.localCandidates) {
-            if (!this.localCandidates.contains(candidateWrapper)) {
+        if (!this.localCandidates.contains(candidateWrapper)) {
+            synchronized (this.localCandidates) {
                 this.localCandidates.add(candidateWrapper);
-                sortCandidates();
             }
+            sortCandidates();
         }
     }
 
