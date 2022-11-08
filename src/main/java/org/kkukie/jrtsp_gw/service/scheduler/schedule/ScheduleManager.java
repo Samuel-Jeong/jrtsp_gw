@@ -5,6 +5,7 @@ import org.kkukie.jrtsp_gw.service.scheduler.schedule.unit.ScheduleUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +33,10 @@ public class ScheduleManager {
     }
 
     public Map<String, ScheduleUnit> getCloneCallMap() {
+        if (scheduleUnitMap.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         HashMap<String, ScheduleUnit> cloneMap;
 
         scheduleUnitMapLock.lock();

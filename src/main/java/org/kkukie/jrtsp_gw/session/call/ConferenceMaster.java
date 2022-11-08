@@ -87,6 +87,10 @@ public class ConferenceMaster {
     }
 
     public List<ConferenceInfo> getConferenceInfos() {
+        if (conferenceInfos.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         conferenceInfoMapLock.lock();
         try {
             return new ArrayList<>(conferenceInfos.values());

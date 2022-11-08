@@ -270,7 +270,13 @@ public class NettyChannelManager {
     }
 
     public List<Streamer> getAllStreamers() {
-        return new ArrayList<>(rtspNettyChannel.getCloneStreamerMap().values());
+        Map<String, Streamer> cloneStreamerMap = rtspNettyChannel.getCloneStreamerMap();
+
+        if (cloneStreamerMap.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return new ArrayList<>(cloneStreamerMap.values());
     }
 
 }

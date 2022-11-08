@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -220,6 +221,10 @@ public class RtspNettyChannel { // > TCP
     }
 
     public Map<String, Streamer> getCloneStreamerMap() {
+        if (streamerMap.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         HashMap<String, Streamer> cloneMap;
 
         streamerMapLock.lock();
