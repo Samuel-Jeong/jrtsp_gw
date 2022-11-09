@@ -22,6 +22,8 @@
 
 package org.kkukie.jrtsp_gw.media.core.scheduler;
 
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Clock;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,7 +36,7 @@ public class WallClock implements Clock {
     /**
      * The default time unit: nanoseconds.
      */
-    private TimeUnit timeUnit = TimeUnit.NANOSECONDS;
+    private final TimeUnit timeUnit = TimeUnit.NANOSECONDS;
 
     @Override
     public long getTime() {

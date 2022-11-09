@@ -21,7 +21,7 @@
 package org.kkukie.jrtsp_gw.media.core.stream.rtp.statistics;
 
 import org.apache.commons.net.ntp.TimeStamp;
-import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Clock;
 import org.kkukie.jrtsp_gw.media.core.stream.rtcp.RtcpSenderReport;
 import org.kkukie.jrtsp_gw.media.core.stream.rtcp.ntp.NtpUtils;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.RtpPacket;
@@ -40,13 +40,15 @@ public class RtpMember {
     public static final int MAX_DROPOUT = 100;
     public static final int MAX_MISORDER = 100;
     public static final int MIN_SEQUENTIAL = 2;
+
     private static final Logger logger = LoggerFactory.getLogger(RtpMember.class);
+
     // Core elements
     private final RtpClock rtpClock;
     private final Clock wallClock;
 
     // Member data
-    private long ssrc;
+    private final long ssrc;
     private String cname;
 
     // Packet stats
@@ -357,7 +359,7 @@ public class RtpMember {
         long delay = receiptNtpTime - lastSR - delaySinceSR;
         this.roundTripDelay = (delay > 4294967L) ? RTP_SEQ_MOD : (int) ((delay * 1000L) >> 16);
         if (logger.isTraceEnabled()) {
-            logger.trace("rtt=" + receiptNtpTime + " - " + lastSR + " - " + delaySinceSR + " = " + delay + " => " + this.roundTripDelay + "ms");
+            logger.trace("rtt = {} - {} - {} = {} -> {}ms", receiptNtpTime, lastSR, delaySinceSR, delay, this.roundTripDelay);
         }
     }
 

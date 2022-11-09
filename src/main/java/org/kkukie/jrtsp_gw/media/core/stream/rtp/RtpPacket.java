@@ -22,9 +22,6 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.rtp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
@@ -42,8 +39,6 @@ import java.nio.ByteBuffer;
  */
 
 public class RtpPacket implements Serializable {
-
-    private final Logger logger = LoggerFactory.getLogger(RtpPacket.class);
 
     public static final int RTP_PACKET_MAX_SIZE = 8192;
     /**
@@ -63,7 +58,7 @@ public class RtpPacket implements Serializable {
      */
     private static final long serialVersionUID = -1590053946635208723L;
     //underlying byte buffer
-    private ByteBuffer buffer;
+    private transient ByteBuffer buffer;
 
     /**
      * Creates new instance of RTP packet.
@@ -377,13 +372,6 @@ public class RtpPacket implements Serializable {
         buffer.rewind();
     }
 
-    @Override
-    public String toString () {
-        return "RTP Packet[marker=" + getMarker() + ", seq=" + getSeqNumber() +
-                ", timestamp=" + getTimestamp() + ", payload_size=" + getPayloadLength() +
-                ", payload=" + getPayloadType() + "]";
-    }
-
     /**
      * Shrink the buffer of this packet by specified length
      *
@@ -510,7 +498,6 @@ public class RtpPacket implements Serializable {
         if (newLen <= buffer.capacity()) {
             // there is more room in the underlying reserved buffer memory
             buffer.limit(newLen);
-            return;
         } else {
             // create a new bigger buffer
             ByteBuffer newBuffer = buffer.isDirect() ? ByteBuffer.allocateDirect(newLen) : ByteBuffer.allocate(newLen);
@@ -545,23 +532,11 @@ public class RtpPacket implements Serializable {
         buffer.put(data, 0, len);
     }
 
-    /**
-     * Read a byte region from specified offset in the RTP packet
-     * and with specified length into a given buffer
-     *
-     * @param off     start offset in the RTP packet of the region to be read
-     * @param len     length of the region to be read
-     * @param outBuff output buffer
-     */
-    public void readRegionToBuff (int off, int len, byte[] outBuff) {
-        assert off >= 0;
-        assert len > 0;
-        assert outBuff != null;
-        assert outBuff.length >= len;
-        assert buffer.limit() >= off + len;
-
-        buffer.position(off);
-        buffer.get(outBuff, 0, len);
+    @Override
+    public String toString () {
+        return "RTP Packet[marker=" + getMarker() + ", seq=" + getSeqNumber() +
+                ", timestamp=" + getTimestamp() + ", payload_size=" + getPayloadLength() +
+                ", payload=" + getPayloadType() + "]";
     }
 
 }

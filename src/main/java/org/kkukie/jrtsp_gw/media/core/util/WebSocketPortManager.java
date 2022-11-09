@@ -13,9 +13,11 @@ public class WebSocketPortManager {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketPortManager.class);
 
+    private static final int PORT_GAP = 1;
+
     private static WebSocketPortManager webSocketPortManager = null;
     private final ConcurrentLinkedQueue<Integer> channelQueues;
-    private final int portGap = 2;
+
     private int localPortMin = 0;
     private int localPortMax = 0;
 
@@ -39,7 +41,7 @@ public class WebSocketPortManager {
         this.localPortMin = localPortMin;
         this.localPortMax = localPortMax;
 
-        for (int idx = localPortMin; idx <= localPortMax; idx += portGap) {
+        for (int idx = localPortMin; idx <= localPortMax; idx += PORT_GAP) {
             try {
                 channelQueues.add(idx);
             } catch (Exception e) {
@@ -49,14 +51,14 @@ public class WebSocketPortManager {
         }
 
         logger.info("|WebSocketPortManager| Ready to use the port resources in Queue. (port range: {} - {}, gap={})",
-                localPortMin, localPortMax, portGap
+                localPortMin, localPortMax, PORT_GAP
         );
     }
 
     public void releaseResource() {
         channelQueues.clear();
         logger.info("|WebSocketPortManager| Release all port resources in Queue. (port range: {} - {}, gap={})",
-                localPortMin, localPortMax, portGap
+                localPortMin, localPortMax, PORT_GAP
         );
     }
 

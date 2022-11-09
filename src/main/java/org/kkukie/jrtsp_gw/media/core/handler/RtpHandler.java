@@ -23,7 +23,6 @@ public class RtpHandler implements PacketHandler {
     private final String conferenceId;
 
     private final RtpClock rtpClock;
-    private final RtpClock oobClock;
     private final RtpStatistics statistics;
     private final RtpPacket rtpPacket;
 
@@ -38,20 +37,19 @@ public class RtpHandler implements PacketHandler {
 
     private Consumer<RtpInfo> rtpRecvCallback = whatever -> {};
 
-    public RtpHandler (String conferenceId, RtpClock clock, RtpClock oobClock,
-                       RtpStatistics statistics, Map<String, RTPFormats> mediaFormatMap) {
+    public RtpHandler (String conferenceId,
+                       RtpClock clock, RtpStatistics statistics,
+                       Map<String, RTPFormats> mediaFormatMap) {
         this.conferenceId = conferenceId;
 
         this.mediaFormatMap = mediaFormatMap;
         this.pipelinePriority = 0;
 
         this.rtpClock = clock;
-        this.oobClock = oobClock;
-
         this.statistics = statistics;
         this.rtpPacket = new RtpPacket(RtpPacket.RTP_PACKET_MAX_SIZE, true);
-        this.loopable = false;
 
+        this.loopable = false;
         this.secure = false;
     }
 

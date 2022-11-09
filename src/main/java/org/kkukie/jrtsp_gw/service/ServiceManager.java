@@ -27,13 +27,17 @@ public class ServiceManager {
     public static final String MAIN_SCHEDULE_JOB = "MAIN";
     public static final String LONG_SESSION_REMOVE_SCHEDULE_JOB = "LONG_SESSION_REMOVE_JOB";
 
-    public static final int DELAY = 1000;
+    private static final int DELAY = 1000;
+    private static final int MAIN_SCHEDULE_THREAD_SIZE = 5;
+
     private static final ServiceManager serviceManager = new ServiceManager(); // lazy initialization
     private final ScheduleManager scheduleManager = new ScheduleManager();
+
     private final String tmpdir = System.getProperty("java.io.tmpdir");
     private final File lockFile = new File(tmpdir, System.getProperty("lock_file", "jrtsp_gw.lock"));
     private FileChannel fileChannel;
     private FileLock lock;
+
     private boolean isQuit = false;
 
     private final DefaultConfig defaultConfig;
@@ -58,7 +62,7 @@ public class ServiceManager {
                 defaultConfig.getLocalRtspListenPort()
         );
 
-        if (scheduleManager.initJob(MAIN_SCHEDULE_JOB, 10, 10 * 2)) {
+        if (scheduleManager.initJob(MAIN_SCHEDULE_JOB, MAIN_SCHEDULE_THREAD_SIZE, MAIN_SCHEDULE_THREAD_SIZE * 2)) {
             // FOR CHECKING the availability of this program
             Job haHandleJob = new JobBuilder()
                     .setScheduleManager(scheduleManager)

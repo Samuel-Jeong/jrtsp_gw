@@ -21,6 +21,9 @@
 
 package org.kkukie.jrtsp_gw.media.core.scheduler;
 
+import org.jetbrains.annotations.NotNull;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Clock;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,19 +49,20 @@ public class ServiceScheduler implements Scheduler {
     private volatile boolean started;
     private final Clock wallClock;
     private ScheduledExecutorService executor;
+
     private final ThreadFactory threadFactory = new ThreadFactory() {
 
-        private AtomicInteger index = new AtomicInteger(0);
+        private final AtomicInteger index = new AtomicInteger(0);
 
         @Override
-        public Thread newThread(Runnable r) {
-            return new Thread(r, "service-scheduler-" + index.incrementAndGet());
+        public Thread newThread(@NotNull Runnable runnable) {
+            return new Thread(runnable, "service-scheduler-" + index.incrementAndGet());
         }
     };
 
     public ServiceScheduler(final Clock wallClock) {
         this.started = false;
-        this.wallClock = new WallClock();
+        this.wallClock = wallClock;
     }
 
     public ServiceScheduler() {

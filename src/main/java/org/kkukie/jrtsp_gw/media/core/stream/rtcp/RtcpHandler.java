@@ -20,7 +20,7 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.rtcp;
 
-import org.kkukie.jrtsp_gw.media.core.scheduler.Scheduler;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Scheduler;
 import org.kkukie.jrtsp_gw.media.core.stream.dtls.DtlsHandler;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.RtpPacket;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.channels.PacketHandler;

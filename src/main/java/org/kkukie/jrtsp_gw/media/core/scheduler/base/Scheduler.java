@@ -19,7 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.kkukie.jrtsp_gw.media.core.scheduler;
+package org.kkukie.jrtsp_gw.media.core.scheduler.base;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;

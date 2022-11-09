@@ -1,4 +1,4 @@
-package org.kkukie.jrtsp_gw.media.core.model;
+package org.kkukie.jrtsp_gw.media.core.stream.rtp.channels;
 
 public class PacketPriority {
 

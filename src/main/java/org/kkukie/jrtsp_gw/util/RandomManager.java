@@ -4,6 +4,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomManager {
 
+    private RandomManager() {}
+
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
 
     public static long getRandomLong(long bound) {

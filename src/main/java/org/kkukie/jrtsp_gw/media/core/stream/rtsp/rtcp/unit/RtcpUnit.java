@@ -3,7 +3,7 @@ package org.kkukie.jrtsp_gw.media.core.stream.rtsp.rtcp.unit;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.net.ntp.TimeStamp;
-import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Clock;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.RtpPacket;
 import org.kkukie.jrtsp_gw.media.core.stream.rtsp.rtcp.module.NtpUtils;
 import org.kkukie.jrtsp_gw.media.core.stream.rtsp.rtcp.module.RtpClock;

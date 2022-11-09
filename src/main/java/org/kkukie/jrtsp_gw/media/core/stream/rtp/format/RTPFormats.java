@@ -35,13 +35,14 @@ import java.util.ArrayList;
  * @author kulikov
  */
 public class RTPFormats {
+
     //the default size of this collection
-    private static final int size = 10;
+    private static final int SIZE = 10;
 
     //backing array
-    private ArrayList<RTPFormat> rtpFormats;
+    private final ArrayList<RTPFormat> rtpFormats;
 
-    private Formats formats = new Formats();
+    private final Formats formats = new Formats();
 
     private int cursor;
 
@@ -49,7 +50,7 @@ public class RTPFormats {
      * Creates new format collection with default size.
      */
     public RTPFormats () {
-        this.rtpFormats = new ArrayList<>(size);
+        this.rtpFormats = new ArrayList<>(SIZE);
     }
 
     /**
@@ -79,9 +80,9 @@ public class RTPFormats {
 
     public void remove (RTPFormat rtpFormat) {
         int pos = -1;
-        for (int i = 0; i < rtpFormats.size(); i++) {
+        for (RTPFormat format : rtpFormats) {
             pos++;
-            if (rtpFormats.get(i).getID() == rtpFormat.getID()) break;
+            if (format.getID() == rtpFormat.getID()) break;
         }
 
         if (pos == -1) {
@@ -103,16 +104,14 @@ public class RTPFormats {
     }
 
     public RTPFormat getRTPFormat (int payload) {
-        for (int i = 0; i < rtpFormats.size(); i++) {
-            if (rtpFormats.get(i).getID() == payload) return rtpFormats.get(i);
+        for (RTPFormat rtpFormat : rtpFormats) {
+            if (rtpFormat.getID() == payload) return rtpFormat;
         }
         return null;
     }
 
     public RTPFormat getRTPFormat (String name) {
-        final int size = rtpFormats.size();
-        for (int i = 0; i < size; i++) {
-            final RTPFormat rtpFormat = rtpFormats.get(i);
+        for (final RTPFormat rtpFormat : rtpFormats) {
             if (rtpFormat.getFormat().getName().toString().equalsIgnoreCase(name)) {
                 return rtpFormat;
             }
@@ -150,8 +149,8 @@ public class RTPFormats {
     }
 
     public boolean contains (Format fmt) {
-        for (int i = 0; i < rtpFormats.size(); i++) {
-            if (rtpFormats.get(i).getFormat().matches(fmt)) {
+        for (RTPFormat rtpFormat : rtpFormats) {
+            if (rtpFormat.getFormat().matches(fmt)) {
                 return true;
             }
         }
@@ -159,9 +158,9 @@ public class RTPFormats {
     }
 
     public RTPFormat find (Format fmt) {
-        for (int i = 0; i < rtpFormats.size(); i++) {
-            if (rtpFormats.get(i).getFormat().matches(fmt)) {
-                return rtpFormats.get(i);
+        for (RTPFormat rtpFormat : rtpFormats) {
+            if (rtpFormat.getFormat().matches(fmt)) {
+                return rtpFormat;
             }
         }
         return null;
@@ -186,8 +185,7 @@ public class RTPFormats {
     public void intersection (RTPFormats other, RTPFormats res) {
         for (int i = 0; i < other.size(); i++) {
             RTPFormat supportedFormat = other.rtpFormats.get(i);
-            for (int j = 0; j < this.rtpFormats.size(); j++) {
-                RTPFormat offeredFormat = this.rtpFormats.get(j);
+            for (RTPFormat offeredFormat : this.rtpFormats) {
                 if (supportedFormat.getFormat().matches(offeredFormat.getFormat())) {
                     // Add offered (instead of supported) format for DTMF dynamic payload
                     res.add(supportedFormat);
@@ -210,4 +208,5 @@ public class RTPFormats {
         buffer.append("}");
         return buffer.toString();
     }
+
 }

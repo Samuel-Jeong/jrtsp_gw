@@ -13,7 +13,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class ConferenceMaster {
 
-
     private final int maxSessionCount;
 
     private static final ConferenceMaster conferenceMaster = new ConferenceMaster();

@@ -1,6 +1,6 @@
 package org.kkukie.jrtsp_gw.media.core.stream.rtsp.rtcp.module;
 
-import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Clock;
 
 import java.util.concurrent.TimeUnit;
 

@@ -53,7 +53,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
     private List<InetSocketAddress> targetAddressList = null;
 
     private final ByteBuffer recvBuffer;
-    private final Queue<byte[]> pendingData = new ConcurrentLinkedQueue<>();
+    private final Queue<byte[]> pendingData;
 
     private final PacketHandlerMaster packetHandlerMaster;
     private final PacketSelector packetSelector;
@@ -66,7 +66,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
         this.conferenceId = conferenceId;
         this.localMediaAddress = localMediaAddress;
         this.recvBuffer = ByteBuffer.allocateDirect(BUFFER_SIZE);
-
+        this.pendingData = new ConcurrentLinkedQueue<>();
         this.packetHandlerMaster = new PacketHandlerMaster(conferenceId, mediaSession);
     }
 

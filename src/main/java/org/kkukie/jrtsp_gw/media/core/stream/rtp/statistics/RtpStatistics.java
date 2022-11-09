@@ -20,7 +20,7 @@
 
 package org.kkukie.jrtsp_gw.media.core.stream.rtp.statistics;
 
-import org.kkukie.jrtsp_gw.media.core.scheduler.Clock;
+import org.kkukie.jrtsp_gw.media.core.scheduler.base.Clock;
 import org.kkukie.jrtsp_gw.media.core.stream.rtcp.*;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.RtpPacket;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.util.SsrcGenerator;
