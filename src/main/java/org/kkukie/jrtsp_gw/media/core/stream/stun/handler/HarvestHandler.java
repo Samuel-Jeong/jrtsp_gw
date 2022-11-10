@@ -75,10 +75,19 @@ public class HarvestHandler {
                         iceInfo.getRemoteUsername(),
                         iceInfo.getRemoteIcePasswd()
                 );
-                dataChannel.send(bindingRequest.encode(), targetAddress);
-                log.debug("|HarvestHandler({})| Send StunRequest(tid={}) to [{}].",
-                        conferenceId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress
-                );
+                if (dataChannel.send(bindingRequest.encode(), targetAddress)) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("|HarvestHandler({})| Send StunRequest(tid={}) to [{}].",
+                                conferenceId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress
+                        );
+                    }
+                } else {
+                    if (log.isTraceEnabled()) {
+                        log.trace("|HarvestHandler({})| !!! FAIL to send StunRequest(tid={}) to [{}].",
+                                conferenceId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress
+                        );
+                    }
+                }
             } catch (Exception e) {
                 log.warn("|HarvestHandler({})| Fail to stun binding.", conferenceId, e);
             }

@@ -204,12 +204,13 @@ public class DataChannel implements DtlsListener, IceEventListener {
         }
     }
 
-    public void send(byte[] data, SocketAddress remoteAddress) throws IOException {
-        if (remoteAddress == null) { return; }
+    public boolean send(byte[] data, SocketAddress remoteAddress) throws IOException {
+        if (remoteAddress == null) { return false; }
         if (data != null) {
             ByteBuffer buffer = ByteBuffer.wrap(data);
-            this.mediaChannel.send(buffer, remoteAddress);
+            return this.mediaChannel.send(buffer, remoteAddress) > 0;
         }
+        return false;
     }
 
     public void flush() {
