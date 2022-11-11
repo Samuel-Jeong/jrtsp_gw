@@ -125,16 +125,16 @@ public class IceHandler implements PacketHandler {
                 log.warn("|IceHandler({})| validateUsername: fail. (remoteUsername={})", conferenceId, remoteUsername);
                 return null;
             } else {
-                int colon = remoteUsername.indexOf(":");
-                String localUFrag = remoteUsername.substring(0, colon);
-                String remoteUfrag = remoteUsername.substring(colon + 1);
+                int colonPos = remoteUsername.indexOf(":");
+                String localUFrag = remoteUsername.substring(0, colonPos);
+                String remoteUfrag = remoteUsername.substring(colonPos + 1);
                 TransportAddress transportAddress = new TransportAddress(remotePeer.getAddress(), remotePeer.getPort(), TransportAddress.TransportProtocol.UDP);
                 StunResponse response = StunMessageFactory.createBindingResponse(request, transportAddress);
 
                 try {
                     response.setTransactionID(transactionID);
-                } catch (StunException var16) {
-                    throw new IOException("|IceHandler(" + conferenceId + ")| Illegal STUN Transaction ID: " + new String(transactionID), var16);
+                } catch (StunException stunException) {
+                    throw new IOException("|IceHandler(" + conferenceId + ")| Illegal STUN Transaction ID: " + new String(transactionID), stunException);
                 }
 
                 String localUsername = remoteUfrag.concat(":").concat(localUFrag);

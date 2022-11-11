@@ -10,69 +10,53 @@ import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.service.model.ice.
 
 import java.util.List;
 
+/**
+ * OFFER >
+ * {
+ * "candidates":
+ *      [
+ *      {"candidate":"candidate:0 1 UDP 50 222.235.208.2 30005 typ host","sdpMLineIndex":0},
+ *      ...
+ *      ],
+ * "code":200,
+ * "command":"offer",
+ * "id":1278941828,
+ * "peer_id":0,
+ * "sdp":
+ *      {
+ *      "sdp":"v=0\r\no=OvenMediaEngine ...",
+ *      "type":"offer"
+ *      }
+ * }
+ */
+
+/**
+ * < ANSWER
+ * {
+ * "id":1278941828,
+ * "peer_id":0,
+ * "command":"answer",
+ * "sdp":
+ * {
+ * "type":"answer",
+ * "sdp":"v=0\r\no=- ..."
+ * }
+ * }
+ */
+
 @Slf4j
 public class OmeAnswer extends AbstractCommand {
-
-    public static final String TYPE = "answer";
-
-    private final long id;
-    private final int peerId;
-    private final String sdp;
-    private final List<RTCIceCandidate> candidates;
 
     public OmeAnswer(long id, int peerId, String sdp, List<RTCIceCandidate> candidates) {
         super(CommandType.ANSWER);
 
-        this.id = id;
-        this.peerId = peerId;
-        this.sdp = sdp;
-        this.candidates = candidates;
-    }
-
-    /**
-     * OFFER >
-     * {
-     * "candidates":
-     *      [
-     *      {"candidate":"candidate:0 1 UDP 50 222.235.208.2 30005 typ host","sdpMLineIndex":0},
-     *      ...
-     *      ],
-     * "code":200,
-     * "command":"offer",
-     * "id":1278941828,
-     * "peer_id":0,
-     * "sdp":
-     *      {
-     *      "sdp":"v=0\r\no=OvenMediaEngine ...",
-     *      "type":"offer"
-     *      }
-     * }
-     */
-
-    /**
-     * < ANSWER
-     * {
-     * "id":1278941828,
-     * "peer_id":0,
-     * "command":"answer",
-     * "sdp":
-     * {
-     * "type":"answer",
-     * "sdp":"v=0\r\no=- ..."
-     * }
-     * }
-     */
-    @Override
-    public String makeJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", id);
-        jsonObject.addProperty("peer_id", peerId);
-        jsonObject.addProperty("command", TYPE);
+        getJsonObject().addProperty("id", id);
+        getJsonObject().addProperty("peer_id", peerId);
 
         JsonObject sdpObject = new JsonObject();
-        sdpObject.addProperty("type", TYPE);
+        sdpObject.addProperty("type", getType().getName());
         sdpObject.addProperty("sdp", sdp);
-        jsonObject.add("sdp", sdpObject);
+        getJsonObject().add("sdp", sdpObject);
 
         if (candidates != null && !candidates.isEmpty()) {
             JsonArray candidateArray = new JsonArray();
@@ -91,12 +75,14 @@ public class OmeAnswer extends AbstractCommand {
                 }
                 candidateArray.add(candidateObject);
             }
-            jsonObject.add("candidates", candidateArray);
+            getJsonObject().add("candidates", candidateArray);
         }
+    }
 
-        String result = jsonObject.toString();
-        log.debug("OmeAnswer: \n{}", WebSocketService.gson.toJson(jsonObject));
-
+    @Override
+    public String makeJson() {
+        String result = getJsonObject().toString();
+        log.debug("OmeAnswer: \n{}", WebSocketService.gson.toJson(getJsonObject()));
         return result;
     }
 

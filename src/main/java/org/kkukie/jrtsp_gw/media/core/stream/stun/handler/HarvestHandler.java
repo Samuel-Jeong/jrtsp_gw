@@ -24,6 +24,9 @@ public class HarvestHandler {
     private ScheduledThreadPoolExecutor executor = null;
     private ScheduledFuture<?> harvesterFuture = null;
 
+    private StunRequest bindingRequest = null;
+    private byte[] encodedBindingRequest = null;
+
     public HarvestHandler(String conferenceId) {
         this.conferenceId = conferenceId;
 
@@ -46,17 +49,30 @@ public class HarvestHandler {
 
         stop();
 
-        executor = new ScheduledThreadPoolExecutor(1);
-        harvesterFuture = executor.scheduleWithFixedDelay(
-                () -> harvest(dataChannel, iceInfo, targetAddressList),
-                0, STUN_DELAY, TimeUnit.MILLISECONDS
-        );
-        if (!harvesterFuture.isDone()) {
-            log.debug("|HarvestHandler({})| Started. (interval={}ms)", conferenceId, STUN_DELAY);
+        try {
+            bindingRequest = StunMessageFactory.createBindingRequest(
+                    iceInfo.getRemoteUsername(),
+                    iceInfo.getRemoteIcePasswd()
+            );
+            encodedBindingRequest = bindingRequest.encode();
+
+            executor = new ScheduledThreadPoolExecutor(1);
+            harvesterFuture = executor.scheduleWithFixedDelay(
+                    () -> harvest(dataChannel, targetAddressList),
+                    0, STUN_DELAY, TimeUnit.MILLISECONDS
+            );
+            if (!harvesterFuture.isDone()) {
+                log.debug("|HarvestHandler({})| Started. (interval={}ms)", conferenceId, STUN_DELAY);
+            }
+        } catch (Exception e) {
+            log.warn("|HarvestHandler({})| Fail to stun binding.", conferenceId, e);
         }
     }
 
     public void stop() {
+        bindingRequest = null;
+        encodedBindingRequest = null;
+
         if (harvesterFuture != null) {
             harvesterFuture.cancel(true);
             harvesterFuture = null;
@@ -68,14 +84,10 @@ public class HarvestHandler {
         }
     }
 
-    private void harvest(DataChannel dataChannel, IceInfo iceInfo, List<InetSocketAddress> targetAddressList) {
+    private void harvest(DataChannel dataChannel, List<InetSocketAddress> targetAddressList) {
         for (InetSocketAddress targetAddress : targetAddressList) {
             try {
-                StunRequest bindingRequest = StunMessageFactory.createBindingRequest(
-                        iceInfo.getRemoteUsername(),
-                        iceInfo.getRemoteIcePasswd()
-                );
-                if (dataChannel.send(bindingRequest.encode(), targetAddress)) {
+                if (dataChannel.send(encodedBindingRequest, targetAddress)) {
                     if (log.isTraceEnabled()) {
                         log.trace("|HarvestHandler({})| Send StunRequest(tid={}) to [{}].",
                                 conferenceId, DatatypeConverter.printHexBinary(bindingRequest.getTransactionId()), targetAddress

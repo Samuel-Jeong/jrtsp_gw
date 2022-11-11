@@ -28,7 +28,7 @@ public class RtpHandler implements PacketHandler {
 
     private int pipelinePriority;
 
-    private boolean loopable;
+    private final boolean loopable;
 
     private boolean secure;
     private DtlsHandler dtlsHandler;

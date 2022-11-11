@@ -14,26 +14,11 @@ import java.util.List;
 @Slf4j
 public class OmeCandidate extends AbstractCommand {
 
-    public static final String TYPE = "candidate";
-
-    private final long id;
-    private final int peerId;
-    private final List<RTCIceCandidate> candidates;
-
     public OmeCandidate(long id, int peerId, List<RTCIceCandidate> candidates) {
         super(CommandType.CANDIDATE);
 
-        this.id = id;
-        this.peerId = peerId;
-        this.candidates = candidates;
-    }
-
-    @Override
-    public String makeJson() {
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id", id);
-        jsonObject.addProperty("peer_id", peerId);
-        jsonObject.addProperty("command", TYPE);
+        getJsonObject().addProperty("id", id);
+        getJsonObject().addProperty("peer_id", peerId);
 
         if (candidates != null && !candidates.isEmpty()) {
             JsonArray candidateArray = new JsonArray();
@@ -52,12 +37,15 @@ public class OmeCandidate extends AbstractCommand {
                 candidateObject.addProperty("sdpMLineIndex", candidate.sdpMLineIndex);
                 candidateArray.add(candidateObject);
             }
-            jsonObject.add("candidates", candidateArray);
+            getJsonObject().add("candidates", candidateArray);
         }
 
-        String result = jsonObject.toString();
-        log.debug("OmeCandidate: \n{}", WebSocketService.gson.toJson(jsonObject));
+    }
 
+    @Override
+    public String makeJson() {
+        String result = getJsonObject().toString();
+        log.debug("OmeCandidate: \n{}", WebSocketService.gson.toJson(getJsonObject()));
         return result;
     }
 

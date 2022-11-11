@@ -106,12 +106,12 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         }
     }
 
-    public void notifySelectedCipherSuite (int var1) {
-        super.notifySelectedCipherSuite(var1);
+    public void notifySelectedCipherSuite (int selectedCipherSuite) {
+        super.notifySelectedCipherSuite(selectedCipherSuite);
     }
 
-    public void notifySelectedCompressionMethod (short var1) {
-        super.notifySelectedCompressionMethod(var1);
+    public void notifySelectedCompressionMethod (short selectedCompressionMethod) {
+        super.notifySelectedCompressionMethod(selectedCompressionMethod);
     }
 
     @SuppressWarnings("rawtypes")

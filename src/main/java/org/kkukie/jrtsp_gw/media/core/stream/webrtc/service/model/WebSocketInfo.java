@@ -151,7 +151,8 @@ public class WebSocketInfo {
         if (dataChannel != null) {
             dataChannel.close();
             WebSocketPortManager.getInstance().restorePort(
-                    ((InetSocketAddress) mediaSession.getLocalMediaAddress()).getPort());
+                    ((InetSocketAddress) mediaSession.getLocalMediaAddress()).getPort()
+            );
         }
     }
 

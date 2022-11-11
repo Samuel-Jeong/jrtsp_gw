@@ -1,6 +1,5 @@
 package org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.command;
 
-
 import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.command.base.AbstractCommand;
 import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.command.base.CommandType;
 
