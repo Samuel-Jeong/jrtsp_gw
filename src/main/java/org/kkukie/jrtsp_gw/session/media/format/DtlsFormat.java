@@ -126,9 +126,7 @@ public class DtlsFormat extends Format implements Cloneable {
 
         if (f.sampleRate != this.sampleRate) return false;
         if (f.sampleSize != this.sampleSize) return false;
-        if (f.channels != this.channels) return false;
-
-        return true;
+        return f.channels == this.channels;
     }
     
     @Override

@@ -131,9 +131,7 @@ public class AudioFormat extends Format implements Cloneable {
         if (f.sampleRate != this.sampleRate) return false;
         // XXX dirty patch for issue #7 - https://github.com/Mobicents/mediaserver/issues/7
 //        if (f.sampleSize != this.sampleSize) return false;
-        if (f.channels != this.channels) return false;
-
-        return true;
+        return f.channels == this.channels;
     }
     
     @Override

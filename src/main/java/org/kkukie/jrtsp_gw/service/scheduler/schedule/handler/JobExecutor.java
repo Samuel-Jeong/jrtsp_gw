@@ -2,8 +2,6 @@ package org.kkukie.jrtsp_gw.service.scheduler.schedule.handler;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.kkukie.jrtsp_gw.service.scheduler.job.Job;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -14,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 public class JobExecutor {
 
     ////////////////////////////////////////////////////////////////////////////////
-    private static final Logger logger = LoggerFactory.getLogger(JobExecutor.class);
 
     private final String scheduleUnitKey;
     private final int index;
@@ -52,6 +49,10 @@ public class JobExecutor {
     public void stop() {
         scheduledThreadPoolExecutor.shutdown();
         priorityQueue.clear();
+    }
+
+    public String getScheduleUnitKey() {
+        return scheduleUnitKey;
     }
 
     public boolean addJob(Job job) {

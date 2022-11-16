@@ -30,17 +30,18 @@ import java.util.ArrayList;
  * @author kulikov
  */
 public class Formats {
+
     //the default size of format list
     public static final int DEFAULT_SIZE = 15;
 
     //backing array
-    private ArrayList<Format> list;
+    private final ArrayList<Format> list;
 
     /**
      * Creates new collection with default size;
      */
     public Formats() {
-        list = new ArrayList<Format>(DEFAULT_SIZE);
+        list = new ArrayList<>(DEFAULT_SIZE);
     }
 
     /**
@@ -49,7 +50,7 @@ public class Formats {
      * @param size the size of the collection.
      */
     public Formats(int size) {
-        list = new ArrayList<Format>(size);
+        list = new ArrayList<>(size);
     }
 
     /**

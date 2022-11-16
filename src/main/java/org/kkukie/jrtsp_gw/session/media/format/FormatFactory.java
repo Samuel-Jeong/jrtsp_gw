@@ -34,6 +34,8 @@ public class FormatFactory {
 
     private static final Text DTMF = new Text("telephone-event");
 
+    private FormatFactory() {}
+
     /**
      * Creates new audio format descriptor.
      *

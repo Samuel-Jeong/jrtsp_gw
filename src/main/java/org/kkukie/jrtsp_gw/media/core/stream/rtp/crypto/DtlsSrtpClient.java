@@ -287,6 +287,7 @@ public class DtlsSrtpClient extends DefaultTlsClient {
         };
     }
 
+    @Override
     public void notifyHandshakeComplete () throws IOException {
         super.notifyHandshakeComplete();
 

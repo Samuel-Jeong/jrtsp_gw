@@ -2,18 +2,14 @@ package org.kkukie.jrtsp_gw.service.scheduler.schedule.unit;
 
 import org.kkukie.jrtsp_gw.service.scheduler.job.Job;
 import org.kkukie.jrtsp_gw.service.scheduler.schedule.handler.JobScheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ScheduleUnit {
 
     public static final int DEFAULT_THREAD_COUNT = 5;
     ////////////////////////////////////////////////////////////////////////////////
-    private static final Logger logger = LoggerFactory.getLogger(ScheduleUnit.class);
     private final long createdTime = System.currentTimeMillis();
 
     private final String scheduleUnitKey;
-
     private final int poolSize; // Thread pool size
     private final JobScheduler jobScheduler;
     ////////////////////////////////////////////////////////////////////////////////

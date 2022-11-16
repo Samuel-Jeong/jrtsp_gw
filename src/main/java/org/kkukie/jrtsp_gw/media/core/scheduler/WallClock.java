@@ -36,7 +36,7 @@ public class WallClock implements Clock {
     /**
      * The default time unit: nanoseconds.
      */
-    private final TimeUnit timeUnit = TimeUnit.NANOSECONDS;
+    private static final TimeUnit timeUnit = TimeUnit.NANOSECONDS;
 
     @Override
     public long getTime() {
@@ -55,7 +55,7 @@ public class WallClock implements Clock {
 
     @Override
     public long getTime(TimeUnit timeUnit) {
-        return timeUnit.convert(System.nanoTime(), this.timeUnit);
+        return timeUnit.convert(System.nanoTime(), WallClock.timeUnit);
     }
 
 }
