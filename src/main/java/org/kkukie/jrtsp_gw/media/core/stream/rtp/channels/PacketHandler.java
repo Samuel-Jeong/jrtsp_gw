@@ -87,4 +87,6 @@ public interface PacketHandler extends Comparable<PacketHandler> {
 	 */
 	int getPipelinePriority();
 
+	void destroy() throws Exception;
+
 }

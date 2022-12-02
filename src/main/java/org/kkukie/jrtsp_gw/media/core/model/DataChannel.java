@@ -160,7 +160,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
             this.recvBuffer.get(dataCopy, 0, dataLength);
 
             // Delegate work to the proper handler
-            PacketHandler handler = packetHandlerMaster.getHandlers().getHandler(dataCopy);
+            PacketHandler handler = packetHandlerMaster.getHandlers().getCapableHandler(dataCopy);
             if (handler != null) {
                 try {
                     byte[] response = handler.handle(
@@ -175,8 +175,8 @@ public class DataChannel implements DtlsListener, IceEventListener {
                     log.error("|DataChannel({})| Could not handle incoming packet.", conferenceId, e);
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("|DataChannel({})| No protocol handler was found to process an incoming packet. Packet will be dropped.", conferenceId);
+                if (log.isTraceEnabled()) {
+                    log.trace("|DataChannel({})| No protocol handler was found to process an incoming packet. Packet will be dropped.", conferenceId);
                 }
             }
             return dataCopy;
@@ -208,7 +208,11 @@ public class DataChannel implements DtlsListener, IceEventListener {
         if (remoteAddress == null) { return false; }
         if (data != null) {
             ByteBuffer buffer = ByteBuffer.wrap(data);
-            return this.mediaChannel.send(buffer, remoteAddress) > 0;
+            if (this.mediaChannel != null) {
+                return this.mediaChannel.send(buffer, remoteAddress) > 0;
+            } else {
+                return false;
+            }
         }
         return false;
     }
@@ -216,7 +220,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
     public void flush() {
         try {
             this.recvBuffer.clear();
-            // lets clear the receiver
+            // let's clear the receiver
             SocketAddress currAddress;
             do {
                 if (mediaChannel != null && mediaChannel.isOpen()) {
@@ -242,7 +246,7 @@ public class DataChannel implements DtlsListener, IceEventListener {
     public void onDtlsHandshakeComplete () {
         log.debug("|DataChannel({})| DTLS handshake completed for RTP candidate.", conferenceId);
         if (mediaSession.isRtcpMux()) {
-            packetHandlerMaster.getRtcpHandler().joinRtpSession();
+            packetHandlerMaster.joinRtpSession();
         }
     }
 

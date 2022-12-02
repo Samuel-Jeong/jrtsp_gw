@@ -280,7 +280,8 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         }
     }
 
-    public void reset () {
+    @Override
+    public void destroy () throws IOException {
         this.server = this.tlsServerProvider.provide();
         this.datagramChannel = null;
         this.srtcpDecoder = null;
@@ -292,6 +293,8 @@ public class DtlsHandler implements PacketHandler, DatagramTransport {
         this.handshakeFailed = false;
         this.handshaking = false;
         this.listeners.clear();
+
+        close();
     }
 
     @Override

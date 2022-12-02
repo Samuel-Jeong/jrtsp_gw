@@ -98,6 +98,12 @@ public class RtcpHandler implements PacketHandler {
         this.dtlsHandler = null;
     }
 
+    @Override
+    public void destroy() throws Exception {
+        leaveRtpSession();
+        stop();
+    }
+
     public void start() {
         serviceScheduler.start();
     }
@@ -166,6 +172,8 @@ public class RtcpHandler implements PacketHandler {
             // Start SSRC timeout timer
             this.ssrcTaskFuture = this.serviceScheduler.scheduleWithFixedDelay(ssrcTask, SSRC_TASK_DELAY, SSRC_TASK_DELAY, TimeUnit.MILLISECONDS);
             this.joined.set(true);
+
+            log.debug("|RtcpHandler({})| Joined the rtp session.", conferenceId);
         }
     }
 
@@ -200,6 +208,8 @@ public class RtcpHandler implements PacketHandler {
             this.statistics.setRtcpPacketType(RtcpPacketType.RTCP_BYE);
             this.scheduledTask = new TxTask(RtcpPacketType.RTCP_BYE);
             this.scheduledTask.run();
+
+            log.debug("|RtcpHandler({})| Leaved the rtp session.", conferenceId);
         }
     }
 

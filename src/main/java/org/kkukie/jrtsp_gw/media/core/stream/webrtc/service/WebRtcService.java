@@ -133,7 +133,7 @@ public class WebRtcService {
         } finally {
             callInfoSetLock.unlock();
             if (callInfos.isEmpty()) {
-                log.debug("|WebRtcService({})| [REMOVE ALL]", conferenceId);
+                log.debug("|WebRtcService({})| Remove all calls.", conferenceId);
             }
         }
     }

@@ -53,6 +53,23 @@ public class RtpHandler implements PacketHandler {
         this.secure = false;
     }
 
+    @Override
+    public void destroy() {
+        ByteBuffer packetBuffer = rtpPacket.getBuffer();
+        if (packetBuffer != null) {
+            packetBuffer.clear();
+        }
+
+        dtlsHandler = null;
+
+        for (RTPFormats rtpFormats : mediaFormatMap.values()) {
+            if (rtpFormats != null) {
+                rtpFormats.clean();
+            }
+        }
+        mediaFormatMap.clear();
+    }
+
     public int getPipelinePriority () {
         return pipelinePriority;
     }

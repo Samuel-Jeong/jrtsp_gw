@@ -55,6 +55,13 @@ public class IceHandler implements PacketHandler {
         }
     }
 
+    @Override
+    public void destroy() {
+        stopHarvester();
+
+        authenticator = null;
+    }
+
     public short getComponentId() {
         return this.componentId;
     }

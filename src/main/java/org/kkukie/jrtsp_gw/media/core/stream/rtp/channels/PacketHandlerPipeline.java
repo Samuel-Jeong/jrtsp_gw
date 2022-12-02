@@ -51,15 +51,15 @@ public class PacketHandlerPipeline {
      * @return Whether the handler was successfully registered or not.
      */
     public boolean addHandler(PacketHandler handler) {
-        synchronized (this.handlers){
-            if (!handlers.contains(handler)) {
+        if (!handlers.contains(handler)) {
+            synchronized (this.handlers){
                 handlers.add(handler);
-                this.count.incrementAndGet();
-                this.handlers.sort(REVERSE_COMPARATOR);
-                return true;
             }
-            return false;
+            this.handlers.sort(REVERSE_COMPARATOR);
+            this.count.incrementAndGet();
+            return true;
         }
+        return false;
     }
 
     /**
@@ -70,13 +70,14 @@ public class PacketHandlerPipeline {
      *         pipeline.
      */
     public boolean removeHandler(PacketHandler handler) {
+        boolean removed;
         synchronized (this.handlers) {
-            boolean removed = this.handlers.remove(handler);
-            if (removed) {
-                this.count.decrementAndGet();
-            }
-            return removed;
+            removed = this.handlers.remove(handler);
         }
+        if (removed) {
+            this.count.decrementAndGet();
+        }
+        return removed;
     }
 
     /**
@@ -95,9 +96,7 @@ public class PacketHandlerPipeline {
      * @return <code>true</code> if the handler is registered. Returns <code>false</code>, otherwise.
      */
     public boolean contains(PacketHandler handler) {
-        synchronized (this.handlers) {
-            return this.handlers.contains(handler);
-        }
+        return this.handlers.contains(handler);
     }
 
     /**
@@ -107,18 +106,25 @@ public class PacketHandlerPipeline {
      * @return The protocol handler capable of processing the packet.<br>
      *         Returns null in case no capable handler exists.
      */
-    public PacketHandler getHandler(byte[] packet) {
-        synchronized (this.handlers) {
-            // Search for the first handler capable of processing the packet
-            for (PacketHandler protocolHandler : this.handlers) {
-                if (protocolHandler.canHandle(packet)) {
-                    return protocolHandler;
-                }
+    public PacketHandler getCapableHandler(byte[] packet) {
+        // Search for the first handler capable of processing the packet
+        for (PacketHandler protocolHandler : this.handlers) {
+            if (protocolHandler.canHandle(packet)) {
+                return protocolHandler;
             }
-
-            // Return null in case no handler is capable of decoding the packet
-            return null;
         }
+
+        // Return null in case no handler is capable of decoding the packet
+        return null;
+    }
+
+    public PacketHandler getHandler(String className) {
+        for (PacketHandler handler : this.handlers) {
+            if (handler.getClass().getName().equals(className)) {
+                return handler;
+            }
+        }
+        return null;
     }
 
     /**
@@ -126,8 +132,8 @@ public class PacketHandlerPipeline {
      * 
      * @return The list of handlers registered.
      */
-    protected List<PacketHandler> getHandlers() {
-        return this.handlers;
+    public List<PacketHandler> getHandlers() {
+        return new ArrayList<>(this.handlers); // Defensive copy
     }
 
 }

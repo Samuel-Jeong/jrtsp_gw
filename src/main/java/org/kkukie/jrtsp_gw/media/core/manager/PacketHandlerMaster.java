@@ -11,6 +11,7 @@ import org.kkukie.jrtsp_gw.media.core.scheduler.WallClock;
 import org.kkukie.jrtsp_gw.media.core.stream.dtls.DtlsHandler;
 import org.kkukie.jrtsp_gw.media.core.stream.dtls.DtlsListener;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.RtpInfo;
+import org.kkukie.jrtsp_gw.media.core.stream.rtp.channels.PacketHandler;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.channels.PacketHandlerPipeline;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.format.RTPFormats;
 import org.kkukie.jrtsp_gw.media.core.stream.rtp.statistics.RtpStatistics;
@@ -24,7 +25,6 @@ import org.kkukie.jrtsp_gw.media.core.stream.webrtc.websocket.model.ice.IceInfo;
 import org.kkukie.jrtsp_gw.session.media.MediaSession;
 import org.kkukie.jrtsp_gw.session.media.base.MediaType;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.DatagramChannel;
@@ -42,15 +42,10 @@ public class PacketHandlerMaster {
     private final String conferenceId;
     private final MediaSession mediaSession;
 
-    public final PacketHandlerPipeline handlers = new PacketHandlerPipeline();
-
-    private IceHandler iceHandler;
-    private DtlsHandler dtlsHandler;
-    private RtpHandler rtpHandler;
-    private RtcpHandler rtcpHandler;
+    private final PacketHandlerPipeline handlers = new PacketHandlerPipeline();
 
     public void initIce(IceInfo iceInfo, List<InetSocketAddress> targetAddressList, DataChannel dataChannel) {
-        iceHandler = new IceHandler(conferenceId, IceComponent.RTP_ID, dataChannel);
+        IceHandler iceHandler = new IceHandler(conferenceId, IceComponent.RTP_ID, dataChannel);
 
         IceAuthenticatorImpl iceAuthenticator = new IceAuthenticatorImpl();
         iceAuthenticator.setUfrag(iceInfo.getLocalIceUfrag());
@@ -71,7 +66,7 @@ public class PacketHandlerMaster {
 
     public void initDtls(DatagramChannel mediaChannel, SocketAddress realRemoteAddress, DtlsListener dtlsListener) {
         if (mediaSession.isSecure()) {
-            dtlsHandler = new DtlsHandler(conferenceId, realRemoteAddress);
+            DtlsHandler dtlsHandler = new DtlsHandler(conferenceId, realRemoteAddress);
             dtlsHandler.setChannel(mediaChannel);
             dtlsHandler.addListener(dtlsListener);
             dtlsHandler.setPipelinePriority(DTLS_PRIORITY);
@@ -91,7 +86,7 @@ public class PacketHandlerMaster {
 
     private void initRtpHandler(Map<String, RTPFormats> mediaFormatMap,
                                 RtpClock rtpClock, RtpStatistics rtpStatistics) {
-        rtpHandler = new RtpHandler(
+        RtpHandler rtpHandler = new RtpHandler(
                 conferenceId,
                 rtpClock, rtpStatistics,
                 mediaFormatMap
@@ -102,7 +97,8 @@ public class PacketHandlerMaster {
             log.debug("|PacketHandlerMaster({})| Success to add RtpHandler to pipeline (priority={}).", conferenceId, RTP_PRIORITY);
 
             if (mediaSession.isSecure()) {
-                rtpHandler.enableSrtp(dtlsHandler);
+                rtpHandler.enableSrtp((DtlsHandler) handlers.getHandler(DtlsHandler.class.getName()));
+                //rtpHandler.enableSrtp(dtlsHandler);
             } else {
                 rtpHandler.disableSrtp();
             }
@@ -111,7 +107,7 @@ public class PacketHandlerMaster {
 
     private void initRtcpHandler(DatagramChannel mediaChannel, SocketAddress realRemoteAddress, RtpStatistics rtpStatistics) {
         if (mediaSession.isRtcpMux()) {
-            rtcpHandler = new RtcpHandler(
+            RtcpHandler rtcpHandler = new RtcpHandler(
                     conferenceId, mediaChannel.socket(),
                     rtpStatistics, MediaType.AUDIO.getName(), realRemoteAddress
             );
@@ -121,7 +117,7 @@ public class PacketHandlerMaster {
                 log.debug("|PacketHandlerMaster({})| Success to add RtcpHandler to pipeline (priority={}).", conferenceId, RTCP_PRIORITY);
 
                 if (mediaSession.isSecure()) {
-                    rtcpHandler.enableSRTCP(dtlsHandler);
+                    rtcpHandler.enableSRTCP((DtlsHandler) handlers.getHandler(DtlsHandler.class.getName()));
                 } else {
                     rtcpHandler.disableSRTCP();
                 }
@@ -181,36 +177,30 @@ public class PacketHandlerMaster {
     }
 
     public void selectCandidate(boolean useCandidate) {
+        DtlsHandler dtlsHandler = (DtlsHandler) handlers.getHandler(DtlsHandler.class.getName());
         if (mediaSession.isSecure() && dtlsHandler != null) {
             dtlsHandler.handshake(useCandidate);
         }
     }
 
-    public void reset() {
-        if (rtpHandler != null) {
-            handlers.removeHandler(rtpHandler);
-            rtpHandler = null;
-        }
-
+    public void joinRtpSession() {
+        RtcpHandler rtcpHandler = (RtcpHandler) handlers.getHandler(RtcpHandler.class.getName());
         if (rtcpHandler != null) {
-            rtcpHandler.stop();
-            handlers.removeHandler(rtcpHandler);
-            rtcpHandler = null;
+            rtcpHandler.joinRtpSession();
         }
+    }
 
-        if (iceHandler != null) {
-            iceHandler.stopHarvester();
-            handlers.removeHandler(iceHandler);
-            iceHandler = null;
-        }
-
+    public void reset() {
         try {
-            if (dtlsHandler != null) {
-                dtlsHandler.close();
-                handlers.removeHandler(dtlsHandler);
-                dtlsHandler = null;
+            for (PacketHandler handler : handlers.getHandlers()) {
+                if (handler != null) {
+                    handler.destroy();
+                    if (handlers.removeHandler(handler)) {
+                        log.debug("|PacketHandlerMaster({})| Success to remove Handler from pipeline (priority={}).", conferenceId, handler.getPipelinePriority());
+                    }
+                }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.warn("|PacketHandlerMaster({})| reset.Exception", conferenceId, e);
         }
     }
