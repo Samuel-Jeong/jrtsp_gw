@@ -214,7 +214,7 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         }
 
         // Find Track ID
-        String conferenceId = parseConferenceIdFromTargetUri(ctx, req, res, targetUri);
+        String conferenceId = parseConferenceIdFromTargetUri(targetUri);
         if (conferenceId == null) {
             log.warn("({}) Fail to get conferenceId.", name);
             sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
@@ -223,8 +223,6 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
 
         ConferenceInfo conferenceInfo = getConferenceInfo(ctx, req, res, conferenceId);
         if (conferenceInfo == null) {
-            log.warn("({}) Fail to get conferenceInfo.", name);
-            sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.SERVICE_UNAVAILABLE);
             return;
         }
 
@@ -269,14 +267,13 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         return uri;
     }
 
-    private String parseConferenceIdFromTargetUri(ChannelHandlerContext ctx, DefaultHttpRequest req, DefaultFullHttpResponse res, String targetUri) {
+    private String parseConferenceIdFromTargetUri(String targetUri) {
         int trackIdPos = targetUri.indexOf(RtpMeta.TRACK_ID_TAG);
         String conferenceId = targetUri;
         if (trackIdPos > 0) {
             String trackId = getTrackIdFromTargetUri(targetUri);
             if (trackId == null || trackId.isEmpty()) {
                 log.warn("({}) Fail to get trackId. Predefined Track ID TAG({}) is not found.", name, RtpMeta.TRACK_ID_TAG);
-                sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
                 return null;
             }
             conferenceId = targetUri.substring(0, trackIdPos - 1).trim();
@@ -322,8 +319,9 @@ public class RtspChannelHandler extends ChannelInboundHandlerAdapter {
         }
 
         // Find Track ID
-        String conferenceId = parseConferenceIdFromTargetUri(ctx, req, res, targetUri);
+        String conferenceId = parseConferenceIdFromTargetUri(targetUri);
         if (conferenceId == null) {
+            sendFailResponse(name, ctx, req, res, null, RtspResponseStatuses.BAD_REQUEST);
             return;
         }
 
