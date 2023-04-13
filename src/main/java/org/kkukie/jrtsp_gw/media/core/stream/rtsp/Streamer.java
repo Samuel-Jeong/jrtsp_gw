@@ -291,6 +291,10 @@ public class Streamer {
         log.debug("|Streamer({})| [PLAY] > Success to send the response: {}\n", getKey(), playResponse);
     }
 
+    /**
+     * rtp-info: url=rtsp://127.0.0.1:6666/trackID=1;seq=10;rtptime=12038900,
+     *           url=rtsp://127.0.0.1:6666/trackID=2;seq=5;rtptime=4636235
+     */
     private String makeRtpInfoData() {
         return RtspHeaderValues.URL + "=" + targetNetworkInfo.getUri() + "/" + RtpMeta.TRACK_ID_TAG + "=" + RtpMeta.AUDIO_TRACK_ID
                 + ";" + RtspHeaderValues.SEQ + "=" + getAudioCurSeqNum()
